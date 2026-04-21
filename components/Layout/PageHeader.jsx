@@ -16,18 +16,21 @@ export default function PageHeader() {
     const pageIcon = currentPage?.iconOn || "";
 
     return (
-        <motion.div
-            key={pageName}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex gap-3  text-chart-1  min-w-[200]  items-center">
+        <div className="bg-background rounded-md px-3 p-1 border border-foreground/10 ">
 
-            {pageIcon}
-            <h1 className="font-semibold tracking-tighter text-lg">
-                {pageName}
+            <motion.div
+                key={pageName}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex gap-3   text-chart-1  min-w-[200]  items-center">
+
+                {pageIcon}
+                <h1 className="font-semibold tracking-tighter text-lg">
+                    {pageName}
 
 
-            </h1>
-        </motion.div>
+                </h1>
+            </motion.div>
+        </div>
     );
 }
