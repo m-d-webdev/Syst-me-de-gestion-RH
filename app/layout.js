@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
       <body className="bg-sidebar ">
         <div className="grid grid-cols-6 ">
           <Sidebare />
-          <div className="w-full border h-screen flex flex-col items-start justify-start col-span-5 ">
+          <div className="w-full max-h-screen overflow-auto scrl_none border h-screen flex flex-col items-start justify-start col-span-5 ">
             <Header />
             {children}
           </div>
