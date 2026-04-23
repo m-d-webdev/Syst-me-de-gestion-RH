@@ -153,7 +153,7 @@ function SectionTitle({ children }) {
 export default function DashboardPage() {
   return (
     <motion.div
-      className="p-6 space-y-6 border w-full"
+      className="p-6 space-y-6  w-full"
       variants={pageVariants}
       initial="hidden"
       animate="show"

@@ -25,9 +25,10 @@ export default function RootLayout({ children }) {
       className={`${geistMono.className} antialiased`}
     >
       <body className="bg-sidebar ">
-        <div className="grid grid-cols-6 ">
+        <div className="flex items-start justify-start ">
+
           <Sidebare />
-          <div className="w-full max-h-screen overflow-auto scrl_none border h-screen flex flex-col items-start justify-start col-span-5 ">
+          <div className=" max-h-screen overflow-auto scrl_none  h-screen flex flex-col items-start justify-start w-full ">
             <Header />
             {children}
           </div>
