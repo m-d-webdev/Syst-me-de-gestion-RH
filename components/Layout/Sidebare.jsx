@@ -25,7 +25,7 @@ const ListLinks = ({ isOpen = true }) => {
 
 
 const Sidebare = ({ }) => {
-    const [isOpen, setOpen] = useState(true)
+    const [isOpen, setOpen] = useState(false)
     const handleChaneOpen = () => {
         setOpen(pv => !pv)
     }

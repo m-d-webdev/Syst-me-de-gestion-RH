@@ -10,6 +10,7 @@ import {
 } from "date-fns";
 import { motion } from "framer-motion";
 import moment from "moment";
+import Dialog from "@/components/Global/Dialog";
 
 const statuses = ["present", "absent", "late"];
 
@@ -26,7 +27,7 @@ const generateFakeData = (days) => {
     }));
 };
 
-export default function AttendanceCalendar() {
+export default function AttendanceCalendar({ _id }) {
     const [currentDate] = useState(new Date());
 
     const start = startOfMonth(currentDate);
@@ -51,49 +52,51 @@ export default function AttendanceCalendar() {
     console.log(selectedMonth);
 
     return (
-        <div className="p-4 bg-background w-full max-w-[600] rounded-2xl shadow">
-            <h2 className="text-xl font-semibold mb-4">
-                {moment(selectedMonth, "M-YYYY").format("MMMM YYYY")}
-            </h2>
+        <Dialog backWhenClose={false} closeIfClickOutside={true}>
+            <div className="p-4 bg-background w-full max-w-[600] rounded-2xl shadow">
+                <h2 className="text-xl font-semibold mb-4">
+                    {moment(selectedMonth, "M-YYYY").format("MMMM YYYY")}
+                </h2>
 
-            {/* Days header */}
-            <div className="grid grid-cols-5 text-center mb-2 text-sm font-medium">
-                {["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"].map((d) => (
-                    <div key={d}>{d}</div>
-                ))}
+                {/* Days header */}
+                <div className="grid grid-cols-5 text-center mb-2 text-sm font-medium">
+                    {["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"].map((d) => (
+                        <div key={d}>{d}</div>
+                    ))}
+                </div>
+
+                {/* Calendar grid */}
+                <div className="grid grid-cols-5 gap-2">
+                    {days.map((day, index) => {
+                        const dayData = attendanceData[index];
+
+                        return (
+                            <motion.div
+                                key={index}
+                                whileHover={{ scale: 1.05 }}
+                                className="relative h-20 p-2 rounded-xl border cursor-pointer hover:shadow-md transition"
+                            >
+                                <div className=" font-medium">
+                                    {format(day, "d")}
+                                </div>
+
+                                {/* Status dot */}
+                                <div
+                                    className={`absolute bottom-2 left-2 w-3 h-3 rounded-full ${getStatusColor(
+                                        dayData.status
+                                    )}`}
+                                />
+
+                                {/* Tooltip info */}
+                                <div className="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 text-white text-xs flex flex-col justify-center items-center rounded-xl transition">
+                                    <span className="capitalize">{dayData.status}</span>
+                                    <span>{dayData.checkIn} - {dayData.checkOut}</span>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
             </div>
-
-            {/* Calendar grid */}
-            <div className="grid grid-cols-5 gap-2">
-                {days.map((day, index) => {
-                    const dayData = attendanceData[index];
-
-                    return (
-                        <motion.div
-                            key={index}
-                            whileHover={{ scale: 1.05 }}
-                            className="relative h-20 p-2 rounded-xl border cursor-pointer hover:shadow-md transition"
-                        >
-                            <div className=" font-medium">
-                                {format(day, "d")}
-                            </div>
-
-                            {/* Status dot */}
-                            <div
-                                className={`absolute bottom-2 left-2 w-3 h-3 rounded-full ${getStatusColor(
-                                    dayData.status
-                                )}`}
-                            />
-
-                            {/* Tooltip info */}
-                            <div className="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 text-white text-xs flex flex-col justify-center items-center rounded-xl transition">
-                                <span className="capitalize">{dayData.status}</span>
-                                <span>{dayData.checkIn} - {dayData.checkOut}</span>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </div>
-        </div>
+        </Dialog>
     );
 }

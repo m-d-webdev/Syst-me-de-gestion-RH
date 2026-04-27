@@ -75,7 +75,7 @@
   /* Primary Blue (HR / identity color) */
   --chart-2: oklch(0.65 0.14 220);
   /* Soft Sky Blue */
-  --chart-3: oklch(0.70 0.10 200);
+  --chart-3: oklch(53.319% 0.25972 262.653);
   /* Light Cyan (data highlight) */
   --chart-4: oklch(0.60 0.12 270);
   /* Indigo Blue (secondary accent) */
@@ -125,7 +125,7 @@
   /* Primary Blue (HR / identity color) */
   --chart-2: oklch(0.65 0.14 220);
   /* Soft Sky Blue */
-  --chart-3: oklch(0.70 0.10 200);
+   --chart-3: oklch(53.319% 0.25972 262.653);
   /* Light Cyan (data highlight) */
   --chart-4: oklch(0.60 0.12 270);
   /* Indigo Blue (secondary accent) */

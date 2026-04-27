@@ -5,6 +5,153 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { employeesForTest } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import AttendanceCalendar from "./(COMPS)/attendanceCalendr";
+import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct";
+import moment from "moment";
+
+const attendanceHistory = [
+  {
+    _id: 1,
+    employeeId: 1,
+    date: "2026-04-01",
+    checkIn: "08:15",
+    checkOut: "16:30",
+    status: "Présent",
+    justification: null,
+  },
+  {
+    _id: 2,
+    employeeId: 2,
+    date: "2026-04-01",
+    checkIn: "08:45",
+    checkOut: "17:10",
+    status: "Présent",
+    justification: "Retard justifié",
+  },
+  {
+    _id: 3,
+    employeeId: 3,
+    date: "2026-04-01",
+    checkIn: null,
+    checkOut: null,
+    status: "En congé",
+    justification: "Congé annuel",
+  },
+  {
+    _id: 4,
+    employeeId: 4,
+    date: "2026-04-01",
+    checkIn: null,
+    checkOut: null,
+    status: "Absent",
+    justification: null,
+  },
+
+  // ---- DAY 2 ----
+  {
+    _id: 5,
+    employeeId: 1,
+    date: "2026-04-02",
+    checkIn: "08:05",
+    checkOut: "16:40",
+    status: "Présent",
+    justification: null,
+  },
+  {
+    _id: 6,
+    employeeId: 2,
+    date: "2026-04-02",
+    checkIn: null,
+    checkOut: null,
+    status: "Absent",
+    justification: "Maladie",
+  },
+  {
+    _id: 7,
+    employeeId: 5,
+    date: "2026-04-02",
+    checkIn: "09:10",
+    checkOut: "17:00",
+    status: "Présent",
+    justification: "Retard justifié",
+  },
+  {
+    _id: 8,
+    employeeId: 6,
+    date: "2026-04-02",
+    checkIn: "08:20",
+    checkOut: "16:50",
+    status: "Présent",
+    justification: null,
+  },
+
+  // ---- DAY 3 ----
+  {
+    _id: 9,
+    employeeId: 7,
+    date: "2026-04-03",
+    checkIn: "08:30",
+    checkOut: "17:15",
+    status: "Présent",
+    justification: null,
+  },
+  {
+    _id: 10,
+    employeeId: 8,
+    date: "2026-04-03",
+    checkIn: null,
+    checkOut: null,
+    status: "Absent",
+    justification: "Justifié",
+  },
+  {
+    _id: 11,
+    employeeId: 9,
+    date: "2026-04-03",
+    checkIn: "08:00",
+    checkOut: "16:20",
+    status: "Présent",
+    justification: null,
+  },
+  {
+    _id: 12,
+    employeeId: 10,
+    date: "2026-04-03",
+    checkIn: "10:00",
+    checkOut: "17:30",
+    status: "Présent",
+    justification: "Retard",
+  },
+
+  // ---- EDGE CASES ----
+  {
+    _id: 13,
+    employeeId: 1,
+    date: "2026-04-04",
+    checkIn: "12:00",
+    checkOut: "16:00",
+    status: "Présent",
+    justification: "Demi-journée",
+  },
+  {
+    _id: 14,
+    employeeId: 2,
+    date: "2026-04-04",
+    checkIn: null,
+    checkOut: null,
+    status: "Absent",
+    justification: "Non justifié",
+  },
+  {
+    _id: 15,
+    employeeId: 3,
+    date: "2026-04-04",
+    checkIn: null,
+    checkOut: null,
+    status: "En congé",
+    justification: "Congé maladie",
+  },
+];
+
 
 const page = () => {
   const [isLoading, setLoading] = useState(false);
@@ -22,6 +169,7 @@ const page = () => {
       hireDate: null,
       salary: null,
       city: null,
+      day: moment().format("D-M-yyyy"),
     }
   );
 
@@ -55,6 +203,8 @@ const page = () => {
     <p className="tracking-tight">poste</p>,
     <p className="tracking-tight">statut</p>,
     <p className="tracking-tight">présence</p>,
+    <p className="tracking-tight">présence</p>,
+    <p className="tracking-tight">Action</p>,
   ];
 
   let rows = employeesForTest.map((i, idx) =>
@@ -73,7 +223,9 @@ const page = () => {
       <TableCell><b className="font-medium">{i.department}</b></TableCell>
       <TableCell>{i.position}</TableCell>
       <TableCell>
-        <p className={`w-fit text-sm font-medium p-1 ${i.status == "Actif" ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+        <p className={`w-fit text-sm font-medium p-1 ${i.status == "Actif" ? "text-[#009e18] " : i.status == "Inactif" ? " text-[#d40000] " : "text-yellow-500"} gap-1 flex items-center  rounded-2xl px-2`}>
+          {i.status == "Actif" ? <i className="bi bi-check-circle "></i> :
+            i.status == "Inactif" ? <i className="bi bi-x-circle"></i> : <i className="bi bi-stopwatch"></i>}
           {i.status}
         </p>
       </TableCell>
@@ -84,16 +236,24 @@ const page = () => {
         </p>
       </TableCell>
 
+      <TableCell>
+        <p className={`w-fit flex items-center gap-1 text-sm font-medium p-1 ${i.attendance[0]?.status == "Présent" ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+          Justifie
+          <i className="bi bi-check2"></i>
+        </p>
+      </TableCell>
+      <TableCell className={"text-center"}>
+        <MoreOptionsPresenceTableLine />
+      </TableCell>
+
 
     </TableRow >
   );
 
   return (
 
-    <div className="">
-      <div className="w-full flex p-10 justify-center items-center">
-        <AttendanceCalendar />
-      </div>
+    <div className="w-full">
+      {/* <AttendanceCalendar /> */}
 
       <CustomTable2
         headers={headers}
@@ -113,7 +273,9 @@ const page = () => {
         currentPage={filters.page}
         totalePages={TotalPages}
         limit={filters.limit}
-
+        enableDaySeleted={true}
+        day={filters.day}
+        setDay={d => setFilters(pv => ({ ...pv, day: d }))}
         setLimit={l => setFilters(pv => ({ ...pv, limit: l }))}
         setPage={p => setFilters(pv => ({ ...pv, page: p }))}
       />

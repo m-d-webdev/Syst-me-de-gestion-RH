@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Wrench } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -22,9 +22,12 @@ import {
 
 import Link from "next/link";
 import { Input } from "../ui/input";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Pagination from "./Dots";
+import moment from "moment";
+import Calendar from "../ui/calendar";
 
+moment.locale("fr");
 
 const CustomTable2 = ({
     headers = [],
@@ -45,12 +48,15 @@ const CustomTable2 = ({
     enableFilterButton = true,
     enableSort = true,
     enableAddElem = true,
+    enableDaySeleted = false,
     hrefWhenClickAdd,
     filterPopup,
     isFitlerOpen,
     setFitlerOpen = () => { },
     sortByPopup,
     isSortByOpen,
+    setDay = () => { },
+    day,
     setSortByOpen = () => { },
     onSearch = () => { },
     originalSearch
@@ -73,12 +79,27 @@ const CustomTable2 = ({
                 clearTimeout(t)
             }
         }, [search]);
+        // FOR THE CHANGING DAY CALENDAR -------------
+        const CalendarDayRef = useRef();
+        const [calendarOpen, setCalendarOpen] = useState(false)
+        const handleClickOutsideCalendar = (e) => {
+            if (!CalendarDayRef.current?.contains(e.target)) {
+                setCalendarOpen(false)
+            }
+        };
 
+        useEffect(() => {
+            if (!calendarOpen) return;
+            document.addEventListener("mousedown", handleClickOutsideCalendar);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutsideCalendar);
+            };
+        }, [calendarOpen]);
 
         return (
             <>
                 <div
-                    className={`${containerClassName} pt-10 text-sm flex min-h-screen flex-col items-start   w-full p-4 px-10   md:overflow-auto `}
+                    className={`${containerClassName} pt-10 text-sm flex min-h-screen flex-col items-start    w-full p-4 px-10   md:overflow-auto `}
                 >
                     <h1 className="font-semibold tracking-tight text-2xl">{pageTitle}</h1>
 
@@ -88,7 +109,8 @@ const CustomTable2 = ({
                                 <Input
                                     onChange={r => setsearch(r.target.value)}
                                     value={search}
-                                    parentClassName=" !py-2  bg-background  border-foreground/15 md:w-[300]"
+                                    className={""}
+                                    parentclassName=" !py-2  !bg-background  border-foreground/15 md:w-[300]"
                                     icon={<Search className=" stroke-1 w-5 h-5" />}
                                     placeholder="Search ... "
                                 />
@@ -98,7 +120,7 @@ const CustomTable2 = ({
                                 enableFilterButton &&
                                 <Button
                                     onClick={() => setFitlerOpen(pv => !pv)}
-                                    variant={"outline"} className={" cursor-pointer "}>
+                                    variant={"outline"} size="lg" className={" cursor-pointer "}>
                                     <i className="bi bi-funnel"></i>
                                     Filter
                                 </Button>
@@ -106,10 +128,46 @@ const CustomTable2 = ({
 
                             {
                                 enableSort &&
-                                <Button onClick={() => setSortByOpen(pv => !pv)} variant={"outline"} className={"  cursor-pointer "}>
+                                <Button size="lg" onClick={() => setSortByOpen(pv => !pv)} variant={"outline"} className={"  cursor-pointer "}>
                                     <i className="bi bi-sort-alpha-down"></i>
                                     Sort
                                 </Button>
+                            }
+                            {
+                                enableDaySeleted &&
+                                <div className="flex items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
+                                    <p className="font-medium min-w-[200] flex gap-3  ">
+                                        <i className="bi bi-calendar-range"></i>
+                                       <span className="text-chart-3"> {moment(day, "D-MM-yyyy").format("dddd DD/MM/YYYY")}</span>
+                                    </p>
+                                    <button
+                                        className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
+                                        onClick={() => setCalendarOpen(true)}
+                                    ><Wrench className="w-5 h-5 stroke-1" /></button>
+                                    <AnimatePresence>
+                                        {calendarOpen &&
+                                            <motion.div
+                                                ref={CalendarDayRef}
+                                                initial={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                                animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                                exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                                className="absolute z-2 w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
+                                            >
+                                                <Calendar
+                                                    classNames={""}
+                                                    locale={"en"}
+                                                    day={day}
+                                                    onSelect={d => {
+
+                                                        setDay(d);
+                                                        setCalendarOpen(false)
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        }
+                                    </AnimatePresence>
+                                </div>
                             }
                         </div>
 
@@ -238,7 +296,7 @@ const CustomTable2 = ({
                         </div>
                         <Pagination onPageChange={p => setPage(p)} currentPage={currentPage} totalPages={totalePages} />
                     </div>
-                </div>
+                </div >
 
                 <AnimatePresence>
                     {(isFitlerOpen && React.isValidElement(filterPopup)) && filterPopup}
