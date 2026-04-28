@@ -85,7 +85,7 @@ const Dialog = ({
                             }
                         }}
 
-                        className={`${containerClassName}  relative  bg-sidebar p-2 rounded-md border border-foreground/20  max-h-full overflow-auto`}
+                        className={`${containerClassName}  relative  bg-sidebar p-2 rounded-xl border border-foreground/20  max-h-full overflow-auto`}
                     >
 
                         {children}

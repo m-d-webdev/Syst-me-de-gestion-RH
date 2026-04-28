@@ -27,7 +27,7 @@ const generateFakeData = (days) => {
     }));
 };
 
-export default function AttendanceCalendar({ _id }) {
+export default function AttendanceCalendar({ _id, onClose }) {
     const [currentDate] = useState(new Date());
 
     const start = startOfMonth(currentDate);
@@ -52,8 +52,8 @@ export default function AttendanceCalendar({ _id }) {
     console.log(selectedMonth);
 
     return (
-        <Dialog backWhenClose={false} closeIfClickOutside={true}>
-            <div className="p-4 bg-background w-full max-w-[600] rounded-2xl shadow">
+        <Dialog backWhenClose={false} onClose={onClose} closeIfClickOutside={true}>
+            <div className="p-4 bg-background  w-[600] rounded-2xl shadow">
                 <h2 className="text-xl font-semibold mb-4">
                     {moment(selectedMonth, "M-YYYY").format("MMMM YYYY")}
                 </h2>

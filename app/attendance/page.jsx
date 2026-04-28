@@ -8,156 +8,146 @@ import AttendanceCalendar from "./(COMPS)/attendanceCalendr";
 import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct";
 import moment from "moment";
 
-const attendanceHistory = [
+const attendanceForOneDay = [
   {
     _id: 1,
-    employeeId: 1,
-    date: "2026-04-01",
-    checkIn: "08:15",
-    checkOut: "16:30",
-    status: "Présent",
+    userId: 1,
+    date: "2026-04-28",
+    status: "present",
     justification: null,
+    checkIn: "08:55",
+    checkOut: "17:10",
+    late: false,
+    note: ""
   },
   {
     _id: 2,
-    employeeId: 2,
-    date: "2026-04-01",
-    checkIn: "08:45",
-    checkOut: "17:10",
-    status: "Présent",
-    justification: "Retard justifié",
+    userId: 2,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "09:10",
+    checkOut: "17:05",
+    late: true,
+    note: "Retard léger"
   },
   {
     _id: 3,
-    employeeId: 3,
-    date: "2026-04-01",
-    checkIn: null,
-    checkOut: null,
-    status: "En congé",
-    justification: "Congé annuel",
+    userId: 3,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "08:40",
+    checkOut: "17:20",
+    late: false,
+    note: ""
   },
   {
     _id: 4,
-    employeeId: 4,
-    date: "2026-04-01",
+    userId: 4,
+    date: "2026-04-28",
+    status: "absent",
+    justification: null,
     checkIn: null,
     checkOut: null,
-    status: "Absent",
-    justification: null,
+    late: false,
+    note: "Maladie"
   },
-
-  // ---- DAY 2 ----
   {
     _id: 5,
-    employeeId: 1,
-    date: "2026-04-02",
-    checkIn: "08:05",
-    checkOut: "16:40",
-    status: "Présent",
+    userId: 5,
+    date: "2026-04-28",
+    status: "present",
     justification: null,
+    checkIn: "08:50",
+    checkOut: "17:00",
+    late: false,
+    note: ""
   },
   {
     _id: 6,
-    employeeId: 2,
-    date: "2026-04-02",
-    checkIn: null,
-    checkOut: null,
-    status: "Absent",
-    justification: "Maladie",
+    userId: 6,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "09:25",
+    checkOut: "17:15",
+    late: true,
+    note: "Retard important"
   },
   {
     _id: 7,
-    employeeId: 5,
-    date: "2026-04-02",
-    checkIn: "09:10",
-    checkOut: "17:00",
-    status: "Présent",
-    justification: "Retard justifié",
+    userId: 7,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "08:30",
+    checkOut: "17:30",
+    late: false,
+    note: ""
   },
   {
     _id: 8,
-    employeeId: 6,
-    date: "2026-04-02",
-    checkIn: "08:20",
-    checkOut: "16:50",
-    status: "Présent",
-    justification: null,
+    userId: 8,
+    date: "2026-04-28",
+    status: "absent",
+    justification: "non_justifie",
+    checkIn: null,
+    checkOut: null,
+    late: false,
+    note: "Absence non signalée"
   },
-
-  // ---- DAY 3 ----
   {
     _id: 9,
-    employeeId: 7,
-    date: "2026-04-03",
-    checkIn: "08:30",
-    checkOut: "17:15",
-    status: "Présent",
+    userId: 9,
+    date: "2026-04-28",
+    status: "present",
     justification: null,
+    checkIn: "08:45",
+    checkOut: "17:05",
+    late: false,
+    note: ""
   },
   {
     _id: 10,
-    employeeId: 8,
-    date: "2026-04-03",
-    checkIn: null,
-    checkOut: null,
-    status: "Absent",
-    justification: "Justifié",
+    userId: 10,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "09:05",
+    checkOut: "17:00",
+    late: true,
+    note: "Retard"
   },
   {
     _id: 11,
-    employeeId: 9,
-    date: "2026-04-03",
-    checkIn: "08:00",
-    checkOut: "16:20",
-    status: "Présent",
-    justification: null,
+    userId: 11,
+    date: "2026-04-28",
+    status: "absent",
+    justification: "justifie",
+    checkIn: null,
+    checkOut: null,
+    late: false,
+    note: "Congé annuel"
   },
   {
     _id: 12,
-    employeeId: 10,
-    date: "2026-04-03",
-    checkIn: "10:00",
-    checkOut: "17:30",
-    status: "Présent",
-    justification: "Retard",
-  },
-
-  // ---- EDGE CASES ----
-  {
-    _id: 13,
-    employeeId: 1,
-    date: "2026-04-04",
-    checkIn: "12:00",
-    checkOut: "16:00",
-    status: "Présent",
-    justification: "Demi-journée",
-  },
-  {
-    _id: 14,
-    employeeId: 2,
-    date: "2026-04-04",
-    checkIn: null,
-    checkOut: null,
-    status: "Absent",
-    justification: "Non justifié",
-  },
-  {
-    _id: 15,
-    employeeId: 3,
-    date: "2026-04-04",
-    checkIn: null,
-    checkOut: null,
-    status: "En congé",
-    justification: "Congé maladie",
-  },
+    userId: 12,
+    date: "2026-04-28",
+    status: "present",
+    justification: null,
+    checkIn: "08:35",
+    checkOut: "17:25",
+    late: false,
+    note: ""
+  }
 ];
 
-
 const page = () => {
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [filterPopupOpen, setFitlerOpen] = useState(false);
   const [sortByPopupOpen, setSortByOpen] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [attendanceList, setAttendanceList] = useState([]);
   const [TotalPages, setTotalPages] = useState([]);
   const [filters, setFilters] = useState(
     {
@@ -186,6 +176,23 @@ const page = () => {
   }
 
 
+  const Get_Data = async () => {
+    setLoading(true)
+    attendanceForOneDay.map(i => {
+
+      setAttendanceList(pv => {
+        const user = employeesForTest.find(em => em._id == i.userId)
+        return ([...pv, { ...i, user }])
+      })
+    });
+
+    setLoading(false)
+  };
+
+  useEffect(() => {
+    Get_Data();
+  }, [])
+
   useEffect(() => {
     setselections([])
   }, [filters]);
@@ -199,51 +206,61 @@ const page = () => {
       />
       <p className="tracking-tight">Nom</p>
     </div>,
-    <p className="tracking-tight">département</p>,
-    <p className="tracking-tight">poste</p>,
-    <p className="tracking-tight">statut</p>,
+    <p className="tracking-tight">Division</p>,
+    <p className="tracking-tight">Service</p>,
+    <p className="tracking-tight">Grade</p>,
+    // <p className="tracking-tight">statut</p>,
     <p className="tracking-tight">présence</p>,
     <p className="tracking-tight">présence</p>,
     <p className="tracking-tight">Action</p>,
   ];
 
-  let rows = employeesForTest.map((i, idx) =>
-    <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/2 " : ""}`} key={idx}>
+  let rows = attendanceList?.map((i, idx) =>
+    <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/10 " : ""} `} key={idx}>
       <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
 
         <CheckBoxinput
           checked={selections.includes(i._id)}
           onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
         />
-        <p className="max-w-[200] flex items-center gap-1  truncate">
-          <img src={i.pic} className="w-7 h-7 object-cover rounded-full" alt="" />
-          {i.firstName} {i.lastName}
+
+
+        <p className="max-w-[200] flex items-center gap-2  truncate">
+          <img src={i.user?.pic} className="w-7 h-7 object-cover rounded-full" alt="" />
+          {i.user?.firstName} {i.user?.lastName}
         </p>
+
       </TableCell>
-      <TableCell><b className="font-medium">{i.department}</b></TableCell>
-      <TableCell>{i.position}</TableCell>
+      <TableCell><p className="">{i.user?.division}</p></TableCell>
+      <TableCell><p className="">{i.user?.service}</p></TableCell>
+      <TableCell>{i.user?.grade}</TableCell>
+
       <TableCell>
-        <p className={`w-fit text-sm font-medium p-1 ${i.status == "Actif" ? "text-[#009e18] " : i.status == "Inactif" ? " text-[#d40000] " : "text-yellow-500"} gap-1 flex items-center  rounded-2xl px-2`}>
-          {i.status == "Actif" ? <i className="bi bi-check-circle "></i> :
-            i.status == "Inactif" ? <i className="bi bi-x-circle"></i> : <i className="bi bi-stopwatch"></i>}
+        <p className={`w-fit flex gap-2 text-sm  p-1 ${i.status == "present" ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/10 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+          {i.status == "present" ? <i className="bi bi-check-circle"></i> : <i className="bi bi-x-circle"></i>}
           {i.status}
         </p>
       </TableCell>
 
       <TableCell>
-        <p className={`w-fit text-sm font-medium p-1 ${i.attendance[0]?.status == "Présent" ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
-          {i.attendance[0].status}
-        </p>
-      </TableCell>
 
-      <TableCell>
-        <p className={`w-fit flex items-center gap-1 text-sm font-medium p-1 ${i.attendance[0]?.status == "Présent" ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
-          Justifie
-          <i className="bi bi-check2"></i>
-        </p>
+        {
+          i.status != "present" ?
+            <p className={`w-fit flex items-center gap-1 text-sm  p-1 ${i.justification != null ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/10 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+              {
+                i.justification != null
+                && <i class="bi bi-file-earmark-check"></i>
+              }
+              {
+                i.justification != null
+                  ? "Justifie" : <b className="font-semibold">non justifie</b>
+              }
+
+            </p> : " --- "
+        }
       </TableCell>
       <TableCell className={"text-center"}>
-        <MoreOptionsPresenceTableLine />
+        <MoreOptionsPresenceTableLine data={i} />
       </TableCell>
 
 
@@ -264,7 +281,6 @@ const page = () => {
         filterPopup={null}
         setFitlerOpen={setFitlerOpen}
         isFitlerOpen={filterPopupOpen}
-
         setSortByOpen={setSortByOpen}
         isSortByOpen={sortByPopupOpen}
         sortByPopup={null}
@@ -279,6 +295,9 @@ const page = () => {
         setLimit={l => setFilters(pv => ({ ...pv, limit: l }))}
         setPage={p => setFilters(pv => ({ ...pv, page: p }))}
       />
+      {/* { HistoryAttendanceOpen  &&
+        <AttendanceCalendar />
+      } */}
     </div>
 
   )
