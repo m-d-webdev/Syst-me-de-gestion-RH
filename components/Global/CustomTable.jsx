@@ -178,8 +178,8 @@ const CustomTable2 = ({
                                 {
 
                                     hrefWhenClickAdd
-                                        ? <Link href={hrefWhenClickAdd} className={" py-2 flex items-center gap-1 text-nowrap font-medium bg-chart-1 text-white !px-3 rounded-md text-sm cursor-pointer"}  > <Plus className="stroke-1 w-5 h-5" /> Add  {pageTitle}</Link>
-                                        : <Button className={"cursor-pointer"} variant={"dark"} > <Plus className="stroke-1 w-5 h-5" /> Add  {pageTitle}</Button>
+                                        ? <Link href={hrefWhenClickAdd} className={" py-2 flex items-center gap-1 text-nowrap font-medium bg-chart-1 text-white !px-3 rounded-md text-sm cursor-pointer"}  > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Link>
+                                        : <Button className={"cursor-pointer"} variant={"dark"} > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Button>
                                 }
                             </>
                         }

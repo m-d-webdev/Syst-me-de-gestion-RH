@@ -276,7 +276,7 @@ const page = () => {
         headers={headers}
         rows={rows}
         isLoading={isLoading}
-        hrefWhenClickAdd="/addUser"
+        hrefWhenClickAdd="/register"
         pageTitle="Présence"
         filterPopup={null}
         setFitlerOpen={setFitlerOpen}
