@@ -1,5 +1,5 @@
 
-const Loader1 = ({ className = " before:border-foreground", wh = " w-[25] h-[25]" }) => {
+const Loader1 = ({ className = " before:border-background", wh = " w-[20] h-[20]" }) => {
     return (
         <div className={`${className} loader before:border-2 ${wh}`}>
         </div>

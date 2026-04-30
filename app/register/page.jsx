@@ -1,10 +1,10 @@
 "use client";
 
-
-
 import { generateTempPassword } from "@/lib/utils";
 import { useState } from "react";
 import Select2 from "@/components/ui/select2"
+import Loader1 from "@/components/Global/Loader1";
+import { REGISTER } from "@/api/Employers/Auth";
 const defaultValues = {
     firstName: "",
     lastName: "",
@@ -17,7 +17,6 @@ const defaultValues = {
     role: "user",
     isActive: true,
 };
-
 function SectionLabel({ children }) {
     return (
         <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400 mb-3 mt-6 first:mt-0">
@@ -47,6 +46,7 @@ function Input({ className = "", ...props }) {
 
 export default function RegisterUser() {
     const [form, setForm] = useState(defaultValues);
+
     const [listOfDivisions, setlistOfDivisions] = useState([
         {
             value: "69f1c6bd1812965267bd636b",
@@ -60,7 +60,7 @@ export default function RegisterUser() {
             value: "69f1c6e91812965267bd636d",
             innerText: "Division Archives"
         },
-    ])
+    ]);
     const [listOfServices, setlistOfServices] = useState([
         {
             value: "69f1c7331812965267bd636f",
@@ -74,7 +74,7 @@ export default function RegisterUser() {
             value: "69f1c7641812965267bd6371",
             innerText: "Service Ressources Humaines"
         },
-    ])
+    ]);
     const [listOfGrades, setlistOfGrades] = useState([
         {
             value: "69f1c8011812965267bd637b",
@@ -88,7 +88,7 @@ export default function RegisterUser() {
             value: "69f1c82a1812965267bd637e",
             innerText: "Ingénieur 1er grade"
         },
-    ])
+    ]);
     const [listOfRoles, setlistOfRoles] = useState([
         { value: "admin", innerText: "Administrateur" },
         { value: "hr_manager", innerText: "Responsable RH" },
@@ -100,15 +100,30 @@ export default function RegisterUser() {
         { value: "auditor", innerText: "Auditeur / Contrôle interne" },
         { value: "intern", innerText: "Stagiaire" },
         { value: "guest", innerText: "Invité / Consultant externe" }
-    ])
+    ]);
+
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleChange = (field) => (e) => {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         setForm((prev) => ({ ...prev, [field]: value }));
     };
+    
+    const handleChange2 = (key, v) => {
+        setForm((prev) => ({ ...prev, [key]: v }));
+    };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log("Submitting:", form);
-        alert("User registered!\n" + JSON.stringify(form, null, 2));
+        setIsLoading(true)
+        const res = await REGISTER({ data: form });
+        if (res.success) {
+            
+                window.location.reload();
+
+        }
+        setIsLoading(false)
+        // alert("User registered!\n" + JSON.stringify(form, null, 2));
     };
 
     const initials = `${form.firstName?.[0] ?? ""}${form.lastName?.[0] ?? ""}`.toUpperCase();
@@ -217,7 +232,7 @@ export default function RegisterUser() {
                                 label="Role"
                                 icon={<i className="bi bi-person"></i>}
                                 list={listOfRoles}
-                                onChange={handleChange("division_id")}
+                                onChange={v => handleChange2("role", v)}
                                 parentClassName=" bg-sidebar/30"
                                 placeholder="ObjectId de la division"
                             />
@@ -226,7 +241,7 @@ export default function RegisterUser() {
                                 label="Division"
                                 icon={<i className="bi bi-building"></i>}
                                 list={listOfDivisions}
-                                onChange={handleChange("division_id")}
+                                onChange={v => handleChange2("division_id", v)}
                                 className="font-mono text-xs"
                                 placeholder="ObjectId de la division"
                             />
@@ -235,7 +250,7 @@ export default function RegisterUser() {
                                 label="Service"
                                 icon={<i className="bi bi-align-top"></i>}
                                 list={listOfServices}
-                                onChange={handleChange("division_id")}
+                                onChange={v => handleChange2("service_id", v)}
                                 className="font-mono text-xs"
                                 placeholder="ObjectId de la division"
                             />
@@ -244,7 +259,7 @@ export default function RegisterUser() {
                                 label="Grade"
                                 icon={<i className="bi bi-mortarboard"></i>}
                                 list={listOfGrades}
-                                onChange={handleChange("division_id")}
+                                onChange={v => handleChange2("grade_id", v)}
                                 className="font-mono text-xs"
                                 placeholder="ObjectId de la division"
                             />
@@ -281,7 +296,11 @@ export default function RegisterUser() {
                             onClick={handleSubmit}
                             className="h-9 px-5  gap-4 flex items-center justify-center py-6 rounded-lg bg-foreground w-full max-w-[400] text-background text-sm font-medium hover:opacity-85 transition-opacity"
                         >
-                            <i className="bi bi-check-circle"></i>
+                            {
+                                isLoading
+                                    ? <Loader1 className="" />
+                                    : <i className="bi bi-check-circle"></i>
+                            }
                             Créer l'utilisateur
 
                         </button>

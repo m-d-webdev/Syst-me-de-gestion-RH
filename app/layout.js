@@ -25,6 +25,7 @@ export default function RootLayout({ children }) {
       className={`${geistMono.className} antialiased`}
     >
       <body className="bg-sidebar ">
+
         <div className="flex items-start justify-start ">
 
           <Sidebare />
@@ -33,7 +34,9 @@ export default function RootLayout({ children }) {
             {children}
           </div>
         </div>
+
       </body>
+
     </html>
   );
 }
