@@ -1,8 +1,10 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-const BACKEND_URL = process.env.BACKEND_URL
+const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+console.log({ BACKEND_URL });
+
 const api = axios.create({
-    baseURL: BACKEND_URL || "http://localhost:8000/api",
+    baseURL: BACKEND_URL,
     timeout: 10000,
     withCredentials: true
 
@@ -12,7 +14,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = Cookies.get("token");
-        
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
