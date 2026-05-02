@@ -1,13 +1,10 @@
-import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import Sidebare from "@/components/Layout/Sidebare";
 import Header from "@/components/Layout/Header";
 import MainContext from "@/contexts/MainContext";
+import WelcomePopup from "@/components/Layout/WelcomingPopup";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Bricolage_Grotesque({
   // variable: "--font-geist-mono",
@@ -33,6 +30,7 @@ export default function RootLayout({ children }) {
             <div className=" max-h-screen overflow-auto scrl_none  h-screen flex flex-col items-start justify-start w-full ">
               <Header />
               {children}
+              <WelcomePopup />
             </div>
           </div>
 

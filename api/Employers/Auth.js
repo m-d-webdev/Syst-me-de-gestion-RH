@@ -1,23 +1,35 @@
 import api from "@/config/axios";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
+
+
+
 export const REGISTER = async ({ data }) => {
     try {
+
         const res = await api.post('/users/register', data)
         const data2 = res.data;
         return data2;
+
     } catch (error) {
+        toast.error("Impossible de créer le compte. Veuillez réessayer.");
         return error.message;
     }
 };
+
+
 export const AUTH = async () => {
     try {
         const res = await api.get('/users/auth')
         const data2 = res.data;
         return data2;
     } catch (error) {
+        toast.error("Session invalide. Veuillez vous reconnecter.");
+
         return error.message;
     }
 };
+
 
 export const LOGIN = async ({ email, password }) => {
     return new Promise(
@@ -28,12 +40,15 @@ export const LOGIN = async ({ email, password }) => {
                 resolve(data2);
 
             } catch (error) {
+                toast.error("Session invalide. Veuillez vous reconnecter.");
                 reject(error?.response?.data ?? "Identifiants invalides. Veuillez réessayer.");
             }
         }
     );
 };
-export const LOGOUT =  () => {
+
+
+export const LOGOUT = () => {
     try {
         Cookies.remove("token")
         if (typeof (window) != undefined) {
