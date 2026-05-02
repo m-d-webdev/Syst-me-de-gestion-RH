@@ -12,6 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = Cookies.get("token");
+        
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -32,8 +33,8 @@ api.interceptors.response.use(
             const { status } = error.response;
 
             if (status === 401) {
-                Cookies.remove("token");
-                window.location.href = "/login";
+                // Cookies.remove("token");
+                // window.location.href = "/login";
             }
 
             if (status === 403) {

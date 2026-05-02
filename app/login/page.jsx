@@ -2,13 +2,14 @@
 
 
 
+import { LOGIN } from "@/api/Employers/Auth";
 import Loader1 from "@/components/Global/Loader1";
 import Logo from "@/components/Global/Logo";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 // LOGIN is passed as a prop — it accepts { email, password }
-export default function LoginPage({ LOGIN }) {
+export default function LoginPage({ setAuthed }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -20,15 +21,22 @@ export default function LoginPage({ LOGIN }) {
         setError("");
 
         if (!email || !password) {
-            setError("Please fill in all fields.");
+            setError("Veuillez remplir tous les champs");
             return;
         }
 
+        setLoading(true);
+
         try {
-            setLoading(true);
-            await LOGIN({ email, password });
+            let res = await LOGIN({ email, password })
+            if (res.success == true) {
+                if (typeof (window) != undefined) {
+                    window.location.href = "/"
+                }
+            }
+
         } catch (err) {
-            setError(err?.response?.data?.message || "Invalid credentials. Try again.");
+            setError(err?.message || "Identifiants invalides. Veuillez réessayer.");
         } finally {
             setLoading(false);
         }
@@ -43,8 +51,8 @@ export default function LoginPage({ LOGIN }) {
                     <div className="mb-8">
                         <div className="flex items-start gap-3 mb-6">
                             <Logo h="h-15" />
-                            <span className="text-foreground   font-medium tracking-tight ">
-                                Administration des Ressources Humaines
+                            <span className="   font-semibold text-chart-1 max-w-[250] tracking-tighter  ">
+                                Administration des Ressources Humaines d'Agadir
                             </span>
                         </div>
 
@@ -58,7 +66,7 @@ export default function LoginPage({ LOGIN }) {
 
                     {/* Error message */}
                     {error && (
-                        <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+                        <div className="mb-5 flex items-center gap-2.5  rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
                             <i className="bi text-destructive bi-bug"></i>
                             <p className="text-sm text-destructive">{error}</p>
                         </div>
@@ -77,7 +85,7 @@ export default function LoginPage({ LOGIN }) {
                             <Input
                                 onChange={(e) => setEmail(e.target.value)}
                                 id="email"
-                                placeholder="exampleou@gmail.com"
+                                placeholder="example@gmail.com"
                                 type="email"
                                 icon={<i className="bi bi-envelope"></i>}
                                 disabled={loading}
@@ -138,13 +146,14 @@ export default function LoginPage({ LOGIN }) {
                   flex items-center justify-center gap-2
                 "
                         >
-                            {loading ? (
-                                <>
-                                    <Loader1 />
-                                    Connexion …
-                                </>
-                            ) :
-                                "Connexion"
+                            {
+                                loading ? (
+                                    <>
+                                        <Loader1 />
+                                        Connexion …
+                                    </>
+                                ) :
+                                    "Connexion"
                             }
 
                         </button>

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import Sidebare from "@/components/Layout/Sidebare";
 import Header from "@/components/Layout/Header";
+import MainContext from "@/contexts/MainContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,16 +26,17 @@ export default function RootLayout({ children }) {
       className={`${geistMono.className} antialiased`}
     >
       <body className="bg-sidebar ">
+        <MainContext  >
 
-        <div className="flex items-start justify-start ">
-
-          <Sidebare />
-          <div className=" max-h-screen overflow-auto scrl_none  h-screen flex flex-col items-start justify-start w-full ">
-            <Header />
-            {children}
+          <div className="flex items-start justify-start ">
+            <Sidebare />
+            <div className=" max-h-screen overflow-auto scrl_none  h-screen flex flex-col items-start justify-start w-full ">
+              <Header />
+              {children}
+            </div>
           </div>
-        </div>
 
+        </MainContext>
       </body>
 
     </html>

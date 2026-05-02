@@ -90,16 +90,11 @@ export default function RegisterUser() {
         },
     ]);
     const [listOfRoles, setlistOfRoles] = useState([
-        { value: "admin", innerText: "Administrateur" },
-        { value: "hr_manager", innerText: "Responsable RH" },
         { value: "hr_agent", innerText: "Agent RH" },
-        { value: "manager", innerText: "Chef de service" },
+        { value: "chef_service", innerText: "Chef de service" },
+        { value: "chef_division", innerText: "Chef de division" },
+        { value: "directeur", innerText: "Directeur" },
         { value: "employee", innerText: "Employé" },
-        { value: "director", innerText: "Directeur / Responsable de division" },
-        { value: "finance", innerText: "Comptable / Finance" },
-        { value: "auditor", innerText: "Auditeur / Contrôle interne" },
-        { value: "intern", innerText: "Stagiaire" },
-        { value: "guest", innerText: "Invité / Consultant externe" }
     ]);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -108,7 +103,7 @@ export default function RegisterUser() {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         setForm((prev) => ({ ...prev, [field]: value }));
     };
-    
+
     const handleChange2 = (key, v) => {
         setForm((prev) => ({ ...prev, [key]: v }));
     };
@@ -118,8 +113,8 @@ export default function RegisterUser() {
         setIsLoading(true)
         const res = await REGISTER({ data: form });
         if (res.success) {
-            
-                window.location.reload();
+
+            window.location.reload();
 
         }
         setIsLoading(false)

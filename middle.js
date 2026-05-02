@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { AUTH } from "./api/Employers/Auth";
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
+let jwtSecretKeyPromise;
 
 /**
  * List of public routes that do NOT require authentication.
@@ -11,23 +16,20 @@ const PUBLIC_ROUTES = [
 /**
  * Static asset prefixes and Next.js internals to always skip.
  */
-const BYPASS_PREFIXES = ["/_next/", "/favicon.ico", "/api/auth/"];
+const BYPASS_PREFIXES = ["/_next/", "/favicon.ico"];
 
 /**
  * Retrieve and validate the auth token from the incoming request.
  * Supports both:
  *  - Cookie-based sessions  (e.g. NextAuth, custom JWTs stored in cookies)
  *  - Bearer tokens in the Authorization header (e.g. API clients)
- *
- * Replace the validation logic inside `isValidToken` with your real
- * verification (e.g. jose JWT verify, opaque-token DB look-up, etc.).
  */
 function getToken(request) {
   // 1️⃣  Cookie-based session token (most common for web apps)
   const cookieToken =
     request.cookies.get("next-auth.session-token")?.value || // NextAuth (HTTP)
     request.cookies.get("__Secure-next-auth.session-token")?.value || // NextAuth (HTTPS)
-    request.cookies.get("auth_token")?.value; // Custom cookie name
+    request.cookies.get("token")?.value; // Custom cookie name
 
   if (cookieToken) return cookieToken;
 
@@ -40,30 +42,16 @@ function getToken(request) {
   return null;
 }
 
-/**
- * Validate the token.
- *
- * ⚠️  This is a STUB — replace with real verification:
- *
- *   JWT example (install jose):
- *     import { jwtVerify } from "jose";
- *     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
- *     await jwtVerify(token, secret);
- *
- *   NextAuth example:
- *     import { getToken } from "next-auth/jwt";
- *     const token = await getToken({ req: request });
- *     return !!token;
- */
+
 async function isValidToken(token) {
   if (!token) return false;
 
-  // TODO: swap this stub for real JWT / session verification
-  // e.g.:
-  // const { payload } = await jwtVerify(token, secret);
-  // return !!payload?.sub;
+  const res = await AUTH()
+  if (res.authed == true) {
+    return true
+  }
+  return false
 
-  return token.length > 0; // <-- placeholder: truthy non-empty string
 }
 
 /**
@@ -84,23 +72,14 @@ export async function middleware(request) {
 
   // ── 3. Check for a valid auth token ────────────────────────────────────────
   const token = getToken(request);
+  console.log({ ___token: token });
+
   const authenticated = await isValidToken(token);
 
   if (!authenticated) {
-    // Redirect unauthenticated users to /login, preserving the original URL
-    // so you can redirect them back after sign-in.
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
-
-  // ── 4. (Optional) Forward identity info to page/API via headers ────────────
-  // Useful when you decode the JWT here and want to pass claims downstream
-  // without re-verifying in every route handler.
-  //
-  // const response = NextResponse.next();
-  // response.headers.set("x-user-id", payload.sub);
-  // return response;
 
   return NextResponse.next();
 }
