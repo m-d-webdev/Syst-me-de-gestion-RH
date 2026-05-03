@@ -15,6 +15,7 @@ export default function page() {
 
   const LoadDivisions = async () => {
     setLoading(true)
+    setAddPopupOpen(false)
     const res = await GET_DIVISIONS();
     setDivisions(res.data);
     setLoading(false)
@@ -28,7 +29,7 @@ export default function page() {
       <div className=" mx-auto w-full max-w-[1200]">
         {/* Page header */}
         <div className="mb-8 flex items-center justify-between w-full ">
-          <h1 className="text-xl flex gap-2 font-semibold items-center font-medium "><i className="bi bi-buildings-fill"></i> Divisions</h1>
+          <h1 className="text-xl flex gap-2 font-semibold items-center  "><i className="bi bi-buildings-fill"></i> Divisions</h1>
           <Button onClick={() => setAddPopupOpen(true)}><Plus /> Créer une division</Button>
         </div>
 
@@ -36,15 +37,15 @@ export default function page() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Loading
             ? [1, 1, 1, 1, 1].map((i, ind) => <DivisionCardSkeleton ind={ind} />)
-            : divisions?.map((service) => (
-              <DivisionCard key={service.id} service={service} onToggle={() => { }} />
+            : divisions?.map((division) => (
+              <DivisionCard key={division.id} division={division} onToggle={() => { }} />
             ))
           }
         </div>
       </div>
       {
         isAddPopupOpen &&
-        <CreateDivisionForm onClose={() => setAddPopupOpen(false)} />
+        <CreateDivisionForm onUpdate={() => LoadDivisions()} onClose={() => setAddPopupOpen(false)} />
       }
     </div>
   );

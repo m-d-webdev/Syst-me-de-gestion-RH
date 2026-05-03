@@ -9,7 +9,7 @@ import Loader1 from "../Global/Loader1";
 
 const EMPTY_FORM = { name: "", description: "", isActive: true };
 
-export default function CreateDivisionForm({ onCreate, onClose }) {
+export default function CreateDivisionForm({ onUpdate, onClose }) {
     const [form, setForm] = useState(EMPTY_FORM);
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
@@ -49,7 +49,7 @@ export default function CreateDivisionForm({ onCreate, onClose }) {
                 setForm(EMPTY_FORM);
                 setErrors({});
                 setSubmitted(true);
-                onClose()
+                onUpdate();
             }
         } catch (error) {
             toast.error(error.message)
