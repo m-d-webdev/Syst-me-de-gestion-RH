@@ -12,7 +12,7 @@ const MainContextOb = createContext();
 const MainContext = ({ children }) => {
     const [isAuthed, setAuthed] = useState(false);
     const [isLoading, setLoading] = useState(true);
-    const [User, setUser] = useState(false);
+    const [User, setUser] = useState(null);
 
     const CheckAuth = async () => {
         setLoading(true);
@@ -48,26 +48,28 @@ const MainContext = ({ children }) => {
                     }
                 </>
         }
+        
+        {/* {children} */}
         <Toaster
             position="top-right"
             toastOptions={{
                 style: {
                     borderRadius: "10px",
                     padding: "8px",
-                    fontSize:"14px",
-                    fontWeight:"500"
+                    fontSize: "14px",
+                    fontWeight: "500"
                 },
                 success: {
                     style: {
                         background: "#F0FDF4",
-                        border:"solid 1px  #86EFAC"
+                        border: "solid 1px  #86EFAC"
                     },
                 },
                 error: {
                     style: {
                         background: "#FEE2E2",
                         color: "red",
-                        border:"solid 1px #FEF2F2"
+                        border: "solid 1px #FEF2F2"
                     },
                 },
             }}

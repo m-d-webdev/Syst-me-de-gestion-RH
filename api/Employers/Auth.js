@@ -40,7 +40,7 @@ export const LOGIN = async ({ email, password }) => {
                 resolve(data2);
 
             } catch (error) {
-                toast.error("Session invalide. Veuillez vous reconnecter.");
+                toast.error("Identifiants invalides. Veuillez réessayer.");
                 reject(error?.response?.data ?? "Identifiants invalides. Veuillez réessayer.");
             }
         }

@@ -103,6 +103,7 @@ const Select2 = ({
   icon,
   orderAlphabet = false,
   onChange = () => { },
+  disabled = false,
   list = [{
     value: "",
     innerText: ""
@@ -114,9 +115,12 @@ const Select2 = ({
   const [HovredItem, setHovredItem] = useState("");
   return (
     <div
-      onClick={() => setmenuOpen(pv => !pv)}
+      onClick={() => setmenuOpen(pv => disabled ? false : !pv)}
       className={`${parentClassName} px-9 tracking-tight  flex items-center  bg-sidebar/30 ${icon ? "max-w-[380] w-full" : "max-w-[350]"} h-[50]  relative border border-foreground/10  ${menuOpen ? "rounded-t-[8]" : "rounded-[8]"} p-1 px-3 `}>
-
+      {
+        disabled &&
+        <div className="w-full h-full absolute top-0 left-0 z-[2] bg-foreground/10 rounded-md"></div>
+      }
       <div
         className={`  opacity-50 absolute duration-150  ${menuOpen ? "opacity-100 text-gold " : ""}    ltr:left-2  rtl:right-2  `}
       >

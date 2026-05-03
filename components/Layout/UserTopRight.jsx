@@ -48,8 +48,8 @@ function UserDropdown() {
                         className="absolute p-2 pt-5 right-0 top-0 w-[300] z-10 bg-background shadow-lg rounded-lg rounded-tr-none border overflow-hidden"
                     >
                         <div className="px-2 truncate border-b pb-8">
-                            <p className="font-semibold uppercase tracking-tight  text-lg">{data.firstName} {data.lastName}</p>
-                            <p className="text-sm opacity-70 truncate flex gap-1 items-center ">{data.email}</p>
+                            <p className="font-semibold uppercase tracking-tight  text-lg">{data?.firstName} {data?.lastName}</p>
+                            <p className="text-sm opacity-70 truncate flex gap-1 items-center ">{data?.email}</p>
                             <p className="text-sm mt-3  truncate flex gap-1 items-center "><i className="bi bi-mortarboard"></i>{data?.grade_id?.name}</p>
                             <p className="text-sm mt-3  truncate flex gap-1 items-center "><i className="bi bi-building"></i>{data?.division_id?.name}</p>
                             <p className="text-sm ml-2 mt-1  truncate flex gap-1 items-center "><i className="bi bi-bezier2"></i>{data?.service_id?.name}</p>
@@ -74,7 +74,7 @@ const UserTopRight = () => {
             </div>
             <div className="truncate">
 
-                <h2 className="text-sm truncate tracking-tight font-medium text-nowrap ">{User.firstName} {User.lastName}</h2>
+                <h2 className="text-sm truncate tracking-tight font-medium text-nowrap ">{User?.firstName} {User?.lastName}</h2>
                 <p className="text-xs opacity-70 tracking-tight">{User?.grade_id?.name}</p>
             </div>
 

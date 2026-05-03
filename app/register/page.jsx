@@ -1,10 +1,11 @@
 "use client";
 
 import { generateTempPassword } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select2 from "@/components/ui/select2"
 import Loader1 from "@/components/Global/Loader1";
 import { REGISTER } from "@/api/Employers/Auth";
+import { GET_DIVISIONS } from "@/api/Division";
 const defaultValues = {
     firstName: "",
     lastName: "",
@@ -45,22 +46,10 @@ function Input({ className = "", ...props }) {
 }
 
 export default function RegisterUser() {
-    const [form, setForm] = useState(defaultValues);
+    const [form, setForm] = useState({});
 
-    const [listOfDivisions, setlistOfDivisions] = useState([
-        {
-            value: "69f1c6bd1812965267bd636b",
-            innerText: "Division Administrative"
-        },
-        {
-            value: "69f1c6dd1812965267bd636c",
-            innerText: "Division Financière"
-        },
-        {
-            value: "69f1c6e91812965267bd636d",
-            innerText: "Division Archives"
-        },
-    ]);
+    const [listOfDivisions, setlistOfDivisions] = useState([]);
+
     const [listOfServices, setlistOfServices] = useState([
         {
             value: "69f1c7331812965267bd636f",
@@ -90,14 +79,33 @@ export default function RegisterUser() {
         },
     ]);
     const [listOfRoles, setlistOfRoles] = useState([
+        { value: "admin", innerText: "Administrateur" },
         { value: "hr_agent", innerText: "Agent RH" },
         { value: "chef_service", innerText: "Chef de service" },
         { value: "chef_division", innerText: "Chef de division" },
-        { value: "directeur", innerText: "Directeur" },
         { value: "employee", innerText: "Employé" },
     ]);
-
     const [isLoading, setIsLoading] = useState(false);
+
+    const [isLoadingExistingRalted, setLoadingExistingRalted] = useState(true)
+
+    const handleLoadNeedDataToRegister = async () => {
+        const divisionsreq = await GET_DIVISIONS();
+
+        setlistOfDivisions(divisionsreq.data.map(e => (
+            {
+                value: e._id,
+                innerText: e.name
+            }
+        )));
+
+        setLoadingExistingRalted(false)
+    };
+
+    useEffect(() => {
+        handleLoadNeedDataToRegister()
+    }, [])
+
 
     const handleChange = (field) => (e) => {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
@@ -241,6 +249,7 @@ export default function RegisterUser() {
                                 placeholder="ObjectId de la division"
                             />
                             <Select2
+                                disabled={form.role == "chef_division"}
                                 type="text"
                                 label="Service"
                                 icon={<i className="bi bi-align-top"></i>}
@@ -289,6 +298,7 @@ export default function RegisterUser() {
 
                         <button
                             onClick={handleSubmit}
+                            disabled={isLoadingExistingRalted || isLoading}
                             className="h-9 px-5  gap-4 flex items-center justify-center py-6 rounded-lg bg-foreground w-full max-w-[400] text-background text-sm font-medium hover:opacity-85 transition-opacity"
                         >
                             {
