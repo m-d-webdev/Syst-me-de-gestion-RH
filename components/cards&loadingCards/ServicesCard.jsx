@@ -1,12 +1,13 @@
 "use client"
-import { Contact, LayoutDashboard, MoreHorizontal, UserKey, Users } from "lucide-react";
+import { LayoutDashboard, MoreHorizontal, UserKey, Users } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { DELETE_DIVISION } from "@/api/Division";
 import Link from "next/link";
 import ReadMore from "../Global/ReadMore";
-const MenuOptions = ({ division, onClose, onUpdate }) => {
+
+
+const MenuOptions = ({ service, onClose, onUpdate }) => {
   const PageRef = useRef();
 
   const handleClickOutside = (e) => {
@@ -37,37 +38,33 @@ const MenuOptions = ({ division, onClose, onUpdate }) => {
 
         <button
           className="p-2 opacity-80 hover:opacity-100 w-full bg-sidebar/50 hover:bg-sidebar flex items-center justify-center gap-1 cursor-pointer font-medium duration-200  text-xs rounded-sm border border-foreground/10">
-          <i className="bi bi-file-earmark-arrow-up"></i>  Exporter services
-        </button>
-
-        <button
-          className="p-2 opacity-80 hover:opacity-100 w-full bg-sidebar/50 hover:bg-sidebar flex items-center justify-center gap-1 cursor-pointer font-medium duration-200  text-xs rounded-sm border border-foreground/10">
           <i className="bi bi-envelope-arrow-up"></i> Contacter le chef
         </button>
 
         <button
-          className={`text-xs opacity-80 hover:opacity-100 w-full justify-center  flex items-center gap-1 font-medium px-4 py-1.5 rounded-sm border transition-colors duration-150 cursor-pointer ${division.isActive
+          className={`text-xs opacity-80 hover:opacity-100 w-full justify-center  flex items-center gap-1 font-medium px-4 py-1.5 rounded-sm border transition-colors duration-150 cursor-pointer ${service.isActive
             ? "border-red-200 text-red-500 hover:bg-red-50"
             : "border-green-200 text-green-600 hover:bg-green-50"
             }`}
         >
-          {division.isActive ? <><i className="bi bi-ban"></i> Désactiver </> : <> <i className="bi bi-check-circle"> Activer</i></>}
+          {service.isActive ? <><i className="bi bi-ban"></i> Désactiver </> : <> <i className="bi bi-check-circle"> Activer</i></>}
         </button>
       </motion.div>
     </>
   )
 }
 
-export default function DivisionCard({ division, onToggle }) {
+
+export default function ServicesCard({ service, division_id, onToggle }) {
   const [menuOpen, setmenuOpen] = useState(false)
   return (
     <div
-      className={`bg-background border border-foreground/15 rounded-xl rounded-tr-none flex flex-col justify-between gap-3 transition-opacity duration-200  ${!division.isActive ? "opacity-60" : ""}`}
+      className={`bg-background border border-foreground/15 rounded-xl rounded-tr-none justify-between flex flex-col gap-3 transition-opacity duration-200  ${!service.isActive ? "opacity-60" : ""}`}
     >
-      <div className="">
+      <div className="w-full">
 
-        <div className="flex w-full justify-between  relative  items-start gap-3">
-          <p className="text-lg pt-3 px-3 tracking-tight font-semibold ">{division.name}</p>
+        <div className="flex w-full justify-between items-start relative   gap-3">
+          <p className="text-lg pt-3 px-3 font-semibold ">{service.name}</p>
           <button
             className="p-1 bg-sidebar rounded-none rounded-bl-sm border border-foreground/10"
             onClick={() => setmenuOpen(true)}>
@@ -76,65 +73,66 @@ export default function DivisionCard({ division, onToggle }) {
 
           <AnimatePresence>
             {menuOpen &&
-              <MenuOptions division={division} onClose={() => setmenuOpen(false)} />
+              <MenuOptions service={service} onClose={() => setmenuOpen(false)} />
             }
           </AnimatePresence>
         </div>
-        <div className="px-3 mt-2">
-          <ReadMore text={division.description} className="text-sm  text-gray-500 leading-relaxed flex-1" />
-        </div>
-        
-      </div>
 
+        <div className="px-3 mt-2">
+          <ReadMore text={service.description} className="text-sm  text-gray-500 leading-relaxed flex-1" />
+        </div>
+
+      </div>
       <div className="w-full p-3">
-        <div className="flex   items-center text-sm ">
-          <Contact className="h-4 " /><span className="opacity-60 ml-1 mr-2">chef :</span>
+
+        {/* Description */}
+
+        <div className="flex gap-1  items-center text-sm ">
+
+          <UserKey className="h-4" /><span className="opacity-60">chef :</span>
+
           {
-            division?.chef?.firstName
+            service?.chef?.firstName
               ?
-              <b> M. {division?.chef?.firstName} {division?.chef?.lastName}</b>
+              <b> M. {service?.chef?.firstName} {service?.chef?.lastName}</b>
               : <span className="opacity-70">Non assigné</span>
           }
+
         </div>
 
         <div className="flex gap-2 mt-3 items-center ">
-
           <div className="p-1 flex gap-1 bg-sidebar items-center bg-sidebare border text-xs rounded-sm px-2 border-foreground/10">
-            <LayoutDashboard className="h-4" /> <p>{division?.servicesCount} services</p>
+            <Users className="h-4" /> <p>{service?.employeesCount} employés</p>
           </div>
-
-          <div className="p-1 flex gap-1 bg-sidebar items-center bg-sidebare border text-xs rounded-sm px-2 border-foreground/10">
-            <Users className="h-4" /> <p>{division?.employeesCount} employés</p>
-          </div>
-
         </div>
-        {/* Footer */}
-        <div className="flex items-center mt-6 justify-between pt-3 border-t border-gray-100">
+
+
+        <div className="flex items-center mt-3 justify-between pt-3 border-t border-gray-100">
           {/* Status badge */}
+
           <span
-            className={`text-xs font-medium px-5 border py-1 rounded-full ${division.isActive
+            className={`text-xs font-medium px-5 border py-1 rounded-full ${service.isActive
               ? "bg-green-50 text-green-500 border-green-500"
               : "bg-destructive/5 text-destructive border-destructive/50"
               }`}
           >
-            {division.isActive ? <>Actif <i className="bi bi-check2-circle"></i> </> : <>Inactif <i className="bi bi-ban"></i></>}
+            {service.isActive ? <>Actif <i className="bi bi-check2-circle"></i> </> : <>Inactif <i className="bi bi-ban"></i></>}
           </span>
 
-          {/* Toggle button */}
-          <Link href={`divisions/${division._id}`}
+
+          <Link href={`/divisions/${division_id}/${service._id}`}
             className="p-1 px-3 rounded-sm items-center opacity-80 hover:opacity-100  bg-sidebar/50 hover:bg-sidebar flex  justify-center gap-2 cursor-pointer tracking-tight font-medium duration-200  text-xs  border border-foreground/10">
-            <i className="bi bi-list-task"></i> Voir les services
+            <i className="bi bi-people"></i> Voir les employés
           </Link>
 
         </div>
-
       </div>
     </div >
   );
 };
 
 
-export const DivisionCardSkeleton = ({ ind }) => (
+export const ServicesCardSkeleton = ({ ind }) => (
   <div key={ind} className="bg-background border border-gray-100 rounded-xl p-5 flex flex-col gap-3">
     <div className="flex items-center justify-between">
       <div className="h-3.5 w-[55%] bg-accent rounded-md animate-pulse" />

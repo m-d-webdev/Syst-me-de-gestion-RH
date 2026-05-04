@@ -1,16 +1,16 @@
 "use client"
 import { useState } from "react";
 import Dialog from "../Global/Dialog";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Input } from "../ui/input";
-import { CREATE_DIVISION } from "@/api/Division";
 import toast from "react-hot-toast";
 import Loader1 from "../Global/Loader1";
+import { CREATE_SERVICE } from "@/api/Service";
 
 const EMPTY_FORM = { name: "", description: "", isActive: true };
 
-export default function CreateDivisionForm({ onUpdate, onClose }) {
-    const [form, setForm] = useState(EMPTY_FORM);
+export default function CreateServiceForm({ onUpdate, division_id, onClose }) {
+    const [form, setForm] = useState({ ...EMPTY_FORM, division_id });
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [Loading, setLoading] = useState(false);
@@ -44,10 +44,8 @@ export default function CreateDivisionForm({ onUpdate, onClose }) {
         setLoading(true)
 
         try {
-            const res = await CREATE_DIVISION({ data: form })
+            const res = await CREATE_SERVICE({ data: form })
             if (res.success == true) {
-                setForm(EMPTY_FORM);
-                setErrors({});
                 setSubmitted(true);
                 onUpdate();
             }
@@ -61,14 +59,19 @@ export default function CreateDivisionForm({ onUpdate, onClose }) {
     };
 
     return (
-        <Dialog closeIfClickOutside={true} containerClassName="w-[500] !bg-background p-4" onClose={onClose}>
+        <Dialog closeIfClickOutside={false} containerClassName="w-[500] !bg-background p-4" onClose={onClose}>
             {/* Header */}
-            <div className="mb-8 ">
+            <div className="mb-8 w-full flex justify-between items-start ">
+                <div className="">
 
-                <h1 className="text-2xl tracking-tighter font-semibold ">Créer une nouvelle division</h1>
-                <p className="text-sm opacity-70 mt-1">
-                    Veuillez remplir les informations ci-dessous pour créer une nouveau division.
-                </p>
+                    <h1 className="text-2xl tracking-tighter font-semibold ">Créer un nouveau service</h1>
+                    <p className="text-sm opacity-70 mt-1">
+                        Veuillez remplir les informations ci-dessous pour créer une nouveau service.
+                    </p>
+                </div>
+                <button onClick={onClose} className="p-1 bg-sidebar rounded-sm border border-foreground/10 flex items-center gap-2">
+                    <X className="h-4" />
+                </button>
             </div>
             {/* Card */}
 
@@ -82,7 +85,7 @@ export default function CreateDivisionForm({ onUpdate, onClose }) {
                 parentclassName="bg-sidebar"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Nom de la division"
+                placeholder="Nom de le service"
                 className={``}
             />
 

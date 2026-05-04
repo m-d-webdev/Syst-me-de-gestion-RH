@@ -59,7 +59,7 @@ const SelectMenu = ({
       }}
       animate={{
         opacity: 1,
-        height: list.length * 50
+        height: list.length > 0 ? 200 : 50
       }}
       ref={PageRef}
 
@@ -89,6 +89,9 @@ const SelectMenu = ({
             </p>
 
           )
+      }
+      {
+        list.length == 0 && <p className="w-full opacity-60  text-sm">Aucune donnée disponible</p>
       }
     </motion.div>
   )

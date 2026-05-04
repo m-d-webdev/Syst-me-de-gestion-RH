@@ -243,10 +243,10 @@ const CustomTable2 = ({
                                                                             {React.isValidElement(NoResultIcon) && NoResultIcon}
                                                                             {NoResultText ? (
                                                                                 <>
-                                                                                    <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
+                                                                                    <h1 className="max-w-[600] font-medium text-xl   text-center">
                                                                                         {NoResultText}
                                                                                     </h1>
-                                                                                    <p className="max-w-[700px] text-[#1B3D50] text-center mt-2">
+                                                                                    <p className="max-w-[500] font-normal text-base text-wrap  text-center mt-1">
                                                                                         {NoResultDescription}
                                                                                     </p>
                                                                                 </>

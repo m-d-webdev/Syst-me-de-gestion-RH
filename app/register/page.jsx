@@ -6,6 +6,7 @@ import Select2 from "@/components/ui/select2"
 import Loader1 from "@/components/Global/Loader1";
 import { REGISTER } from "@/api/Employers/Auth";
 import { GET_DIVISIONS } from "@/api/Division";
+import { GET_SERVICES } from "@/api/Service";
 const defaultValues = {
     firstName: "",
     lastName: "",
@@ -50,20 +51,7 @@ export default function RegisterUser() {
 
     const [listOfDivisions, setlistOfDivisions] = useState([]);
 
-    const [listOfServices, setlistOfServices] = useState([
-        {
-            value: "69f1c7331812965267bd636f",
-            innerText: "Service Archives"
-        },
-        {
-            value: "69f1c7411812965267bd6370",
-            innerText: "Service Comptabilité"
-        },
-        {
-            value: "69f1c7641812965267bd6371",
-            innerText: "Service Ressources Humaines"
-        },
-    ]);
+    const [listOfServices, setlistOfServices] = useState([]);
     const [listOfGrades, setlistOfGrades] = useState([
         {
             value: "69f1c8011812965267bd637b",
@@ -86,6 +74,7 @@ export default function RegisterUser() {
         { value: "employee", innerText: "Employé" },
     ]);
     const [isLoading, setIsLoading] = useState(false);
+    const [LoadingServices, setLoadingServices] = useState(false);
 
     const [isLoadingExistingRalted, setLoadingExistingRalted] = useState(true)
 
@@ -102,6 +91,24 @@ export default function RegisterUser() {
         setLoadingExistingRalted(false)
     };
 
+    const HandleGetServices = async ({ division_id }) => {
+        setLoadingServices(true);
+
+        handleChange2("service_id", null);
+
+        const res = await GET_SERVICES({ division_id });
+
+        setlistOfServices(res.data?.map(e => (
+            {
+                value: e._id,
+                innerText: e.name
+            }
+        )));
+
+
+        setLoadingServices(false)
+
+    }
     useEffect(() => {
         handleLoadNeedDataToRegister()
     }, [])
@@ -244,20 +251,31 @@ export default function RegisterUser() {
                                 label="Division"
                                 icon={<i className="bi bi-building"></i>}
                                 list={listOfDivisions}
-                                onChange={v => handleChange2("division_id", v)}
+                                onChange={v => {
+                                    handleChange2("division_id", v);
+                                    HandleGetServices({ division_id: v });
+                                }
+                                }
                                 className="font-mono text-xs"
                                 placeholder="ObjectId de la division"
                             />
-                            <Select2
-                                disabled={form.role == "chef_division"}
-                                type="text"
-                                label="Service"
-                                icon={<i className="bi bi-align-top"></i>}
-                                list={listOfServices}
-                                onChange={v => handleChange2("service_id", v)}
-                                className="font-mono text-xs"
-                                placeholder="ObjectId de la division"
-                            />
+                            <div className="w-full relative">
+                                {
+                                    LoadingServices &&
+                                    <div className="w-full absolute z-[2] h-full flex justify-center items-center"><Loader1 className="before:border-foreground" /> </div>
+                                }
+
+                                <Select2
+                                    disabled={form.role == "chef_division"}
+                                    type="text"
+                                    label="Service"
+                                    icon={<i className="bi bi-align-top"></i>}
+                                    list={listOfServices}
+                                    onChange={v => handleChange2("service_id", v)}
+                                    className="font-mono text-xs"
+                                    placeholder="ObjectId de la division"
+                                />
+                            </div>
                             <Select2
                                 type="text"
                                 label="Grade"
