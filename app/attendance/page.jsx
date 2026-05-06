@@ -2,153 +2,22 @@
 import CustomTable2 from "@/components/Global/CustomTable"
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { employeesForTest } from "@/lib/utils";
+import { employeesForTest, UserPic } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import AttendanceCalendar from "./(COMPS)/attendanceCalendr";
 import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct";
 import moment from "moment";
+import { GET_ATTENDANCES } from "@/api/Attendance";
+import { UseMainConext } from "@/contexts/MainContext";
 
-const attendanceForOneDay = [
-  {
-    _id: 1,
-    userId: 1,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:55",
-    checkOut: "17:10",
-    late: false,
-    note: ""
-  },
-  {
-    _id: 2,
-    userId: 2,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "09:10",
-    checkOut: "17:05",
-    late: true,
-    note: "Retard léger"
-  },
-  {
-    _id: 3,
-    userId: 3,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:40",
-    checkOut: "17:20",
-    late: false,
-    note: ""
-  },
-  {
-    _id: 4,
-    userId: 4,
-    date: "2026-04-28",
-    status: "absent",
-    justification: null,
-    checkIn: null,
-    checkOut: null,
-    late: false,
-    note: "Maladie"
-  },
-  {
-    _id: 5,
-    userId: 5,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:50",
-    checkOut: "17:00",
-    late: false,
-    note: ""
-  },
-  {
-    _id: 6,
-    userId: 6,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "09:25",
-    checkOut: "17:15",
-    late: true,
-    note: "Retard important"
-  },
-  {
-    _id: 7,
-    userId: 7,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:30",
-    checkOut: "17:30",
-    late: false,
-    note: ""
-  },
-  {
-    _id: 8,
-    userId: 8,
-    date: "2026-04-28",
-    status: "absent",
-    justification: "non_justifie",
-    checkIn: null,
-    checkOut: null,
-    late: false,
-    note: "Absence non signalée"
-  },
-  {
-    _id: 9,
-    userId: 9,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:45",
-    checkOut: "17:05",
-    late: false,
-    note: ""
-  },
-  {
-    _id: 10,
-    userId: 10,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "09:05",
-    checkOut: "17:00",
-    late: true,
-    note: "Retard"
-  },
-  {
-    _id: 11,
-    userId: 11,
-    date: "2026-04-28",
-    status: "absent",
-    justification: "justifie",
-    checkIn: null,
-    checkOut: null,
-    late: false,
-    note: "Congé annuel"
-  },
-  {
-    _id: 12,
-    userId: 12,
-    date: "2026-04-28",
-    status: "present",
-    justification: null,
-    checkIn: "08:35",
-    checkOut: "17:25",
-    late: false,
-    note: ""
-  }
-];
 
 const page = () => {
+  const { User } = UseMainConext()
   const [isLoading, setLoading] = useState(true);
   const [filterPopupOpen, setFitlerOpen] = useState(false);
   const [sortByPopupOpen, setSortByOpen] = useState(false);
   const [attendanceList, setAttendanceList] = useState([]);
   const [TotalPages, setTotalPages] = useState([]);
+  const [firstTime, setfirstTime] = useState(false);
   const [filters, setFilters] = useState(
     {
       page: 1,
@@ -159,7 +28,7 @@ const page = () => {
       hireDate: null,
       salary: null,
       city: null,
-      day: moment().format("D-M-yyyy"),
+      date: moment().format("D-M-yyyy"),
     }
   );
 
@@ -177,24 +46,16 @@ const page = () => {
 
 
   const Get_Data = async () => {
-    setLoading(true)
-    attendanceForOneDay.map(i => {
-
-      setAttendanceList(pv => {
-        const user = employeesForTest.find(em => em._id == i.userId)
-        return ([...pv, { ...i, user }])
-      })
-    });
-
+    setLoading(true);
+    const res = await GET_ATTENDANCES({ ...filters });
+    setAttendanceList(res.data ?? [])
     setLoading(false)
   };
 
-  useEffect(() => {
-    Get_Data();
-  }, [])
 
   useEffect(() => {
-    setselections([])
+    setselections([]);
+    Get_Data();
   }, [filters]);
 
 
@@ -206,12 +67,11 @@ const page = () => {
       />
       <p className="tracking-tight">Nom</p>
     </div>,
-    <p className="tracking-tight">Division</p>,
     <p className="tracking-tight">Service</p>,
     <p className="tracking-tight">Grade</p>,
     // <p className="tracking-tight">statut</p>,
     <p className="tracking-tight">présence</p>,
-    <p className="tracking-tight">présence</p>,
+    <p className="tracking-tight">justification</p>,
     <p className="tracking-tight">Action</p>,
   ];
 
@@ -226,37 +86,35 @@ const page = () => {
 
 
         <p className="max-w-[200] flex items-center gap-2  truncate">
-          <img src={i.user?.pic} className="w-7 h-7 object-cover rounded-full" alt="" />
-          {i.user?.firstName} {i.user?.lastName}
+          <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
+          {i?.user_id?.firstName} {i?.user_id?.lastName}
         </p>
 
       </TableCell>
-      <TableCell><p className="">{i.user?.division}</p></TableCell>
-      <TableCell><p className="">{i.user?.service}</p></TableCell>
-      <TableCell>{i.user?.grade}</TableCell>
+      <TableCell><p className="">{i?.user_id?.service_id?.name}</p></TableCell>
+      <TableCell>{i?.user_id?.grade_id?.name}</TableCell>
 
       <TableCell>
-        <p className={`w-fit flex gap-2 text-sm  p-1 ${i.status == "present" ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/10 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
-          {i.status == "present" ? <i className="bi bi-check-circle"></i> : <i className="bi bi-x-circle"></i>}
-          {i.status}
+        <p className={`w-fit font-medium flex gap-2 text-sm  p-1 ${i.isPresente == true ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "} border rounded-2xl px-2`}>
+          {/* {i.isPresente == true ? <i className="bi bi-check-circle"></i> : <i className="bi bi-x-circle"></i>} */}
+          {
+            i.isPresente == true
+              ? <>Présent <i className="bi bi-check2-circle"></i></>
+              : <>Absent <i className="bi bi-x-circle"></i></>
+          }
         </p>
       </TableCell>
-
       <TableCell>
-
         {
-          i.status != "present" ?
-            <p className={`w-fit flex items-center gap-1 text-sm  p-1 ${i.justification != null ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/10 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+          i.isPresente == false ?
+            <p className={`w-fit flex  items-center gap-1 text-sm  p-1 ${i.justification != null ? "bg-green-100/10 text-[#009e18] font-medium border-green-500" : "bg-red-100/10 text-[#d40000] font-semibold border-[2px] border-red-400 "} border rounded-2xl px-2`}>
               {
                 i.justification != null
-                && <i class="bi bi-file-earmark-check"></i>
-              }
-              {
-                i.justification != null
-                  ? "Justifie" : <b className="font-semibold">non justifie</b>
+                  ? <a download={true} target="_blank" href={i.justification}>Justifié <i className="bi bi-file-earmark-check"></i></a>
+                  : <>Non justifié <i className="bi bi-ban"></i></>
               }
 
-            </p> : " --- "
+            </p> : <p className="opacity-60">Présent</p>
         }
       </TableCell>
       <TableCell className={"text-center"}>
@@ -276,8 +134,10 @@ const page = () => {
         headers={headers}
         rows={rows}
         isLoading={isLoading}
-        hrefWhenClickAdd="/register"
+        hrefWhenClickAdd="/attendance/mark-attendance"
         pageTitle="Présence"
+        enableFilterButton={User.role == "admin"}
+        enableSort={User.role == "admin"}
         filterPopup={null}
         setFitlerOpen={setFitlerOpen}
         isFitlerOpen={filterPopupOpen}
@@ -290,8 +150,10 @@ const page = () => {
         totalePages={TotalPages}
         limit={filters.limit}
         enableDaySeleted={true}
-        day={filters.day}
-        setDay={d => setFilters(pv => ({ ...pv, day: d }))}
+        day={filters.date}
+        NoResultDescription="Aucune donnée de présence n’est disponible pour le moment. Veuillez ajouter des enregistrements ou réessayer plus tard"
+        NoResultText="Aucune présence enregistrée"
+        setDay={d => setFilters(pv => ({ ...pv, date: d }))}
         setLimit={l => setFilters(pv => ({ ...pv, limit: l }))}
         setPage={p => setFilters(pv => ({ ...pv, page: p }))}
       />

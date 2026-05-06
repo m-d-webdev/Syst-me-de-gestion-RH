@@ -50,6 +50,11 @@ const EmloyeesInAService = ({ service_id }) => {
     const GetUsers = async () => {
         setLoading(true);
         const res = await GET_USERS({ service_id });
+        if (!res.data) {
+            setLoading(false);
+            return
+        };
+
         setusers(res.data);
         setDivision(res.data[0]?.division_id)
         setService(res.data[0]?.service_id)
@@ -68,7 +73,7 @@ const EmloyeesInAService = ({ service_id }) => {
     const headers = [
         <div className="flex  pl-3 w-fit items-center justify-center gap-2">
             <CheckBoxinput
-                checked={!users.some(p => !selections.includes(p._id)) && users.length > 0}
+                checked={!users?.some(p => !selections.includes(p._id)) && users.length > 0}
                 onClick={handleSelectAll}
             />
             <p className="tracking-tight">Nom</p>
@@ -118,7 +123,7 @@ const EmloyeesInAService = ({ service_id }) => {
                 </Link>
                 <Link className="p-1 px-2    truncate  flex items-center" href={`/divisions/${division?._id}`}> {division?.name} <ChevronRight className="w-4 h-4" /> </Link>
                 <Link className="p-1 px-2     truncate  flex items-center " href={`/divisions/${division?._id}/${service?._id}`}>
-                    
+
                     {service?.name}
                 </Link>
             </div>

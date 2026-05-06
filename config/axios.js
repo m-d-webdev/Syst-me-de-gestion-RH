@@ -1,13 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
-console.log({ BACKEND_URL });
 
 const api = axios.create({
     baseURL: BACKEND_URL,
     timeout: 10000,
     withCredentials: true
-
 });
 
 // Request interceptor — attach auth token if present

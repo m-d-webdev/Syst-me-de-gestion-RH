@@ -33,6 +33,7 @@ const CustomTable2 = ({
     headers = [],
     rows = [],
     containerClassName = "",
+    tableContainerClassName = "min-h-[65vh]",
     totalePages = 1,
     setPage = () => { },
     limit = 10,
@@ -103,89 +104,97 @@ const CustomTable2 = ({
                 >
                     <h1 className="font-semibold tracking-tight text-2xl">{pageTitle}</h1>
 
-                    <div className="w-full mt-4 flex items-center justify-between">
-                        <div className="flex  gap-2 items-center">
-                            {enableSearch &&
-                                <Input
-                                    onChange={r => setsearch(r.target.value)}
-                                    value={search}
-                                    className={""}
-                                    parentclassName=" !py-2  !bg-background  border-foreground/15 md:w-[300]"
-                                    icon={<Search className=" stroke-1 w-5 h-5" />}
-                                    placeholder="Search ... "
-                                />
-                            }
-
-                            {
-                                enableFilterButton &&
-                                <Button
-                                    onClick={() => setFitlerOpen(pv => !pv)}
-                                    variant={"outline"} size="lg" className={" cursor-pointer "}>
-                                    <i className="bi bi-funnel"></i>
-                                    Filter
-                                </Button>
-                            }
-
-                            {
-                                enableSort &&
-                                <Button size="lg" onClick={() => setSortByOpen(pv => !pv)} variant={"outline"} className={"  cursor-pointer "}>
-                                    <i className="bi bi-sort-alpha-down"></i>
-                                    Sort
-                                </Button>
-                            }
-                            {
-                                enableDaySeleted &&
-                                <div className="flex items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
-                                    <p className="font-medium min-w-[200] flex gap-3  ">
-                                        <i className="bi bi-calendar-range"></i>
-                                       <span className="text-chart-3"> {moment(day, "D-MM-yyyy").format("dddd DD/MM/YYYY")}</span>
-                                    </p>
-                                    <button
-                                        className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
-                                        onClick={() => setCalendarOpen(true)}
-                                    ><Wrench className="w-5 h-5 stroke-1" /></button>
-                                    <AnimatePresence>
-                                        {calendarOpen &&
-                                            <motion.div
-                                                ref={CalendarDayRef}
-                                                initial={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
-                                                animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                                                exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
-                                                transition={{ duration: 0.15, ease: "easeOut" }}
-                                                className="absolute z-2 w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
-                                            >
-                                                <Calendar
-                                                    classNames={""}
-                                                    locale={"en"}
-                                                    day={day}
-                                                    onSelect={d => {
-
-                                                        setDay(d);
-                                                        setCalendarOpen(false)
-                                                    }}
-                                                />
-                                            </motion.div>
-                                        }
-                                    </AnimatePresence>
-                                </div>
-                            }
-                        </div>
-
-                        {
-                            enableAddElem &&
-                            <>
+                    {
+                        (enableSearch ||
+                            enableFilterButton ||
+                            enableSort ||
+                            enableDaySeleted ||
+                            enableAddElem) &&
+                        <div className="w-full mt-4 flex items-center justify-between">
+                            <div className="flex  gap-2 items-center">
+                                {enableSearch &&
+                                    <Input
+                                        onChange={r => setsearch(r.target.value)}
+                                        value={search}
+                                        className={""}
+                                        parentclassName=" !py-2  !bg-background  border-foreground/15 md:w-[300]"
+                                        icon={<Search className=" stroke-1 w-5 h-5" />}
+                                        placeholder="Search ... "
+                                    />
+                                }
 
                                 {
-
-                                    hrefWhenClickAdd
-                                        ? <Link href={hrefWhenClickAdd} className={" py-2 flex items-center gap-1 text-nowrap font-medium bg-chart-1 text-white !px-3 rounded-md text-sm cursor-pointer"}  > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Link>
-                                        : <Button className={"cursor-pointer"} variant={"dark"} > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Button>
+                                    enableFilterButton &&
+                                    <Button
+                                        onClick={() => setFitlerOpen(pv => !pv)}
+                                        variant={"outline"} size="lg" className={" cursor-pointer "}>
+                                        <i className="bi bi-funnel"></i>
+                                        Filter
+                                    </Button>
                                 }
-                            </>
-                        }
 
-                    </div>
-                    <div className="flex  w-full min-h-[65vh] flex-col ites-start justify-start">
+                                {
+                                    enableSort &&
+                                    <Button size="lg" onClick={() => setSortByOpen(pv => !pv)} variant={"outline"} className={"  cursor-pointer "}>
+                                        <i className="bi bi-sort-alpha-down"></i>
+                                        Sort
+                                    </Button>
+                                }
+                                {
+                                    enableDaySeleted &&
+                                    <div className="flex items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
+                                        <p className="font-medium min-w-[200] flex gap-3  ">
+                                            <i className="bi bi-calendar-range"></i>
+                                            <span className="text-chart-3"> {moment(day, "D-M-yyyy").format("dddd DD/MM/YYYY")}</span>
+                                        </p>
+                                        <button
+                                            className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
+                                            onClick={() => setCalendarOpen(true)}
+                                        ><Wrench className="w-5 h-5 stroke-1" /></button>
+                                        <AnimatePresence>
+                                            {calendarOpen &&
+                                                <motion.div
+                                                    ref={CalendarDayRef}
+                                                    initial={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                                    transition={{ duration: 0.15, ease: "easeOut" }}
+                                                    className="absolute z-2 w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
+                                                >
+                                                    <Calendar
+                                                        classNames={""}
+                                                        locale={"en"}
+                                                        day={day}
+                                                        onSelect={d => {
+
+                                                            setDay(d);
+                                                            setCalendarOpen(false)
+                                                        }}
+                                                    />
+                                                </motion.div>
+                                            }
+                                        </AnimatePresence>
+                                    </div>
+                                }
+                            </div>
+
+                            {
+                                enableAddElem &&
+                                <>
+
+                                    {
+
+                                        hrefWhenClickAdd
+                                            ? <Link href={hrefWhenClickAdd} className={" py-2 flex items-center gap-1 text-nowrap font-medium bg-chart-1 text-white !px-3 rounded-md text-sm cursor-pointer"}  > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Link>
+                                            : <Button className={"cursor-pointer"} variant={"dark"} > <Plus className="stroke-1 w-5 h-5" /> Ajouter  {pageTitle}</Button>
+                                    }
+                                </>
+                            }
+
+                        </div>
+                    }
+                    
+                    <div className={`flex  w-full ${tableContainerClassName}   flex-col ites-start justify-start`}>
 
                         <Table className="mt-6  rounded-t-2xl  ">
 

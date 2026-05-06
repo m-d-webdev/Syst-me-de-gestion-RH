@@ -108,8 +108,6 @@ export default function ServicesCard({ service, division_id, onToggle }) {
 
 
         <div className="flex items-center mt-3 justify-between pt-3 border-t border-gray-100">
-          {/* Status badge */}
-
           <span
             className={`text-xs font-medium px-5 border py-1 rounded-full ${service.isActive
               ? "bg-green-50 text-green-500 border-green-500"

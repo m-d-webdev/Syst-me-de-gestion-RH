@@ -22,7 +22,7 @@ export const HOLIDAYS = [
   "25-9", // Aïd Al-Mawlid (approx)
 ];
 export default function Calendar({ onSelect, day }) {
-  const today = moment(day, "DD-MM-yyyy");
+  const today = moment(day, "D-M-yyyy");
   const [current, setCurrent] = useState(today.clone().startOf("month"));
   const [selected, setSelected] = useState(day);
 
@@ -31,7 +31,7 @@ export default function Calendar({ onSelect, day }) {
 
   const handleSelect = useCallback(
     (day) => {
-      const formatted = day.format("D-M-YYYY");
+      const formatted = day.format("D-M-yyyy");
       setSelected(formatted);
       if (onSelect) onSelect(formatted);
     },
