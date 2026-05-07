@@ -6,7 +6,7 @@ const Logo = ({ className, textClass, isOpen = true, h = "h-30" }) => {
   return (
     <Link href={"/"} className='flex   items-center'>
       <div className="flex items-center p-1 justify-center bg-background border border-foreground/10 rounded-md ">
-        <img src="/logo.png" className={`${isOpen ? h : "h-10"} duration-200 `} alt="" />
+        <img src="/logo.svg" className={`${isOpen ? h : "h-10"} duration-200 `} alt="" />
         {/* <h1 className='font-bold text-base'>{CompanyName}</h1> */}
       </div>
       {/* <i className="bi bi-emoji-sunglasses text-chart-1"></i> */}

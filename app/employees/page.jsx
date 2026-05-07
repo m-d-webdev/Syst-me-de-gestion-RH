@@ -1,26 +1,29 @@
 "use client"
+import { GET_USERS } from "@/api/Employers/User";
+import UsersFilter from "@/components/FilterPopups/UserFilter";
 import CustomTable2 from "@/components/Global/CustomTable"
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { employeesForTest } from "@/lib/utils";
+import { employeesForTest, UserPic } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const page = () => {
   const [isLoading, setLoading] = useState(false);
   const [filterPopupOpen, setFitlerOpen] = useState(false);
   const [sortByPopupOpen, setSortByOpen] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [Users, setUsers] = useState([]);
   const [TotalPages, setTotalPages] = useState([]);
   const [filters, setFilters] = useState(
     {
       page: 1,
       limit: 10,
       department: null,
-      position: null,
+      grade_id: null,
+      role: null,
       status: null,
       hireDate: null,
-      salary: null,
-      city: null,
+      division_id: null,
+      service_id: null,
     }
   );
 
@@ -36,9 +39,15 @@ const page = () => {
     }
   }
 
-
+  const get_users = async () => {
+    setLoading(true);
+    const res = await GET_USERS({ ...filters });
+    setUsers(res.data)
+    setLoading(false);
+  }
   useEffect(() => {
     setselections([])
+    get_users()
   }, [filters]);
 
 
@@ -52,15 +61,13 @@ const page = () => {
     </div>,
     <p className="tracking-tight">email</p>,
     <p className="tracking-tight">téléphone</p>,
-    <p className="tracking-tight">département</p>,
-    <p className="tracking-tight">poste</p>,
+    <p className="tracking-tight">Division</p>,
+    <p className="tracking-tight">Service</p>,
+    <p className="tracking-tight">Grade</p>,
     <p className="tracking-tight">statut</p>,
-    <p className="tracking-tight">date d'embauche</p>,
-    // <p className="tracking-tight">salaire</p>,
-    <p className="tracking-tight">ville</p>,
   ];
 
-  let rows = employeesForTest.map((i, idx) =>
+  let rows = Users?.map((i, idx) =>
     <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/2 " : ""}`} key={idx}>
       <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
 
@@ -68,28 +75,24 @@ const page = () => {
           checked={selections.includes(i._id)}
           onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
         />
+
         <p className="max-w-[200] flex items-center gap-1  truncate">
-          <img src={i.pic} className="w-7 h-7 object-cover rounded-full" alt="" />
+          <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
           {i.firstName} {i.lastName}
         </p>
+
       </TableCell>
-      <TableCell><b className="font-medium">{i.email}</b></TableCell>
+      <TableCell><p className="font-medium max-w-[120] truncate">{i.email}</p></TableCell>
       <TableCell><b className="font-medium">{i.phone}</b></TableCell>
-      <TableCell><b className="font-medium">{i.department}</b></TableCell>
-      <TableCell>{i.position}</TableCell>
+      <TableCell><p className="font-medium max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell>
+      <TableCell><p className="font-medium max-w-[150] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
+      <TableCell>{i?.grade_id?.name}</TableCell>
       <TableCell>
-        <p className={`w-fit text-sm font-medium p-1 ${i.status == "Actif" ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
-          {i.status}
+        <p className={`w-fit text-sm font-medium p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+          {i.isActive == true ? "Actif" : "Inactif"}
         </p>
       </TableCell>
-      <TableCell><b className="font-medium">{i.hireDate}</b>      </TableCell>
-      {/* <TableCell></TableCell> */}
 
-
-      <TableCell className={"flex items-center gap-2 w-fit pl-5"}>
-        <b className="font-medium">{i.city}</b>
-
-      </TableCell>
     </TableRow >
   );
 
@@ -102,7 +105,12 @@ const page = () => {
         isLoading={isLoading}
         hrefWhenClickAdd="/addUser"
         pageTitle="Employés"
-        filterPopup={null}
+        filterPopup={
+          <UsersFilter
+            filters={filters}
+            setFilters={setFilters}
+            onClose={() => setFitlerOpen(false)} />
+        }
         setFitlerOpen={setFitlerOpen}
         isFitlerOpen={filterPopupOpen}
 

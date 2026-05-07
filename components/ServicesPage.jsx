@@ -20,7 +20,6 @@ const ServicesPage = ({ division_id }) => {
     const getServices = async () => {
         setisLoading(true)
         const res = await GET_SERVICES({ division_id });
-        console.log({ res });
         setData(res.data)
         setDivisionName(res.data[0]?.division_id?.name)
         setisLoading(false)
@@ -57,7 +56,11 @@ const ServicesPage = ({ division_id }) => {
             </div>
             {
                 isAddPopupOpen &&
-                <CreateServiceForm onUpdate={() => getServices()} division_id={division_id} onClose={() => setAddPopupOpen(false)} />
+                <CreateServiceForm onUpdate={() => {
+                    setAddPopupOpen(false)
+                    getServices()
+                }
+                } division_id={division_id} onClose={() => setAddPopupOpen(false)} />
             }
         </div>
     )

@@ -1,6 +1,7 @@
 "use client"
 import { AUTH } from '@/api/Employers/Auth';
 import LoginPage from '@/app/login/page';
+import { initTheme } from '@/components/Layout/SwitchTheme';
 import CheckingAuth from '@/components/Popups/CheckingAuth';
 import React, { useContext, createContext, useState, useEffect } from 'react'
 import { Toaster } from "react-hot-toast";
@@ -32,6 +33,7 @@ const MainContext = ({ children }) => {
 
     useEffect(() => {
         CheckAuth();
+        initTheme()
     }, []);
 
 
@@ -48,7 +50,7 @@ const MainContext = ({ children }) => {
                     }
                 </>
         }
-        
+
         {/* {children} */}
         <Toaster
             position="top-right"

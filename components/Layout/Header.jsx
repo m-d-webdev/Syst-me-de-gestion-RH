@@ -3,6 +3,8 @@
 import SearchInput from "./SearchInput"
 import PageHeader from "./PageHeader"
 import UserTopRight from "./UserTopRight"
+import SwitchTheme from "./SwitchTheme"
+import LangSwitcher from "./LangSwitcher"
 
 const Header = () => {
     return (
@@ -12,6 +14,10 @@ const Header = () => {
             <PageHeader />
             {/* </div> */}
             <SearchInput />
+            <div className="flex gap-2 items-center">
+                <SwitchTheme />
+                <LangSwitcher />
+            </div>
             <UserTopRight />
         </div>
     )

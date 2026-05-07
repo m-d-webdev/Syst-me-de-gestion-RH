@@ -203,7 +203,7 @@ const CustomTable2 = ({
                                     {headers.map((c, i) => (
                                         <TableHead
                                             key={i}
-                                            className={`${headersClassName} bg-[#F8F9FB]  ${i == 0 ? "" : ""} text-black border border-border`}
+                                            className={`${headersClassName} bg-secondary text-foreground  ${i == 0 ? "" : ""}  border border-border`}
                                         >
                                             {c}
                                         </TableHead>

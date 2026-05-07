@@ -82,7 +82,7 @@
   --chart-5: oklch(0.72 0.08 180);
   /* Aqua/Teal (support metric) */
 
-  --sidebar: oklch(0.18 0.02 255);
+  --sidebar: oklch(15.246% 0.01744 255.535);
   /* Deep Navy (clean admin feel) */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.141 0.005 285.823);
@@ -132,7 +132,7 @@
   --chart-5: oklch(0.72 0.08 180);
   /* Aqua/Teal (support metric) */
 
-  --sidebar: oklch(0.18 0.02 255);
+  --sidebar: oklch(11.751% 0.01556 238.398);
   /* Deep Navy (clean admin feel) */
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);

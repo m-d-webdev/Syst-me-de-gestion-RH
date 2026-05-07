@@ -67,7 +67,7 @@ export default function DivisionCard({ division, onToggle }) {
       <div className="">
 
         <div className="flex w-full justify-between  relative  items-start gap-3">
-          <p className="text-lg pt-3 px-3 tracking-tight font-semibold ">{division.name}</p>
+          <p className="text-lg pt-3 px-3 tracking-tight font-semibold capitalize">{division.name}</p>
           <button
             className="p-1 bg-sidebar rounded-none rounded-bl-sm border border-foreground/10"
             onClick={() => setmenuOpen(true)}>

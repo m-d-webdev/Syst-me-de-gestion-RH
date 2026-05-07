@@ -22,7 +22,7 @@ export default function PageHeader() {
                 key={pageName}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex gap-3   text-chart-1  min-w-[200]  items-center">
+                className="flex gap-3   text-chart-1  min-w-[160]  items-center">
 
                 {pageIcon}
                 <h1 className="font-semibold tracking-tighter text-lg">

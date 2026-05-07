@@ -1,19 +1,10 @@
 import api from "@/config/axios";
 import toast from "react-hot-toast";
 
-export const GET_USERS = async ({ isActive, search, role, division_id, service_id } = {}) => {
+export const GET_USERS = async (params = {}) => {
     try {
-
-        const params = {};
-        if (isActive !== undefined) params.isActive = isActive;
-        if (search) params.search = search;
-        if (role) params.role = role;
-        if (division_id) params.division_id = division_id;
-        if (service_id) params.service_id = service_id;
-
         const res = await api.get("/users", { params });
         return res.data;
-
     } catch (error) {
         toast.error(error?.response?.data?.message ?? "Échec du chargement des utilisateurs");
         return error.message;
@@ -81,6 +72,18 @@ export const TOGGLE_USER_STATUS = async ({ id }) => {
         return res.data;
     } catch (error) {
         toast.error(error?.response?.data?.message ?? "Échec de la mise à jour du statut");
+        return error.message;
+    }
+};
+
+
+
+export const FetchGrads = async () => {
+    try {
+        const res = await api.get(`/getGrades`);
+        return res.data;
+    } catch (error) {
+        toast.error(error?.response?.data?.message ?? "Échec du chargement de l'grades");
         return error.message;
     }
 };

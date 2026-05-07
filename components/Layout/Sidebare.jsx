@@ -30,7 +30,7 @@ const Sidebare = ({ }) => {
         setOpen(pv => !pv)
     }
     return (
-        <div className={` relative duration-200 bg-background max-h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
+        <div className={` relative duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
             <div className="w-full flex justify-center items-center">
 
                 <Logo isOpen={isOpen} />

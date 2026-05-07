@@ -108,13 +108,13 @@ export default function Calendar({ onSelect, day }) {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+    <div className="max-w-sm mx-auto p-4 bg-background rounded-2xl shadow-sm border border-foreground/15">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <button
           onClick={prevMonth}
-          className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-lg"
+          className="w-8 h-8 flex items-center justify-center rounded-lg border border-foreground/15 transition-colors text-lg"
         >
           ‹
         </button>
@@ -126,7 +126,7 @@ export default function Calendar({ onSelect, day }) {
         </span>
         <button
           onClick={nextMonth}
-          className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-lg"
+          className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 transition-colors text-lg"
         >
           ›
         </button>
@@ -137,7 +137,7 @@ export default function Calendar({ onSelect, day }) {
         {DAYS.map((d) => (
           <div
             key={d}
-            className="text-center text-xs font-medium text-gray-400 py-1"
+            className="text-center text-xs font-medium opacity-70 py-1"
           >
             {d}
           </div>
@@ -160,7 +160,7 @@ export default function Calendar({ onSelect, day }) {
           ))}
         </div>
       ))}
-      <div className="flex gap-5 items-center  mt-3" >
+      <div className="flex gap-5 i  tems-center  mt-3" >
 
         <div className="flex gap-2 items-center">
           <div className="w-3 h-3 rounded-full bg-green-300"></div> <p>jour férié</p>

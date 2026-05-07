@@ -64,7 +64,7 @@ export default function ServicesCard({ service, division_id, onToggle }) {
       <div className="w-full">
 
         <div className="flex w-full justify-between items-start relative   gap-3">
-          <p className="text-lg pt-3 px-3 font-semibold ">{service.name}</p>
+          <p className="text-lg pt-3 px-3 font-semibold capitalize">{service.name}</p>
           <button
             className="p-1 bg-sidebar rounded-none rounded-bl-sm border border-foreground/10"
             onClick={() => setmenuOpen(true)}>

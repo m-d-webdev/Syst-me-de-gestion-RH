@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button";
 import Loader1 from "@/components/Global/Loader1";
 import { AnimatePresence, motion } from "framer-motion";
 import Calendar from "@/components/ui/calendar";
-import { RefreshCcw, Wrench } from "lucide-react";
+import { MoveLeft, RefreshCcw, Wrench } from "lucide-react";
+import Link from "next/link";
 
 const page = () => {
 
@@ -197,7 +198,7 @@ const page = () => {
         <div className="w-full p-4">
             {/* <AttendanceCalendar /> */}
             <div className="flex gap-5 w-full pr-6 items-center justify-end">
-                <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-1 px-3 flex items-center gap-2 rounded-md border border-foreground/10">
+                <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
                     <RefreshCcw className="h-4 w-4" /> Actualiser
                 </button>
                 <div className="flex w-fit items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
@@ -245,7 +246,12 @@ const page = () => {
                 tableContainerClassName="min-h-none"
                 isLoading={isLoading}
             />
-            <div className="w-full  flex justify-end px-10 items-center">
+            <div className="w-full  gap-4 flex justify-end px-10 items-center">
+                <Link href={"/attendance"} className={" items-center  text-sm  flex gap-2 p-[7] font-medium px-5 bg-accent border border-foreground/15 rounded-md"}>
+
+                    <MoveLeft  className="w-4 h-4" />
+                    Retour
+                </Link>
                 <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg" className={"w-[150]"}>
                     Submit
                     {

@@ -6,6 +6,8 @@ import { LOGIN } from "@/api/Employers/Auth";
 import Loader1 from "@/components/Global/Loader1";
 import Logo from "@/components/Global/Logo";
 import { Input } from "@/components/ui/input";
+import { UseMainConext } from "@/contexts/MainContext";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 // LOGIN is passed as a prop — it accepts { email, password }
@@ -15,7 +17,11 @@ export default function LoginPage({ setAuthed }) {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const { User } = UseMainConext()
+    const Router = useRouter()
+    if (User != null) {
+        return Router.push("/")
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
