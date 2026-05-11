@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { User, Settings, LogOut } from "lucide-react";
 import { UseMainConext } from "@/contexts/MainContext";
 import { LOGOUT } from "@/api/Employers/Auth";
+import { UserPic } from "@/lib/utils";
 
 
 
@@ -70,7 +71,7 @@ const UserTopRight = () => {
     return (
         <div className="flex bg-background p-1 pr-3 border border-foreground/10 rounded-md relative gap-3 items-start justify-start">
             <div className="p-[2]  border-2 border-chart-1 rounded-full">
-                <img src="https://i.pinimg.com/1200x/e1/ab/c3/e1abc3affc8bce22b4439567c4b01d85.jpg" className="w-8 min-w-8 rounded-full object-cover h-8" alt="" />
+                <img src={UserPic()} className="w-8 min-w-8 rounded-full object-cover h-8" alt="" />
             </div>
             <div className="truncate">
 

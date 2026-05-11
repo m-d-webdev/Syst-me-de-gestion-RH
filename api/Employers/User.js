@@ -13,7 +13,7 @@ export const GET_USERS = async (params = {}) => {
 
 export const GET_USER = async ({ id }) => {
     try {
-        const res = await api.get(`/user/${id}`);
+        const res = await api.get(`/users/${id}`);
         return res.data;
     } catch (error) {
         toast.error(error?.response?.data?.message ?? "Échec du chargement de l'utilisateur");

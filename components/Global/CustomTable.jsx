@@ -133,13 +133,13 @@ const CustomTable2 = ({
                                     </Button>
                                 }
 
-                                {
+                                {/* {
                                     enableSort &&
                                     <Button size="lg" onClick={() => setSortByOpen(pv => !pv)} variant={"outline"} className={"  cursor-pointer "}>
                                         <i className="bi bi-sort-alpha-down"></i>
                                         Sort
                                     </Button>
-                                }
+                                } */}
                                 {
                                     enableDaySeleted &&
                                     <div className="flex items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
@@ -193,7 +193,7 @@ const CustomTable2 = ({
 
                         </div>
                     }
-                    
+
                     <div className={`flex  w-full ${tableContainerClassName}   flex-col ites-start justify-start`}>
 
                         <Table className="mt-6  rounded-t-2xl  ">
@@ -211,14 +211,14 @@ const CustomTable2 = ({
                                 </TableRow>
                             </TableHeader>
 
-                            <TableBody>
+                            <TableBody >
                                 <>
                                     {
                                         isLoading
                                             ?
                                             <>
                                                 {
-                                                    Array(5).fill().map(i =>
+                                                    Array(10).fill().map(i =>
                                                         <TableRow key={i} className={""}>
                                                             {
                                                                 Array(headers.length).fill().map((c, i) =>
@@ -237,45 +237,60 @@ const CustomTable2 = ({
                                             </>
                                             : <>
                                                 {
-                                                    rows.length > 0 ? (
-                                                        rows.map((r, i) => r)
-                                                    ) : (
-                                                        <TableRow>
-                                                            <TableCell
-                                                                // colSpan={columns.length}
-                                                                className="h-24 font-medium text-lg   text-center "
-                                                                colSpan={headers?.length}
-                                                            >
-                                                                {!isLoading ?
-                                                                    (
-                                                                        <div className="w-full  flex flex-col p-10 gap-4 items-center justify-center">
-                                                                            {React.isValidElement(NoResultIcon) && NoResultIcon}
-                                                                            {NoResultText ? (
-                                                                                <>
-                                                                                    <h1 className="max-w-[600] font-medium text-xl   text-center">
-                                                                                        {NoResultText}
-                                                                                    </h1>
-                                                                                    <p className="max-w-[500] font-normal text-base text-wrap  text-center mt-1">
-                                                                                        {NoResultDescription}
-                                                                                    </p>
-                                                                                </>
-                                                                            ) : (
-                                                                                <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
-                                                                                    No result
-                                                                                </h1>
-                                                                            )}
-                                                                        </div>
-                                                                    )
-                                                                    :
-                                                                    <div className="w-full  flex flex-col p-10 gap-4 items-center justify-center">
+                                                    rows.length > 0 ?
+                                                        <>
+                                                            {
+                                                                rows.map((r, i) => r)
+                                                            }
+                                                            {12 - rows.length > 0 &&
+                                                                Array(12 - rows.length).fill().map((r, i) =>
+                                                                    <TableRow className={`h-[20]`} key={i}>
+                                                                        {
+                                                                            Array(headers).fill().map((oa, asd) =>
+                                                                                <TableCell key={asd} className={""}></TableCell>
+                                                                            )
+                                                                        }
+                                                                    </TableRow >)
+                                                            }
+                                                        </>
 
-                                                                        <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
-                                                                            No result </h1>
-                                                                    </div>
-                                                                }
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
+                                                        : (
+                                                            <TableRow>
+                                                                <TableCell
+                                                                    // colSpan={columns.length}
+                                                                    className="h-24 font-medium text-lg   text-center "
+                                                                    colSpan={headers?.length}
+                                                                >
+                                                                    {!isLoading ?
+                                                                        (
+                                                                            <div className="w-full  flex flex-col p-10 gap-4 items-center justify-center">
+                                                                                {React.isValidElement(NoResultIcon) && NoResultIcon}
+                                                                                {NoResultText ? (
+                                                                                    <>
+                                                                                        <h1 className="max-w-[600] font-medium text-xl   text-center">
+                                                                                            {NoResultText}
+                                                                                        </h1>
+                                                                                        <p className="max-w-[500] font-normal text-base text-wrap  text-center mt-1">
+                                                                                            {NoResultDescription}
+                                                                                        </p>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
+                                                                                        No result
+                                                                                    </h1>
+                                                                                )}
+                                                                            </div>
+                                                                        )
+                                                                        :
+                                                                        <div className="w-full  flex flex-col p-10 gap-4 items-center justify-center">
+
+                                                                            <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
+                                                                                No result </h1>
+                                                                        </div>
+                                                                    }
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )}
                                             </>
                                     }
                                 </>

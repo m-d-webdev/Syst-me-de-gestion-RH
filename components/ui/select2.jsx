@@ -107,6 +107,7 @@ const Select2 = ({
   orderAlphabet = false,
   onChange = () => { },
   disabled = false,
+  defaultValue,
   list = [{
     value: "",
     innerText: ""
@@ -114,7 +115,13 @@ const Select2 = ({
   ...props
 }) => {
   const [menuOpen, setmenuOpen] = useState(false);
+
   const [value, setValue] = useState("");
+  useEffect(() => {
+    let innerTextforValue = list?.find(il => il.value == defaultValue)?.innerText ?? "";
+    setValue(innerTextforValue)
+  }, [])
+
   const [HovredItem, setHovredItem] = useState("");
   return (
     <div

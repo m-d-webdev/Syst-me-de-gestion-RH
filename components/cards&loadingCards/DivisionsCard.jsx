@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { DELETE_DIVISION } from "@/api/Division";
 import Link from "next/link";
 import ReadMore from "../Global/ReadMore";
+import { ServiceICON } from "@/lib/utils";
 const MenuOptions = ({ division, onClose, onUpdate }) => {
   const PageRef = useRef();
 
@@ -100,7 +101,7 @@ export default function DivisionCard({ division, onToggle }) {
         <div className="flex gap-2 mt-3 items-center ">
 
           <div className="p-1 flex gap-1 bg-sidebar items-center bg-sidebare border text-xs rounded-sm px-2 border-foreground/10">
-            <LayoutDashboard className="h-4" /> <p>{division?.servicesCount} services</p>
+            <ServiceICON className="h-4" /> <p>{division?.servicesCount} services</p>
           </div>
 
           <div className="p-1 flex gap-1 bg-sidebar items-center bg-sidebare border text-xs rounded-sm px-2 border-foreground/10">

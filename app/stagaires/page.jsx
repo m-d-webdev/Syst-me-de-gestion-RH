@@ -3,6 +3,7 @@ import { GET_USERS } from "@/api/Employers/User";
 import UsersFilter from "@/components/FilterPopups/UserFilter";
 import CustomTable2 from "@/components/Global/CustomTable"
 import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct";
+import MoreOptionsTrainer from "@/components/Popups/MoreOptionsTrainer";
 import MoreOptionsUser from "@/components/Popups/MoreOptionsUser";
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -64,12 +65,11 @@ const page = () => {
       />
       <p className="tracking-tight">Nom</p>
     </div>,
-    <p className="tracking-tight">Poste</p>,
-    <p className="tracking-tight">téléphone</p>,
+    <p className="tracking-tight">CIN</p>,
+    <p className="tracking-tight">Email</p>,
+    <p className="tracking-tight">Téléphone</p>,
     <p className="tracking-tight">Division</p>,
     <p className="tracking-tight">Service</p>,
-    <p className="tracking-tight">Grade</p>,
-    <p className="tracking-tight">statut</p>,
     <p className="tracking-tight">Action</p>,
   ];
 
@@ -85,24 +85,14 @@ const page = () => {
           {i.firstName} {i.lastName}
         </p>
       </TableCell>
-      <TableCell><p className="font-medium max-w-[120] truncate">{getRoleLabel(i.role)}</p></TableCell>
+      <TableCell><p className="font-medium max-w-[120] truncate">{"--"}</p></TableCell>
+      <TableCell><b className="font-medium">{i.email}</b></TableCell>
       <TableCell><b className="font-medium">{i.phone}</b></TableCell>
       <TableCell><p className="font-medium max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell>
       <TableCell><p className="font-medium max-w-[150] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.grade_id?.name}</p></TableCell>
-      <TableCell>
-
-        <p className={`w-fit text-sm font-medium flex items-center gap-2 p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18] font-medium  border-2 border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
-          {
-            i.isActive == true
-              ? <>Actif <i className="bi bi-check-circle"></i></>
-              : <>Inactif<i className="bi bi-x-circle"></i></>
-          }
-        </p>
-
-      </TableCell>
+      
       <TableCell className={"text-center"}>
-        <MoreOptionsUser data={i} />
+        <MoreOptionsTrainer data={i} />
       </TableCell>
     </TableRow >
   );
@@ -114,8 +104,8 @@ const page = () => {
         headers={headers}
         rows={rows}
         isLoading={isLoading}
-        hrefWhenClickAdd="/addUser"
-        pageTitle="Employés"
+        hrefWhenClickAdd="/addTraining"
+        pageTitle="Stagaires"
 
         filterPopup={
           <UsersFilter

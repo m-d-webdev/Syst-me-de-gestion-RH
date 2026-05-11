@@ -7,6 +7,7 @@ import Loader1 from "@/components/Global/Loader1";
 import { REGISTER } from "@/api/Employers/Auth";
 import { GET_DIVISIONS } from "@/api/Division";
 import { GET_SERVICES } from "@/api/Service";
+import { FetchGrads } from "@/api/Employers/User";
 const defaultValues = {
     firstName: "",
     lastName: "",
@@ -52,20 +53,8 @@ export default function RegisterUser() {
     const [listOfDivisions, setlistOfDivisions] = useState([]);
 
     const [listOfServices, setlistOfServices] = useState([]);
-    const [listOfGrades, setlistOfGrades] = useState([
-        {
-            value: "69f1c8011812965267bd637b",
-            innerText: "Technicien 3ème grade"
-        },
-        {
-            value: "69f1c8121812965267bd637c",
-            innerText: "Technicien 2ème grade"
-        },
-        {
-            value: "69f1c82a1812965267bd637e",
-            innerText: "Ingénieur 1er grade"
-        },
-    ]);
+    const [listOfGrades, setlistOfGrades] = useState();
+
     const [listOfRoles, setlistOfRoles] = useState([
         { value: "admin", innerText: "Administrateur" },
         { value: "hr_agent", innerText: "Agent RH" },
@@ -73,6 +62,7 @@ export default function RegisterUser() {
         { value: "chef_division", innerText: "Chef de division" },
         { value: "employee", innerText: "Employé" },
     ]);
+    
     const [isLoading, setIsLoading] = useState(false);
     const [LoadingServices, setLoadingServices] = useState(false);
 
@@ -80,6 +70,8 @@ export default function RegisterUser() {
 
     const handleLoadNeedDataToRegister = async () => {
         const divisionsreq = await GET_DIVISIONS();
+        let gradesRes = await FetchGrads();
+        setlistOfGrades(gradesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
 
         setlistOfDivisions(divisionsreq.data.map(e => (
             {
