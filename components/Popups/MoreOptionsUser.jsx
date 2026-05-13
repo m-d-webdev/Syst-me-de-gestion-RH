@@ -81,9 +81,6 @@ const MoreOptionsUser = ({ data }) => {
                                 <i className="bi text-base w-5 bi-clipboard-check"></i>
                                 Copier les informations
                             </button>
-                            <a target="_blank" href={decision_de_stage_url(data._id)} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
-                                Decision de stage
-                            </a>
                         </motion.div>
                     }
                 </AnimatePresence>

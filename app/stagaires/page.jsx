@@ -1,4 +1,5 @@
 "use client"
+import { GET_STAGAIRES } from "@/api/Employers/Stagiare";
 import { GET_USERS } from "@/api/Employers/User";
 import UsersFilter from "@/components/FilterPopups/UserFilter";
 import CustomTable2 from "@/components/Global/CustomTable"
@@ -46,7 +47,7 @@ const page = () => {
 
   const get_users = async () => {
     setLoading(true);
-    const res = await GET_USERS({ ...filters });
+    const res = await GET_STAGAIRES({ ...filters });
     setUsers(res.data)
     setTotalPages(res.pagination.totalPages)
     setLoading(false);
@@ -82,15 +83,15 @@ const page = () => {
         />
         <p className="max-w-[200] flex items-center gap-1  truncate">
           <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
-          {i.firstName} {i.lastName}
+          {i.name}
         </p>
       </TableCell>
-      <TableCell><p className="font-medium max-w-[120] truncate">{"--"}</p></TableCell>
+      <TableCell><p className="font-medium max-w-[120] truncate">{i.cin}</p></TableCell>
       <TableCell><b className="font-medium">{i.email}</b></TableCell>
       <TableCell><b className="font-medium">{i.phone}</b></TableCell>
       <TableCell><p className="font-medium max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell>
       <TableCell><p className="font-medium max-w-[150] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
-      
+
       <TableCell className={"text-center"}>
         <MoreOptionsTrainer data={i} />
       </TableCell>
