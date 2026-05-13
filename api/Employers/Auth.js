@@ -17,7 +17,6 @@ export const REGISTER = async ({ data }) => {
     }
 };
 
-
 export const AUTH = async () => {
     try {
         const res = await api.get('/users/auth')

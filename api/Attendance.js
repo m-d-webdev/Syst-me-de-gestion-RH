@@ -23,10 +23,10 @@ export const GET_ATTENDANCES = async ({
 };
 
 // 🔹 Get single attendance
-export const GET_ATTENDANCE = async ({ id }) => {
+export const GET_ATTENDANCE = async ({ id, data }) => {
     try {
-        
-        const res = await api.get(`/attendance/${id}`);
+
+        const res = await api.post(`/attendance/history`, { user_id: id, ...data });
         return res.data;
 
     } catch (error) {

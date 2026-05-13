@@ -1,10 +1,18 @@
-"use client"
-import CustomTable2 from "@/components/Global/CustomTable"
+"use client";
+
+
+import CustomTable2 from "@/components/Global/CustomTable";
+
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
+
 import { TableCell, TableRow } from "@/components/ui/table";
+
 import { employeesForTest, UserPic } from "@/lib/utils";
+
 import { useEffect, useState } from "react";
+
 import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct";
+
 import moment from "moment";
 import { GET_ATTENDANCES } from "@/api/Attendance";
 import { UseMainConext } from "@/contexts/MainContext";

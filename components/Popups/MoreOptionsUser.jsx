@@ -8,6 +8,7 @@ import { COPY_TEXT } from "@/lib/utils";
 import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
+import { decision_de_stage_url } from "@/api/DOCUMENTS";
 
 const MoreOptionsUser = ({ data }) => {
 
@@ -31,12 +32,6 @@ const MoreOptionsUser = ({ data }) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [menuOpen]);
-
-    const [isDeactivating, setDeactivating] = useState(false)
-    const [isFeaturing, setFeaturing] = useState(false)
-
-
-
 
     return (
         <>
@@ -73,6 +68,7 @@ const MoreOptionsUser = ({ data }) => {
                                 <ReceiptText className="stroke-1 w-5 h-5" />
                                 Détails de l’employé
                             </Link>
+
                             <Link href={`/`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi text-base w-5 bi-pen"></i>
                                 Modifier
@@ -85,10 +81,9 @@ const MoreOptionsUser = ({ data }) => {
                                 <i className="bi text-base w-5 bi-clipboard-check"></i>
                                 Copier les informations
                             </button>
-
-                            <button className="flex cursor-pointer  p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border text-destructive border-transparent hover:border-destructive/50 rounded-md hover:bg-destructive/5  items-center ">
-
-                            </button>
+                            <a target="_blank" href={decision_de_stage_url(data._id)} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                                Decision de stage
+                            </a>
                         </motion.div>
                     }
                 </AnimatePresence>

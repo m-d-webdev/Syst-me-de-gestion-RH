@@ -104,7 +104,7 @@ const page = () => {
         headers={headers}
         rows={rows}
         isLoading={isLoading}
-        hrefWhenClickAdd="/addTraining"
+        hrefWhenClickAdd="/stagaires/ajouter"
         pageTitle="Stagaires"
 
         filterPopup={
