@@ -10,6 +10,7 @@ import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { UseMainConext } from "@/contexts/MainContext";
 import { employeesForTest, getRoleLabel, UserPic } from "@/lib/utils";
+import moment from "moment";
 import { useEffect, useState } from "react";
 
 const page = () => {
@@ -69,8 +70,10 @@ const page = () => {
     <p className="tracking-tight">CIN</p>,
     <p className="tracking-tight">Email</p>,
     <p className="tracking-tight">Téléphone</p>,
-    <p className="tracking-tight">Division</p>,
     <p className="tracking-tight">Service</p>,
+    <p className="tracking-tight">Date</p>,
+    <p className="tracking-tight">Dure</p>,
+    <p className="tracking-tight">Statu</p>,
     <p className="tracking-tight">Action</p>,
   ];
 
@@ -89,8 +92,27 @@ const page = () => {
       <TableCell><p className="font-medium max-w-[120] truncate">{i.cin}</p></TableCell>
       <TableCell><b className="font-medium">{i.email}</b></TableCell>
       <TableCell><b className="font-medium">{i.phone}</b></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
+      <TableCell><p className="font-medium max-w-[200] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
+      <TableCell><p className="font-medium text-xs">{moment(i.start_date).format("DD/MM/YYYY")} a {moment(i.end_date).format("DD/MM/YYYY")}</p></TableCell>
+      <TableCell><p className="font-medium max-w-[200] truncate">{moment(i?.end_date).diff(moment(i?.start_date), 'days')} jour</p></TableCell>
+      <TableCell>
+        {
+
+          (moment().isSameOrAfter(moment(i?.start_date, "YYYY-MM-DD")) &&
+            moment().isSameOrBefore(moment(i?.end_date, "YYYY-MM-DD")))
+            ? <p className="text-sm bg-yellow-500/10 text-yellow-600 border border-yellow-500/50 font-medium w-fit p-1 px-3 rounded-md">En cours</p>
+            : <>
+              {
+                moment().isBefore(moment(i?.start_date, "YYYY-MM-DD"))
+                  ? <p className="text-sm bg-red-500/10 text-red-600 border border-red-500/50 font-medium w-fit p-1 px-3 rounded-md">Non commencé</p>
+                  : moment().isAfter(moment(i?.end_date, "YYYY-MM-DD")) && <p className="text-sm bg-green-500/10 text-green-600 border border-green-500/50 font-medium w-fit p-1 px-3 rounded-md">Terminé</p>
+              }
+
+
+            </>
+        }
+
+      </TableCell>
 
       <TableCell className={"text-center"}>
         <MoreOptionsTrainer data={i} />

@@ -8,6 +8,7 @@ import { GET_DIVISIONS } from "@/api/Division";
 import { GET_SERVICES } from "@/api/Service";
 import { FetchGrads } from "@/api/Employers/User";
 import { AJOUTER_STAGAIRE } from "@/api/Employers/Stagiare";
+import CheckBoxinput from "@/components/ui/CheckBoxinput";
 
 function SectionLabel({ children }) {
     return (
@@ -40,6 +41,7 @@ export default function RegisterUser() {
     const [form, setForm] = useState(
         {
             name: null,
+            ar_name: null,
             email: null,
             cin: null,
             phone: null,
@@ -48,6 +50,7 @@ export default function RegisterUser() {
             end_date: null,
             division_id: null,
             service_id: null,
+            gender: null,
             isActive: true,
         }
     );
@@ -145,12 +148,21 @@ export default function RegisterUser() {
                                 />
                             </FieldGroup>
                             <SectionLabel>Informations personnelles</SectionLabel>
-                            <FieldGroup label="Prénom">
+                            <FieldGroup label="Nom complet (Nom → Prénom)">
                                 <Input
                                     type="text"
                                     value={form.name}
                                     onChange={handleChange("name")}
-                                    placeholder="Prénom"
+                                    placeholder="Nom complet "
+                                />
+                            </FieldGroup>
+                            <hr className="border-gray-100 my-1" />
+                            <FieldGroup label="الاسم الكامل (النسب ← الاسم الشخصي)">
+                                <Input
+                                    type="text"
+                                    value={form.ar_name}
+                                    onChange={handleChange("ar_name")}
+                                    placeholder="الاسم الكامل"
                                 />
                             </FieldGroup>
                             <hr className="border-gray-100 my-2" />
@@ -162,7 +174,33 @@ export default function RegisterUser() {
                                     placeholder="JH0000"
                                 />
                             </FieldGroup>
+                            <hr className="border-gray-100 my-2" />
+                            <FieldGroup label={"Genre"} >
+                                <div className="flex gap-2 items-center">
 
+                                    <CheckBoxinput
+                                        checked={form.gender == "female"}
+                                        onClick={() => handleChange2("gender", "female")}
+
+                                    />
+                                    <p
+                                        onClick={() => handleChange2("gender", "female")}
+                                        className="text-sm">
+                                        Féminin
+                                    </p>
+
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <CheckBoxinput
+                                        checked={form.gender == "male"}
+                                        onClick={() => handleChange2("gender", "male")}
+                                    />
+                                    <p
+                                        onClick={() => handleChange2("gender", "male")}
+                                        className="text-sm">Masculin</p>
+                                </div>
+
+                            </FieldGroup>
                             <hr className="border-gray-100 my-5" />
 
                             {/* Contact */}
@@ -231,15 +269,16 @@ export default function RegisterUser() {
                                         <Input
                                             type="date"
                                             className="max-w-[400]"
-                                            onChange={handleChange("end_date")}
+                                            onChange={handleChange("start_date")}
                                             placeholder="Prénom"
                                         />
                                     </FieldGroup>
                                     <FieldGroup label="Date de fin">
                                         <Input
                                             type="date"
+                                            minDate={form.start_date}
                                             className="max-w-[400]"
-                                            onChange={handleChange("start_date")}
+                                            onChange={handleChange("end_date")}
                                             placeholder="Prénom"
                                         />
                                     </FieldGroup>

@@ -269,6 +269,7 @@ export default function RegisterUser() {
                                 />
                             </div>
                             <Select2
+                            orderAlphabet={true}
                                 type="text"
                                 label="Grade"
                                 icon={<i className="bi bi-mortarboard"></i>}
