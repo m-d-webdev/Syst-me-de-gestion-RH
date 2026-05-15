@@ -9,3 +9,6 @@ export const attestation_de_stage_url = (id) => {
 export const Notification_de_fin_de_stage_url = (id) => {
     return `${NEXT_PUBLIC_DOCUMENTS}/end-training/${id}`
 }
+export const engagement_de_stage_url = (id) => {
+    return `${NEXT_PUBLIC_DOCUMENTS}/engagement/${id}`
+}
