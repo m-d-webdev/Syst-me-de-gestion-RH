@@ -8,6 +8,7 @@ import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { UseMainConext } from "@/contexts/MainContext";
 import { employeesForTest, getRoleLabel, UserPic } from "@/lib/utils";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const page = () => {
@@ -80,10 +81,10 @@ const page = () => {
           checked={selections.includes(i._id)}
           onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
         />
-        <p className="max-w-[200] flex items-center gap-1  truncate">
+        <Link href={`/users/${i._id}`}  className="max-w-[200] underline flex items-center gap-1  truncate">
           <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
           {i.firstName} {i.lastName}
-        </p>
+        </Link>
       </TableCell>
       <TableCell><p className="font-medium max-w-[120] truncate">{getRoleLabel(i.role)}</p></TableCell>
       <TableCell><b className="font-medium">{i.phone}</b></TableCell>

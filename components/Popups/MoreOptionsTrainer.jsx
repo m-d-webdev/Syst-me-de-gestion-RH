@@ -71,9 +71,14 @@ const MoreOptionsTrainer = ({ data }) => {
                             className="absolute drop-shadow-xl min-w-[150] flex flex-col gap-1 bg-background top-0 right-0 z-10 p-1 shadow-sm rounded-lg"
                         >
 
-                            <a target="_blank" href={`${decision_de_stage_url(data._id)}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-2 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                            <a target="_blank" href={`${decision_de_stage_url(data._id, "fr")}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-2 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi bi-file-pdf"></i>
-                                Decision de stage
+                                Decision de stage francais
+                            </a>
+
+                            <a target="_blank" href={`${decision_de_stage_url(data._id, "ar")}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-2 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                                <i className="bi bi-file-pdf"></i>
+                                Decision de stage arabic
                             </a>
                             <a target="_blank" href={`${attestation_de_stage_url(data._id)}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-2 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i class="bi bi-file-earmark-medical"></i>

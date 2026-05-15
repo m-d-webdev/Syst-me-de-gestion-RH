@@ -61,10 +61,10 @@ const page = () => {
 
   const headers = [
     <div className="flex  pl-3 w-fit items-center justify-center gap-2">
-      <CheckBoxinput
+      {/* <CheckBoxinput
         checked={!employeesForTest.some(p => !selections.includes(p._id)) && employeesForTest.length > 0}
         onClick={handleSelectAll}
-      />
+      /> */}
       <p className="tracking-tight">Nom</p>
     </div>,
     <p className="tracking-tight">CIN</p>,
@@ -72,21 +72,22 @@ const page = () => {
     <p className="tracking-tight">Téléphone</p>,
     <p className="tracking-tight">Service</p>,
     <p className="tracking-tight">Date</p>,
-    <p className="tracking-tight">Dure</p>,
+    <p className="tracking-tight">Durée totale</p>,
+    <p className="tracking-tight">Restant</p>,
     <p className="tracking-tight">Statu</p>,
     <p className="tracking-tight">Action</p>,
   ];
 
   let rows = Users?.map((i, idx) =>
     <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/2 " : ""}`} key={idx}>
-      <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
-        <CheckBoxinput
+      <TableCell className={"flex items-center gap-1 pl-2"}>
+        {/* <CheckBoxinput
           checked={selections.includes(i._id)}
           onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
-        />
-        <p className="max-w-[200] flex items-center gap-1  truncate">
-          <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
-          {i.name}
+        /> */}
+        <img src={UserPic()} className="w-6 h-6 object-cover rounded-full" alt="" />
+        <p className="truncate max-w-[180]">
+          {i.name} adasd
         </p>
       </TableCell>
       <TableCell><p className="font-medium max-w-[120] truncate">{i.cin}</p></TableCell>
@@ -95,17 +96,21 @@ const page = () => {
       <TableCell><p className="font-medium max-w-[200] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
       <TableCell><p className="font-medium text-xs">{moment(i.start_date).format("DD/MM/YYYY")} a {moment(i.end_date).format("DD/MM/YYYY")}</p></TableCell>
       <TableCell><p className="font-medium max-w-[200] truncate">{moment(i?.end_date).diff(moment(i?.start_date), 'days')} jour</p></TableCell>
+      <TableCell className={"text-center"}>
+        <p className="text-red-800">
+          {moment(i?.end_date).diff(moment(), 'days')} jour
+        </p>
+      </TableCell>
       <TableCell>
         {
-
           (moment().isSameOrAfter(moment(i?.start_date, "YYYY-MM-DD")) &&
             moment().isSameOrBefore(moment(i?.end_date, "YYYY-MM-DD")))
-            ? <p className="text-sm bg-yellow-500/10 text-yellow-600 border border-yellow-500/50 font-medium w-fit p-1 px-3 rounded-md">En cours</p>
+            ? <p className="text-xs bg-yellow-500/10 text-yellow-600 border border-yellow-500/50 font-medium w-fit p-1 px-3 rounded-md">En cours</p>
             : <>
               {
                 moment().isBefore(moment(i?.start_date, "YYYY-MM-DD"))
-                  ? <p className="text-sm bg-red-500/10 text-red-600 border border-red-500/50 font-medium w-fit p-1 px-3 rounded-md">Non commencé</p>
-                  : moment().isAfter(moment(i?.end_date, "YYYY-MM-DD")) && <p className="text-sm bg-green-500/10 text-green-600 border border-green-500/50 font-medium w-fit p-1 px-3 rounded-md">Terminé</p>
+                  ? <p className="text-xs bg-red-500/10 text-red-600 border border-red-500/50 font-medium w-fit p-1 px-3 rounded-md">Non commencé</p>
+                  : moment().isAfter(moment(i?.end_date, "YYYY-MM-DD")) && <p className="text-xs bg-green-500/10 text-green-600 border border-green-500/50 font-medium w-fit p-1 px-3 rounded-md">Terminé</p>
               }
 
 
@@ -113,6 +118,7 @@ const page = () => {
         }
 
       </TableCell>
+
 
       <TableCell className={"text-center"}>
         <MoreOptionsTrainer data={i} />

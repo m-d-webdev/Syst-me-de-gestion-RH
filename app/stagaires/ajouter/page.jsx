@@ -128,7 +128,7 @@ export default function RegisterUser() {
                     : <div className="w-full max-w-[1200] grid  bg-background items-end  grid-cols-1 xl:grid-cols-2 p-6 gap-10">
                         <div className="w-full  rounded-2xl ">
                             <div className="bg-foreground rounded-xl px-8 py-6 flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center font-mono font-semibold text-lg text-[#1a1a2e] flex-shrink-0">
+                                <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center font-mono font-semibold text-lg text-[#1a1a2e] ">
                                     {initials}
                                 </div>
                                 <div>
