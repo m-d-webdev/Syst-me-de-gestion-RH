@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Calendar from "@/components/ui/calendar";
 import { MoveLeft, RefreshCcw, Wrench } from "lucide-react";
 import Link from "next/link";
+import TableCardItem from "@/components/cards&loadingCards/TableCard";
 
 const page = () => {
 
@@ -37,9 +38,6 @@ const page = () => {
     useEffect(() => {
         Get_USERS();
     }, []);
-
-    console.log(AttendanceChekingList[0]);
-
 
     const handleTogglePresense = (id, period) => {
         setAttendanceChekingList(pv => pv.map(ele => ele._id == id
@@ -244,11 +242,24 @@ const page = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
     return (
 
         <div className="w-full p-4">
-            {/* <AttendanceCalendar /> */}
-            <div className="flex gap-5 w-full pr-6 items-center justify-end">
+
+            <div className="flex flex-col md:flex-row md:gap-5 gap-1 w-full md:pr-6 md:items-center items-end justify-end">
                 <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
                     <RefreshCcw className="h-4 w-4" /> Actualiser
                 </button>
@@ -285,25 +296,94 @@ const page = () => {
                     </AnimatePresence>
                 </div>
             </div>
-            <CustomTable2
-                headers={headers}
-                rows={rows}
-                enableAddElem={false}
-                enableDaySeleted={false}
-                enableFilterButton={false}
-                enableSearch={false}
-                enableSort={false}
-                containerClassName={"!min-h-[200]  !pt-0 !p-0 "}
-                tableContainerClassName="min-h-none"
-                isLoading={isLoading}
-            />
-            <div className="w-full  gap-4 flex justify-end px-10 items-center">
+            {
+                !isMobile &&
+                <CustomTable2
+                    headers={headers}
+                    rows={rows}
+                    enableAddElem={false}
+                    enableDaySeleted={false}
+                    enableFilterButton={false}
+                    enableSearch={false}
+                    enableSort={false}
+                    containerClassName={"!min-h-[200]  !pt-0 !p-0 "}
+                    tableContainerClassName="min-h-none hidden md:block"
+                    isLoading={isLoading}
+                />
+            }
+            {
+                isMobile &&
+                <div className="flex mt-10 flex-col md:hidden  gap-3">
+                    {
+                        AttendanceChekingList.map(i =>
+                            <TableCardItem
+                                title={<div className="flex items-center font-semibold gap-2 text-lg "><img src={UserPic()} className="w-[30] h-[30] rounded-full" alt="" />{i.firstName} {i.lastName}</div>}
+                                entries={[
+                                    <div className="flex gap-2 items-center">C.I.N:<p className="font-me">{i.cin ?? "JB456"}</p></div>,
+                                    <div className="flex gap-2 items-center">Grade:<p className="font-me">{i.grade_id?.name}</p></div>,
+                                    <div className="flex flex-col gap-2 mt-2">
+                                        Presence:
+                                        <div className="grid grid-cols-2 gap-1">
+                                            <p
+                                                onClick={() => handleTogglePresense(i._id, "morning")}
+                                                className={`flex w-full font-semibold  gap-2 cursor-pointer rounded-l-2xl border p-2 items-center ${(i.presente_period?.includes("morning"))
+                                                    ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                            >
+                                                <CheckBoxinput
+                                                    onClick={() => handleTogglePresense(i._id, "morning")}
+                                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                    checked={i.presente_period?.includes("morning")}
+                                                />
+                                                matin
+                                            </p>
+                                            <p
+                                                onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                                className={`flex  w-full font-semibold  gap-2 cursor-pointer rounded-r-2xl border p-2 items-center ${((i.presente_period?.includes("afternoon")))
+                                                    ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                            >
+                                                <CheckBoxinput
+                                                    onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                    checked={(i.presente_period?.includes("afternoon"))}
+                                                />
+                                                après-midi
+                                            </p>
+                                        </div>
+                                    </div>,
+                                    <div className={` cursor-pointer mt-2 flex items-center justify-center gap-2 rounded-full font-medium  `}>
+                                        {
+                                            i.presente_period?.length < 2 &&
+                                            <>
+                                                <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
+                                                <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-2 w-full border border-foreground/10 rounded-xl text-center">
+
+                                                    {
+                                                        i.justification == null ?
+                                                            <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
+                                                            : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                                                    }
+                                                </label>
+                                            </>
+                                        }
+                                    </div>
+                                ]}
+                            />
+                        )
+                    }
+                </div>
+            }
+
+            <div className="w-full mt-6 gap-2 md:gap-4 flex justify-end md:px-10 items-center">
                 <Link href={"/attendance"} className={" items-center  text-sm  flex gap-2 p-[7] font-medium px-5 bg-accent border border-foreground/15 rounded-md"}>
 
                     <MoveLeft className="w-4 h-4" />
                     Retour
                 </Link>
-                <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg" className={"w-[150]"}>
+                <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg"
+                    className={"w-[200] !py-4"}
+                >
                     Submit
                     {
                         isSubmiting

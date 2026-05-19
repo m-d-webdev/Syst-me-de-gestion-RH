@@ -8,6 +8,7 @@ import { User, Settings, LogOut } from "lucide-react";
 import { UseMainConext } from "@/contexts/MainContext";
 import { LOGOUT } from "@/api/Employers/Auth";
 import { UserPic } from "@/lib/utils";
+import SwitchTheme from "./SwitchTheme";
 
 
 
@@ -55,7 +56,7 @@ function UserDropdown() {
                             <p className="text-sm mt-3  truncate flex gap-1 items-center "><i className="bi bi-building"></i>{data?.division_id?.name}</p>
                             <p className="text-sm ml-2 mt-1  truncate flex gap-1 items-center "><i className="bi bi-bezier2"></i>{data?.service_id?.name}</p>
                         </div>
-
+                        <SwitchTheme className="flex w-fit" />
                         <button onClick={LOGOUT} className="flex w-full justify-center  bg-destructive/10 border border-destructive/20 rounded-md items-center gap-2 px-3   py-2 text-red-500 hover:bg-destructive/15 cursor-pointer  duration-200 opacity-70 hover:opacity-100">
                             <LogOut size={16} /> Logout
                         </button>

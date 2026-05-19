@@ -22,7 +22,7 @@ const Header = () => {
             <SearchInput />
             <div className="flex gap-2 items-center">
                 <SwitchTheme />
-                <LangSwitcher />
+                <LangSwitcher className="" />
             </div>
             <NotificationButton />
             <UserTopRight />

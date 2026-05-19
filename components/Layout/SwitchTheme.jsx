@@ -3,10 +3,10 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 
 
-export default function SwitchTheme() {
-    
+export default function SwitchTheme({ className = "md:flex hidden" }) {
+
     return (
-        <div className="flex bg-background border border-foreground/10 rounded-md p-1 w-fit  items-center gap-2">
+        <div className={`${className} bg-background border border-foreground/10 rounded-md p-1 w-fit  items-center gap-2`}>
             {/* Light */}
             <button
                 onClick={() => setTheme("light")}

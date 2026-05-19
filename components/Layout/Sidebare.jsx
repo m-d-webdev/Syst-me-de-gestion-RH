@@ -29,16 +29,7 @@ const ListLinks = ({ isOpen = true }) => {
 const BackgroundBlack = () => {
     const { setSideBareVisible } = UseMainConext()
 
-    const pathname = usePathname();
 
-    const [isOK, setOk] = useState(false);
-
-
-    useEffect(() => {
-        if (!isOK) return;
-
-        setSideBareVisible(false);
-    }, [pathname]);
     return (
         <div onClick={() => setSideBareVisible(false)} className={` fixed left-0 z-2 md:z-auto md:relative   h-screen w-screen bg-foreground/20 overflow-auto "}`}>
         </div>
@@ -70,7 +61,7 @@ const Sidebare = ({ }) => {
             <AnimatePresence>
 
                 {isMobile ?
-                    isSideBareVisible &
+                    isSideBareVisible &&
                     <div className={` fixed left-0 z-10 md:z-auto md:relative  duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
                         <div className="w-full flex justify-center items-center">
 
@@ -87,7 +78,7 @@ const Sidebare = ({ }) => {
                         <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
                     </div>
                     :
-                    <div className={` fixed left-0 z-10 md:z-auto md:relative  duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
+                    <div className={`duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
                         <div className="w-full flex justify-center items-center">
 
                             <Logo isOpen={isOpen} />

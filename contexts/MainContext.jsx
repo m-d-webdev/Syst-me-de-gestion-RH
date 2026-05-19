@@ -3,6 +3,7 @@ import { AUTH } from '@/api/Employers/Auth';
 import LoginPage from '@/app/login/page';
 import { initTheme } from '@/components/Layout/SwitchTheme';
 import CheckingAuth from '@/components/Popups/CheckingAuth';
+import { usePathname } from 'next/navigation';
 import React, { useContext, createContext, useState, useEffect } from 'react'
 import { Toaster } from "react-hot-toast";
 
@@ -14,7 +15,7 @@ const MainContext = ({ children }) => {
     const [isAuthed, setAuthed] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const [User, setUser] = useState(null);
-    const [isSideBareVisible, setSideBareVisible] = useState(true)
+    const [isSideBareVisible, setSideBareVisible] = useState(false)
     const CheckAuth = async () => {
         setLoading(true);
         const res = await AUTH();
@@ -30,6 +31,10 @@ const MainContext = ({ children }) => {
 
         setLoading(false);
     };
+    const pathname = usePathname();
+    useEffect(() => {
+        setSideBareVisible(false);
+    }, [pathname]);
 
     useEffect(() => {
         CheckAuth();
