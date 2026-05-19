@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Link from "next/link";
-import { ReceiptText, Trash2 } from "lucide-react";
+import { File, ReceiptText, Trash2 } from "lucide-react";
 import { COPY_TEXT } from "@/lib/utils";
 import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
-import { decision_de_stage_url } from "@/api/DOCUMENTS";
+import { decision_de_stage_url, demande_explication } from "@/api/DOCUMENTS";
 
 const MoreOptionsUser = ({ data }) => {
 
@@ -64,6 +64,10 @@ const MoreOptionsUser = ({ data }) => {
                             ref={PageRef}
                             className="absolute drop-shadow-xl min-w-[150] flex flex-col gap-1 bg-background top-0 right-0 z-10 p-1 shadow-sm rounded-lg"
                         >
+                            <a target="_blank" href={demande_explication(data._id)} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                                <File />
+                                demande d'explication
+                            </a>
                             <Link href={`/users/${data._id}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <ReceiptText className="stroke-1 w-5 h-5" />
                                 Détails de l’employé

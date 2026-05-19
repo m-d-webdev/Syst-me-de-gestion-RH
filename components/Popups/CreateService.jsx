@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import Loader1 from "../Global/Loader1";
 import { CREATE_SERVICE } from "@/api/Service";
 
-const EMPTY_FORM = { name: "", description: "", isActive: true };
+const EMPTY_FORM = { name: "", ar_name: "", description: "", isActive: true };
 
 export default function CreateServiceForm({ onUpdate, division_id, onClose }) {
     const [form, setForm] = useState({ ...EMPTY_FORM, division_id });
@@ -86,6 +86,17 @@ export default function CreateServiceForm({ onUpdate, division_id, onClose }) {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Nom de le service"
+                className={``}
+            />
+            <Input
+                label={"الاسم بالعربية"}
+                id="ar_name"
+                name="ar_name"
+                type="text"
+                parentclassName="bg-sidebar "
+                value={form.ar_name}
+                onChange={handleChange}
+                placeholder="اسم القسم"
                 className={``}
             />
 

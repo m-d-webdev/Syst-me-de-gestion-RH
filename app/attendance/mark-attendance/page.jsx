@@ -4,7 +4,7 @@
 import CustomTable2 from "@/components/Global/CustomTable"
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { employeesForTest, UserPic } from "@/lib/utils";
+import { UserPic } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { GET_USERS } from "@/api/Employers/User";
 import { CREATE_ATTENDANCE } from "@/api/Attendance";
@@ -21,9 +21,6 @@ const page = () => {
 
     const [isLoading, setLoading] = useState(true);
     const [isSubmiting, setisSubmiting] = useState(false);
-    const [division_id, setDivision_id] = useState(null);
-    const [service_id, setService_id] = useState(null);
-    const [services, setServices] = useState([]);
     const [calendarOpen, setCalendarOpen] = useState(false);
     const [AttendanceChekingList, setAttendanceChekingList] = useState([]);
     const [date, setDate] = useState(moment().format("D-M-yyy"));
@@ -33,7 +30,7 @@ const page = () => {
     const Get_USERS = async () => {
         setLoading(true);
         const res = await GET_USERS();
-        setAttendanceChekingList(res?.data?.map(u => ({ ...u, presente: true, justification: null })))
+        setAttendanceChekingList(res?.data?.map(u => ({ ...u, presente: true, presente_period: ["morning", "afternoon"], justification: null })))
         setLoading(false);
     };
 
@@ -41,28 +38,55 @@ const page = () => {
         Get_USERS();
     }, []);
 
+    console.log(AttendanceChekingList[0]);
 
-    const handleTogglePresense = id => {
-        setAttendanceChekingList(pv => pv.map(ele => ele._id == id ? { ...ele, presente: !ele.presente } : ele));
+
+    const handleTogglePresense = (id, period) => {
+        setAttendanceChekingList(pv => pv.map(ele => ele._id == id
+            ? {
+                ...ele,
+                presente_period: ele.presente_period?.includes(period)
+                    ? ele.presente_period?.filter(pver =>
+                        pver != period
+                    )
+                    : [...ele.presente_period, period]
+            }
+            : ele
+        ));
+
+
     }
 
 
     const handleUploadFIles = (e, id) => {
         const file = e.target.files[0];
         if (!file) return;
-        setAttendanceChekingList(pv => pv.map(ele => ele._id == id ? { ...ele, justification: file } : ele));
+        setAttendanceChekingList(pv =>
+            pv.map(ele =>
+                ele._id === id ?
+                    { ...ele, justification: file }
+                    : ele
+            )
+        );
     };
+
+    // ==============================
 
     const handleSUBMIT = async () => {
         setisSubmiting(true);
-
         try {
             for (const u of AttendanceChekingList) {
-                if (u.presente === false && u.justification != null) {
+                if (u.presente_period.length < 2 && u.justification != null) {
+
                     const formData = new FormData();
                     formData.append("user_id", u._id);
                     formData.append("date", date);
-                    formData.append("isPresente", u.presente);
+
+                    formData.append(
+                        "presente_periods",
+                        JSON.stringify(u.presente_period)
+                    );
+
                     formData.append("justification", u.justification);
                     const res = await CREATE_ATTENDANCE(formData);
 
@@ -71,12 +95,11 @@ const page = () => {
                     };
 
                 } else {
-                    const { _id, presente } = u;
-
+                    const { _id, presente_period } = u;
                     const res = await CREATE_ATTENDANCE({
                         user_id: _id,
                         date,
-                        isPresente: presente,
+                        presente_periods: JSON.stringify(presente_period)
                     });
 
                     if (res.data) {
@@ -99,7 +122,13 @@ const page = () => {
 
     const handleRefresh = () => {
         setSubmitedList([])
-        setAttendanceChekingList(pv => pv.map(ele => ({ ...ele, presente: true, justification: null })));
+        setAttendanceChekingList(pv =>
+            pv.map(
+                ele => (
+                    { ...ele, presente: true, presente_period: ["morning", "afternoon"], justification: null }
+                )
+            )
+        );
     }
     // ====================
     const headers = [
@@ -147,31 +176,53 @@ const page = () => {
             <TableCell><p className="">{i.cin ?? "---"}</p></TableCell>
             <TableCell><p className="">{i.grade_id?.name}</p></TableCell>
             <TableCell>
-                <div onClick={() => handleTogglePresense(i._id)} className={`w-fit px-2 cursor-pointer flex items-center gap-2 rounded-full font-medium border p-1 ${i.presente == true ? "bg-green-500/10 text-green-500 border-green-500" : "bg-red-500/20 text-red-500 border-red-500"} `}>
-                    {
-                        i.presente == true
-                            ? <>Présent <CheckBoxinput onClick={() => handleTogglePresense(i._id)} labelClassName={"peer-checked:text-white peer-checked:bg-green-500"} checked={true} /> </>
-                            : <>Absent <CheckBoxinput onClick={() => handleTogglePresense(i._id)} labelClassName={"text-red-500 border-red-500 bg-red-500"} checked={false} /></>
-                    }
+                <div className="flex gap-2 items-center "></div>
+                <div className={`w-fit flex   items-center `}>
+                    <p
+                        onClick={() => handleTogglePresense(i._id, "morning")}
+                        className={`flex font-semibold  gap-2 cursor-pointer rounded-l-2xl border p-2 items-center ${(i.presente_period?.includes("morning"))
+                            ? "bg-green-500/5 border-green-500/20 text-green-600"
+                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                    >
+                        <CheckBoxinput
+                            onClick={() => handleTogglePresense(i._id, "morning")}
+                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                            checked={i.presente_period?.includes("morning")}
+                        />
+                        matin
+                    </p>
+                    <p
+                        onClick={() => handleTogglePresense(i._id, "afternoon")}
+                        className={`flex font-semibold  gap-2 cursor-pointer rounded-r-2xl border p-2 items-center ${((i.presente_period?.includes("afternoon")))
+                            ? "bg-green-500/5 border-green-500/20 text-green-600"
+                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                    >
+                        <CheckBoxinput
+                            onClick={() => handleTogglePresense(i._id, "afternoon")}
+                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                            checked={(i.presente_period?.includes("afternoon"))}
+                        />
+                        après-midi
+                    </p>
                 </div>
+
 
             </TableCell>
             <TableCell>
-                <div className={`!w-fit cursor-pointer flex items-center gap-2 rounded-full font-medium border  bg-sidebar  border-foreground/15 `}>
+                <div className={`!w-fit cursor-pointer flex items-center gap-2 rounded-full font-medium border  bg-sidebar  border-foreground/20 `}>
                     {
-                        i.presente == false &&
+                        i.presente_period?.length < 2 &&
                         <>
+                            <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
+                            <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-1">
 
-                            <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id="inputforjustification" />
-                            <label htmlFor="inputforjustification" className="  px-3 p-1">
-
-                                {i.justification == null ?
-                                    <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
-                                    : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                                {
+                                    i.justification == null ?
+                                        <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
+                                        : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
                                 }
                             </label>
                         </>
-
                     }
                 </div>
 
@@ -249,7 +300,7 @@ const page = () => {
             <div className="w-full  gap-4 flex justify-end px-10 items-center">
                 <Link href={"/attendance"} className={" items-center  text-sm  flex gap-2 p-[7] font-medium px-5 bg-accent border border-foreground/15 rounded-md"}>
 
-                    <MoveLeft  className="w-4 h-4" />
+                    <MoveLeft className="w-4 h-4" />
                     Retour
                 </Link>
                 <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg" className={"w-[150]"}>

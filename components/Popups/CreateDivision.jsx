@@ -7,7 +7,7 @@ import { CREATE_DIVISION } from "@/api/Division";
 import toast from "react-hot-toast";
 import Loader1 from "../Global/Loader1";
 
-const EMPTY_FORM = { name: "", description: "", isActive: true };
+const EMPTY_FORM = { name: "", ar_name: "", description: "", isActive: true };
 
 export default function CreateDivisionForm({ onUpdate, onClose }) {
     const [form, setForm] = useState(EMPTY_FORM);
@@ -83,6 +83,18 @@ export default function CreateDivisionForm({ onUpdate, onClose }) {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Nom de la division"
+                className={``}
+            />
+            <div className="mt-2"></div>
+            <Input
+                label={"الاسم بالعربية"}
+                id="ar_name"
+                name="ar_name"
+                type="text"
+                parentclassName="bg-sidebar "
+                value={form.ar_name}
+                onChange={handleChange}
+                placeholder="اسم القسم"
                 className={``}
             />
 

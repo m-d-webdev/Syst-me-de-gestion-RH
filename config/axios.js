@@ -1,6 +1,16 @@
+
+import { isLocalFun } from "@/lib/utils";
 import axios from "axios";
 import Cookies from "js-cookie";
-const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+
+
+const isLocal = isLocalFun();
+let BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+
+
+if (isLocal) {
+    BACKEND_URL = process.env.BACKEND_URL_LOCAL || process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL
+}
 
 const api = axios.create({
     baseURL: BACKEND_URL,

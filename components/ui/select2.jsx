@@ -1,22 +1,27 @@
 "use client"
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Search } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react"
+import { Input } from "./input";
 
 const SelectMenu = ({
   onClose,
   list = [],
   orderAlphabet,
   onChange,
+  enableSearch,
   overedItem = () => { }
 }) => {
   const PageRef = useRef();
+  const PageRef2 = useRef();
   const handleClickOutside = (e) => {
     if (!PageRef.current?.contains(e.target)) {
-      onClose();
+      // onClose();
     }
   };
+
+  const [searchQuery, setSearch] = useState("");
 
 
   const handleOptionFirstLetter = (e) => {
@@ -29,7 +34,7 @@ const SelectMenu = ({
       })
       ?.findIndex(l => l?.innerText.toLowerCase()?.startsWith(key.toLowerCase()))
 
-    PageRef.current?.scrollTo({
+    PageRef2.current?.scrollTo({
       top: Index * 40,
       left: 0,
       behavior: "smooth"
@@ -46,6 +51,9 @@ const SelectMenu = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+
+
   return (
     <motion.div
       onMouseLeave={() => overedItem("")}
@@ -62,37 +70,43 @@ const SelectMenu = ({
         height: list.length > 0 ? 200 : 50
       }}
       ref={PageRef}
-
       className="w-full p-3 flex flex-col  overflow-auto rounded-b-md z-[10] max-h-[200] left-0 absolute top-full bg-background drop-shadow-md "
     >
       {
-        list &&
-        list
-          .sort((a, b) => {
-            return orderAlphabet
-              ? a.innerText.localeCompare(b.innerText)
-              : 0
-          })
-          .map((option, i) =>
-
-            <p
-              key={i}
-              onClick={
-                () => {
-                  onChange(option)
-                }
-              }
-              onMouseOver={() => overedItem(option.innerText)}
-              className="hover2 tracking-tight duration-150 hover:font-medium first-letter:uppercase lowercase p-2 px-3 cursor-pointer hover:bg-accent/50"
-            >
-              {option.innerText}
-            </p>
-
-          )
+        enableSearch &&
+        <Input
+          parentclassName=" !p-1 "
+          className={"top-0 p-0"}
+          onChange={v => setSearch(v.target.value)}
+          icon={<Search className="w-5 h-5 " />}
+        />
       }
-      {
-        list.length == 0 && <p className="w-full opacity-60  text-sm">Aucune donnée disponible</p>
-      }
+      <div ref={PageRef2} className={`flex ${enableSearch ? "max-h-[90%]" : ""}  overflow-auto scrl_none flex-col`}>
+
+        {list &&
+          list
+            .filter((option) =>
+              enableSearch && searchQuery
+                ? option.innerText.toLowerCase().includes(searchQuery.toLowerCase())
+                : true
+            )
+            .sort((a, b) =>
+              orderAlphabet ? a.innerText.localeCompare(b.innerText) : 0
+            )
+            .map((option, i) => (
+              <p
+                key={i}
+                onClick={() => onChange(option)}
+                onMouseOver={() => overedItem(option.innerText)}
+                className="hover2 tracking-tight duration-150 hover:font-medium first-letter:uppercase lowercase p-2 px-3 cursor-pointer hover:bg-accent/50"
+              >
+                {option.innerText}
+              </p>
+            ))}
+        {
+          list.length == 0 && <p className="w-full opacity-60  text-sm">Aucune donnée disponible</p>
+        }
+      </div>
     </motion.div>
   )
 }
@@ -107,6 +121,7 @@ const Select2 = ({
   orderAlphabet = false,
   onChange = () => { },
   disabled = false,
+  enableSearch = false,
   defaultValue,
   list = [{
     value: "",
@@ -114,18 +129,39 @@ const Select2 = ({
   }],
   ...props
 }) => {
+
   const [menuOpen, setmenuOpen] = useState(false);
 
+
+  const PageRef = useRef();
+  const handleClickOutside = (e) => {
+    if (!PageRef.current?.contains(e.target)) {
+      setmenuOpen(pv => !pv)
+    }
+  };
+
+
   const [value, setValue] = useState("");
+
   useEffect(() => {
+    if (!menuOpen) return;
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen])
+  useEffect(() => {
+
     let innerTextforValue = list?.find(il => il.value == defaultValue)?.innerText ?? "";
-    setValue(innerTextforValue)
+    setValue(innerTextforValue);
   }, [])
 
   const [HovredItem, setHovredItem] = useState("");
   return (
     <div
-      onClick={() => setmenuOpen(pv => disabled ? false : !pv)}
+      ref={PageRef}
+      onClick={() => setmenuOpen(pv => disabled ? false : true)}
       className={`${parentClassName} px-9 tracking-tight  flex items-center  bg-sidebar/30 ${icon ? "max-w-[380] w-full" : "max-w-[350]"} h-[50]  relative border border-foreground/10  ${menuOpen ? "rounded-t-[8]" : "rounded-[8]"} p-1 px-3 `}>
       {
         disabled &&
@@ -167,6 +203,7 @@ const Select2 = ({
           <SelectMenu
             orderAlphabet={orderAlphabet}
             list={list}
+            enableSearch={enableSearch}
             overedItem={v => {
               setHovredItem(v)
             }}

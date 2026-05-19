@@ -146,7 +146,7 @@ export default function EmployeePopup({ id }) {
                                 </div>
                             </div>
 
-                            <div className="mt-10 gap-5 grid px-5 grid-cols-3">
+                            <div className="mt-10 gap-5 grid px-5 grid-cols-2">
                                 <div className="text-sm  w-full tracking-tight flex flex-col opacity-80 items-center justify-start text-center gap-2  p-2 px-2 bg-chart-1/5 rounded-md border border-chart-1/50">
                                     <div className="flex text-chart-1 items-end gap-2 w-full  ">
                                         <i className="bi bi-buildings text-xl"  ></i>
@@ -169,6 +169,15 @@ export default function EmployeePopup({ id }) {
                                     </div>
                                     <span className="">
                                         {userData.grade_id?.name ?? "Aucun"}
+                                    </span>
+                                </div>
+                                <div className="text-sm  w-full tracking-tight flex flex-col opacity-80 items-center justify-start text-center gap-2  p-2 px-2 bg-chart-1/5 rounded-md border border-chart-1/50">
+                                    <div className="flex text-chart-1  items-end gap-2 w-full  ">
+                                        <BriefcaseBusiness className="w-6 !min-w-6 min stroke-1  h-6 " />
+                                        <p>lieu de travail</p>
+                                    </div>
+                                    <span className="">
+                                        {userData.office_id?.name ?? "Aucun"}
                                     </span>
                                 </div>
                             </div>

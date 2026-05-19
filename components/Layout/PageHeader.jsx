@@ -16,7 +16,7 @@ export default function PageHeader() {
     const pageIcon = currentPage?.iconOn || "";
 
     return (
-        <div className="bg-background rounded-md px-3 p-1 border border-foreground/10 ">
+        <div className="hidden md:block bg-background rounded-md px-3 p-1 border border-foreground/10 ">
 
             <motion.div
                 key={pageName}

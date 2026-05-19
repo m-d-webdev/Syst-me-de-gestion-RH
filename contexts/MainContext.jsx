@@ -14,7 +14,7 @@ const MainContext = ({ children }) => {
     const [isAuthed, setAuthed] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const [User, setUser] = useState(null);
-
+    const [isSideBareVisible, setSideBareVisible] = useState(true)
     const CheckAuth = async () => {
         setLoading(true);
         const res = await AUTH();
@@ -37,7 +37,11 @@ const MainContext = ({ children }) => {
     }, []);
 
 
-    return <MainContextOb.Provider value={{ User }}>
+    return <MainContextOb.Provider value={{
+        User,
+        isSideBareVisible,
+        setSideBareVisible
+    }}>
 
         {
             isLoading ?
@@ -80,8 +84,10 @@ const MainContext = ({ children }) => {
 }
 
 export const UseMainConext = () => {
-    const { User } = useContext(MainContextOb);
-    return { User };
+    const { User, isSideBareVisible, setSideBareVisible } = useContext(MainContextOb);
+    return {
+        User, isSideBareVisible, setSideBareVisible
+    };
 
 }
 

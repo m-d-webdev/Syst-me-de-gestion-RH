@@ -103,18 +103,27 @@ const page = () => {
       <TableCell>{i?.user_id?.grade_id?.name}</TableCell>
 
       <TableCell>
-        <p className={`w-fit font-medium flex gap-2 text-sm  p-1 ${i.isPresente == true ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "} border rounded-2xl px-2`}>
-          {/* {i.isPresente == true ? <i className="bi bi-check-circle"></i> : <i className="bi bi-x-circle"></i>} */}
+        <p className={`w-fit font-medium flex gap-2 text-sm  p-1 ${i.presente_periods?.length == 2 ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "} border rounded-2xl px-2`}>
           {
-            i.isPresente == true
-              ? <>Présent <i className="bi bi-check2-circle"></i></>
-              : <>Absent <i className="bi bi-x-circle"></i></>
+            i.presente_periods.length == 2
+              ? <>Présent toute la journée<i className="bi bi-check2-circle"></i></>
+              : <>
+                {
+                  i.presente_periods.length == 0
+                    ? <>Absent toute la journée <i className="bi bi-x-circle"></i> </>
+                    : <>
+                      {i.presente_periods[0] == "morning" && <>Absent Après-midi</>}
+                      {i.presente_periods[0] == "afternoon" && <>Absent Matin</>}
+
+                    </>
+                }
+              </>
           }
         </p>
       </TableCell>
       <TableCell>
         {
-          i.isPresente == false ?
+          i.presente_periods?.length < 2 ?
             <p className={`w-fit flex  items-center gap-1 text-sm  p-1 ${i.justification != null ? "bg-green-100/10 text-[#009e18] font-medium border-green-500" : "bg-red-100/10 text-[#d40000] font-semibold border-[2px] border-red-400 "} border rounded-2xl px-2`}>
               {
                 i.justification != null

@@ -87,3 +87,13 @@ export const FetchGrads = async () => {
         return error.message;
     }
 };
+
+export const FetchOffices = async () => {
+    try {
+        const res = await api.get(`/getOffices`);
+        return res.data;
+    } catch (error) {
+        toast.error(error?.response?.data?.message ?? "Échec du chargement de l'Offices");
+        return error.message;
+    }
+};

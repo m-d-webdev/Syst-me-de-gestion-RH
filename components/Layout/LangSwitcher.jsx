@@ -45,7 +45,7 @@ export default function LangSwitcher() {
                 className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background  text-sm font-medium cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
             >
                 <span>{active.flag}</span>
-                <span className="w-18">{active.label}</span>
+                <span className="w-18 hidden md:block">{active.label}</span>
                 <motion.svg
                     animate={{ rotate: open ? 180 : 0 }}
                     transition={{ duration: 0.2 }}

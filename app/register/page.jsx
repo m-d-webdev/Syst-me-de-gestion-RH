@@ -7,19 +7,11 @@ import Loader1 from "@/components/Global/Loader1";
 import { REGISTER } from "@/api/Employers/Auth";
 import { GET_DIVISIONS } from "@/api/Division";
 import { GET_SERVICES } from "@/api/Service";
-import { FetchGrads } from "@/api/Employers/User";
-const defaultValues = {
-    firstName: "",
-    lastName: "",
-    email: "@gmail.com",
-    password: "",
-    phone: "+2126",
-    division_id: "",
-    service_id: "",
-    grade_id: "",
-    role: "user",
-    isActive: true,
-};
+import { FetchGrads, FetchOffices } from "@/api/Employers/User";
+import { MapPinned } from "lucide-react";
+
+
+
 function SectionLabel({ children }) {
     return (
         <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400 mb-3 mt-6 first:mt-0">
@@ -62,16 +54,23 @@ export default function RegisterUser() {
         { value: "chef_division", innerText: "Chef de division" },
         { value: "employee", innerText: "Employé" },
     ]);
-    
+
+    const [listOfOffice, setlistOfOffice] = useState([]);
+
     const [isLoading, setIsLoading] = useState(false);
     const [LoadingServices, setLoadingServices] = useState(false);
 
     const [isLoadingExistingRalted, setLoadingExistingRalted] = useState(true)
 
     const handleLoadNeedDataToRegister = async () => {
+        setLoadingExistingRalted(true);
+
         const divisionsreq = await GET_DIVISIONS();
         let gradesRes = await FetchGrads();
         setlistOfGrades(gradesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
+
+        let OfficesRes = await FetchOffices();
+        setlistOfOffice(OfficesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
 
         setlistOfDivisions(divisionsreq.data.map(e => (
             {
@@ -120,7 +119,6 @@ export default function RegisterUser() {
         setIsLoading(true)
         const res = await REGISTER({ data: form });
         if (res.success) {
-
             window.location.reload();
 
         }
@@ -162,6 +160,24 @@ export default function RegisterUser() {
                                 value={form.lastName}
                                 onChange={handleChange("lastName")}
                                 placeholder="Nom"
+                            />
+                        </FieldGroup>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <FieldGroup label="الاسم الشخصي">
+                            <Input
+                                type="text"
+                                value={form.ar_firstName}
+                                onChange={handleChange("ar_firstName")}
+                                placeholder="الاسم الشخصي"
+                            />
+                        </FieldGroup>
+                        <FieldGroup label="الاسم العائلي">
+                            <Input
+                                type="text"
+                                value={form.ar_lastName}
+                                onChange={handleChange("ar_lastName")}
+                                placeholder="الاسم العائلي"
                             />
                         </FieldGroup>
                     </div>
@@ -228,58 +244,74 @@ export default function RegisterUser() {
 
                         {/* Organisation */}
                         <SectionLabel>Organisation</SectionLabel>
-                        <div className="flex flex-col gap-4">
-                            <Select2
-                                type="text"
-                                label="Role"
-                                icon={<i className="bi bi-person"></i>}
-                                list={listOfRoles}
-                                onChange={v => handleChange2("role", v)}
-                                parentClassName=" bg-sidebar/30"
-                                placeholder="ObjectId de la division"
-                            />
-                            <Select2
-                                type="text"
-                                label="Division"
-                                icon={<i className="bi bi-building"></i>}
-                                list={listOfDivisions}
-                                onChange={v => {
-                                    handleChange2("division_id", v);
-                                    HandleGetServices({ division_id: v });
-                                }
-                                }
-                                className="font-mono text-xs"
-                                placeholder="ObjectId de la division"
-                            />
-                            <div className="w-full relative">
-                                {
-                                    LoadingServices &&
-                                    <div className="w-full absolute z-[2] h-full flex justify-center items-center"><Loader1 className="before:border-foreground" /> </div>
-                                }
+                        {
+                            isLoadingExistingRalted
+                                ? <Loader1 />
+                                : <div className="flex flex-col gap-4">
+                                    <Select2
+                                        type="text"
+                                        label="Role"
+                                        icon={<i className="bi bi-person"></i>}
+                                        list={listOfRoles}
+                                        onChange={v => handleChange2("role", v)}
+                                        parentClassName=" bg-sidebar/30"
+                                        placeholder="ObjectId de la division"
+                                    />
+                                    <Select2
+                                        type="text"
+                                        label="Division"
+                                        icon={<i className="bi bi-building"></i>}
+                                        list={listOfDivisions}
+                                        onChange={v => {
+                                            handleChange2("division_id", v);
+                                            HandleGetServices({ division_id: v });
+                                        }
+                                        }
+                                        className="font-mono text-xs"
+                                        placeholder="ObjectId de la division"
+                                    />
+                                    <div className="w-full relative">
+                                        {
+                                            LoadingServices &&
+                                            <div className="w-full absolute z-[2] h-full flex justify-center items-center"><Loader1 className="before:border-foreground" /> </div>
+                                        }
 
-                                <Select2
-                                    disabled={form.role == "chef_division"}
-                                    type="text"
-                                    label="Service"
-                                    icon={<i className="bi bi-align-top"></i>}
-                                    list={listOfServices}
-                                    onChange={v => handleChange2("service_id", v)}
-                                    className="font-mono text-xs"
-                                    placeholder="ObjectId de la division"
-                                />
-                            </div>
-                            <Select2
-                            orderAlphabet={true}
-                                type="text"
-                                label="Grade"
-                                icon={<i className="bi bi-mortarboard"></i>}
-                                list={listOfGrades}
-                                onChange={v => handleChange2("grade_id", v)}
-                                className="font-mono text-xs"
-                                placeholder="ObjectId de la division"
-                            />
+                                        <Select2
+                                            disabled={form.role == "chef_division"}
+                                            type="text"
+                                            label="Service"
+                                            icon={<i className="bi bi-align-top"></i>}
+                                            list={listOfServices}
+                                            onChange={v => handleChange2("service_id", v)}
+                                            className="font-mono text-xs"
+                                            placeholder="ObjectId de la division"
+                                        />
+                                    </div>
+                                    <Select2
+                                        orderAlphabet={true}
+                                        type="text"
+                                        label="Grade"
+                                        icon={<i className="bi bi-mortarboard"></i>}
+                                        list={listOfGrades}
+                                        onChange={v => handleChange2("grade_id", v)}
+                                        className="font-mono text-xs"
+                                        placeholder="ObjectId de la division"
+                                    />
+                                    <Select2
+                                        orderAlphabet={true}
+                                        type="text"
+                                        label="lieu de travail"
+                                        icon={<MapPinned className="w-4 h-4" />}
+                                        list={listOfOffice}
+                                        onChange={v => handleChange2("office_id", v)}
+                                        className="font-mono text-xs"
+                                        enableSearch={true}
+                                        placeholder="lieu de travail"
+                                    />
 
-                        </div>
+                                </div>
+                        }
+
 
                         <hr className="border-gray-100 my-5" />
 

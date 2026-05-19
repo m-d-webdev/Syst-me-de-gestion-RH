@@ -4,7 +4,9 @@ import Link from "next/link";
 import Logo from "../Global/Logo"
 import { sidebarLinks } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { UseMainConext } from "@/contexts/MainContext";
 
 const ListLinks = ({ isOpen = true }) => {
     const pathname = usePathname();
@@ -24,27 +26,90 @@ const ListLinks = ({ isOpen = true }) => {
 }
 
 
+const BackgroundBlack = () => {
+    const { setSideBareVisible } = UseMainConext()
+
+    const pathname = usePathname();
+
+    const [isOK, setOk] = useState(false);
+
+
+    useEffect(() => {
+        if (!isOK) return;
+
+        setSideBareVisible(false);
+    }, [pathname]);
+    return (
+        <div onClick={() => setSideBareVisible(false)} className={` fixed left-0 z-2 md:z-auto md:relative   h-screen w-screen bg-foreground/20 overflow-auto "}`}>
+        </div>
+    )
+}
+
 const Sidebare = ({ }) => {
     const [isOpen, setOpen] = useState(true)
+    const { isSideBareVisible, setSideBareVisible } = UseMainConext()
     const handleChaneOpen = () => {
         setOpen(pv => !pv)
     }
-    return (
-        <div className={` relative duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
-            <div className="w-full flex justify-center items-center">
+    const [isMobile, setIsMobile] = useState(false);
 
-                <Logo isOpen={isOpen} />
-            </div>
-            <ListLinks isOpen={isOpen} />
-            <Link target="_blank" href={"/report-problem"} className="w-full text-sm mt-7 p-2 bg-accent rounded-md border border-foreground/20 flex items-center justify-center gap-2">
-                <i className="bi text-md bi-headset"></i>
-                {
-                    isOpen &&
-                    <p className="duration-200">Signaler problème</p>
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+
+
+    return (
+        <>
+            <AnimatePresence>
+
+                {isMobile ?
+                    isSideBareVisible &
+                    <div className={` fixed left-0 z-10 md:z-auto md:relative  duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
+                        <div className="w-full flex justify-center items-center">
+
+                            <Logo isOpen={isOpen} />
+                        </div>
+                        <ListLinks isOpen={isOpen} />
+                        <Link target="_blank" href={"/report-problem"} className="w-full text-sm mt-7 p-2 bg-accent rounded-md border border-foreground/20 flex items-center justify-center gap-2">
+                            <i className="bi text-md bi-headset"></i>
+                            {
+                                isOpen &&
+                                <p className="duration-200">Signaler problème</p>
+                            }
+                        </Link>
+                        <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
+                    </div>
+                    :
+                    <div className={` fixed left-0 z-10 md:z-auto md:relative  duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
+                        <div className="w-full flex justify-center items-center">
+
+                            <Logo isOpen={isOpen} />
+                        </div>
+                        <ListLinks isOpen={isOpen} />
+                        <Link target="_blank" href={"/report-problem"} className="w-full text-sm mt-7 p-2 bg-accent rounded-md border border-foreground/20 flex items-center justify-center gap-2">
+                            <i className="bi text-md bi-headset"></i>
+                            {
+                                isOpen &&
+                                <p className="duration-200">Signaler problème</p>
+                            }
+                        </Link>
+                        <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
+                    </div>
                 }
-            </Link>
-            <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
-        </div>
+            </AnimatePresence>
+            {
+                isSideBareVisible && isMobile &&
+                <BackgroundBlack />
+            }
+        </>
+
     )
 }
 

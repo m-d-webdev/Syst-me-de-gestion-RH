@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Plus, Search, Wrench } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Search, Wrench } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -65,6 +65,7 @@ const CustomTable2 = ({
     try {
 
         const [search, setsearch] = useState(originalSearch);
+
         useEffect(() => {
             if (!search || search == "") {
                 if (originalSearch != null && originalSearch != "") {
@@ -80,12 +81,21 @@ const CustomTable2 = ({
                 clearTimeout(t)
             }
         }, [search]);
+
         // FOR THE CHANGING DAY CALENDAR -------------
         const CalendarDayRef = useRef();
         const [calendarOpen, setCalendarOpen] = useState(false)
         const handleClickOutsideCalendar = (e) => {
             if (!CalendarDayRef.current?.contains(e.target)) {
                 setCalendarOpen(false)
+            }
+        };
+        const changesDay = (e = true) => {
+            if (e == true) {
+                setDay(moment(day, "D-M-yyyy").add(1, 'days').format("D-M-yyyy"))
+            }
+            else {
+                setDay(moment(day, "D-M-yyyy").subtract(1, 'days').format("D-M-yyyy"))
             }
         };
 
@@ -143,14 +153,29 @@ const CustomTable2 = ({
                                 {
                                     enableDaySeleted &&
                                     <div className="flex items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
+                                        <button
+                                            className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
+                                            onClick={() => changesDay(false)}
+                                        >
+                                            <ChevronLeft className="w-5 h-5 stroke-1" />
+                                        </button>
                                         <p className="font-medium min-w-[200] flex gap-3  ">
                                             <i className="bi bi-calendar-range"></i>
-                                            <span className="text-chart-3"> {moment(day, "D-M-yyyy").format("dddd DD/MM/YYYY")}</span>
+                                            <span className="text-chart-3">{moment(day, "D-M-yyyy").format("dddd DD/MM/YYYY")}</span>
                                         </p>
+
+                                        <button
+                                            className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
+                                            onClick={() => changesDay(true)}
+                                        >
+                                            <ChevronRight className="w-5 h-5 stroke-1" />
+                                        </button>
                                         <button
                                             className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
                                             onClick={() => setCalendarOpen(true)}
-                                        ><Wrench className="w-5 h-5 stroke-1" /></button>
+                                        >
+                                            <Wrench className="w-5 h-5 stroke-1" />
+                                        </button>
                                         <AnimatePresence>
                                             {calendarOpen &&
                                                 <motion.div

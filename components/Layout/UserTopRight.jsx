@@ -34,8 +34,8 @@ function UserDropdown() {
             {/* Avatar button */}
             <button
                 onClick={() => setOpen(!open)}
-                className="mt-1 ml-2 text-chart-1 cursor-pointer p-1 bg-accent rounded-full border border-foreground/10">
-                <ChevronDown className="w-4 h-4" />
+                className="md:mt-1 md:ml-2  text-chart-1 absolute md:relative w-full h-full top-0 right-0  cursor-pointer p-1 md:bg-accent rounded-full md:border border-foreground/10">
+                <ChevronDown className="w-4 hidden md:block h-4" />
             </button>
             {/* Dropdown */}
             <AnimatePresence>
@@ -69,11 +69,11 @@ const UserTopRight = () => {
     const { User } = UseMainConext();
 
     return (
-        <div className="flex bg-background p-1 pr-3 border border-foreground/10 rounded-md relative gap-3 items-start justify-start">
+        <div className="flex md:bg-background p-1 md:pr-3 md:border border-foreground/10 rounded-md relative md:gap-3 items-start justify-start">
             <div className="p-[2]  border-2 border-chart-1 rounded-full">
-                <img src={UserPic()} className="w-8 min-w-8 rounded-full object-cover h-8" alt="" />
+                <img src={UserPic()} className="md:w-8 w-6 md:min-w-8 min-w-6 rounded-full object-cover md:h-8 h-6" alt="" />
             </div>
-            <div className="truncate">
+            <div className="truncate hidden md:block">
 
                 <h2 className="text-sm truncate tracking-tight font-medium text-nowrap ">{User?.firstName} {User?.lastName}</h2>
                 <p className="text-xs opacity-70 tracking-tight">{User?.grade_id?.name}</p>
