@@ -50,13 +50,6 @@ const DocumentsPopup = ({ _id, onClose }) => {
                 Notification de fin de stage
             </a>
             <a
-                target="_blank" href={`${Notification_de_fin_de_stage_url(_id)}`}
-                className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
-            >
-                <i class="bi text-3xl bi-file-earmark-medical"></i>
-                Notification de fin de stage
-            </a>
-            <a
                 target="_blank" href={`${engagement_de_stage_url(_id)}`}
                 className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
             >

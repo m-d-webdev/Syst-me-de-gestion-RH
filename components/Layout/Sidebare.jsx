@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { UseMainConext } from "@/contexts/MainContext";
+import { SquareChevronLeft, SquareChevronRight } from "lucide-react";
 
 const ListLinks = ({ isOpen = true }) => {
     const pathname = usePathname();
@@ -36,7 +37,7 @@ const BackgroundBlack = () => {
     )
 }
 
-const Sidebare = ({ }) => {
+const Sidebare = () => {
     const [isOpen, setOpen] = useState(true)
     const { isSideBareVisible, setSideBareVisible } = UseMainConext()
     const handleChaneOpen = () => {
@@ -92,6 +93,17 @@ const Sidebare = ({ }) => {
                             }
                         </Link>
                         <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
+
+                        <div className="w-full flex items-end justify-end mt-10">
+
+                            <button onClick={handleChaneOpen} className="p-2 border border-foreground/15 rounded-md bg-accent">
+                                {
+                                    isOpen
+                                        ? <SquareChevronLeft className="w-5 h-5 stroke-1" />
+                                        : <SquareChevronRight className="w-5 h-5 stroke-1" />
+                                }
+                            </button>
+                        </div>
                     </div>
                 }
             </AnimatePresence>

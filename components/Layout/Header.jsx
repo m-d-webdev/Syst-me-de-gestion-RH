@@ -12,7 +12,7 @@ import { UseMainConext } from "@/contexts/MainContext"
 const Header = () => {
     const { setSideBareVisible } = UseMainConext()
     return (
-        <div className=" flex items-center gap-1  p-1 justify-between md:px-5 px-2 w-full  ">
+        <div className=" flex items-center gap-1  p-1 justify-between  px-2 w-full  ">
             <button onClick={() => setSideBareVisible(true)} className="flex p-2 bg-background border border-foreground/20 rounded-md md:hidden">
                 <Menu className="w-5 h-5" />
             </button>

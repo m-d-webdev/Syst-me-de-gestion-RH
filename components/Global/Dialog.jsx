@@ -54,7 +54,7 @@ const Dialog = ({
         <div style={{
             // zIndex: "990",
         }}
-            onClick={handleClickOutside} className='fixed z-[20] overflow-auto inset-0 p-4  bg-foreground/20 top-0 left-0 w-screen h-screen flex items-center justify-center'>
+            onClick={handleClickOutside} className='fixed z-[20] backdrop-blur-sm overflow-auto inset-0 p-4  bg-foreground/40 top-0 left-0 w-screen h-screen flex items-center justify-center'>
 
             <AnimatePresence>
                 {

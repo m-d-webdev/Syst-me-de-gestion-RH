@@ -4,7 +4,7 @@ import { GET_USERS } from "@/api/Employers/User";
 import CustomTable2 from "@/components/Global/CustomTable"
 import CheckBoxinput from "@/components/ui/CheckBoxinput";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { employeesForTest, getRoleLabel } from "@/lib/utils";
+import { employeesForTest, getRoleLabel, UserPic } from "@/lib/utils";
 import { ChevronRight, Home, MoveRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -95,7 +95,7 @@ const EmloyeesInAService = ({ service_id }) => {
                     onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
                 />
                 <p className="max-w-[200] flex items-center gap-1  truncate">
-                    <img src={"https://i.pinimg.com/736x/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"} className="w-7 h-7 object-cover rounded-full mr-1" alt="" />
+                    <img src={UserPic()} className="w-7 h-7 object-cover rounded-full mr-1" alt="" />
                     {i.firstName} {i.lastName}
                 </p>
             </TableCell>
@@ -104,7 +104,7 @@ const EmloyeesInAService = ({ service_id }) => {
             <TableCell>{getRoleLabel(i.role)}</TableCell>
             <TableCell>{i?.grade_id?.name}</TableCell>
             <TableCell>
-                <p className={`w-fit text-sm font-medium flex items-center gap-1 px-2 p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+                <p className={`w-fit text-sm font-medium flex items-center gap-1 px-2 p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18] border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border-2 rounded-2xl px-2`}>
                     {i.isActive == true ? <>Actif <i className="bi bi-check-circle"></i></> : <><i className="bi bi-x-circle"></i> Inactif</>}
                 </p>
             </TableCell>
