@@ -77,7 +77,7 @@ export default function EmployeePopup({ id }) {
     }, [])
     const Router = useRouter()
     return (
-        <Dialog backWhenClose={true} containerClassName="!p-0 !min-h-[450] !bg-background  md:w-[700]" >
+        <Dialog backWhenClose={true} containerClassName="!p-0 !min-h-[450] !bg-background  md:min-w-[700]" >
             {/* Actions */}
             {
                 Loading ?

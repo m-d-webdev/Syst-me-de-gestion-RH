@@ -140,7 +140,16 @@ export default function TaskModal({ task, defaultStatus, onClose, onSave, WillAs
               className="w-full bg-accent border border-foreground/15 rounded-xl px-3.5 py-2.5 text-[13px] placeholder-slate-600 focus:outline-none focus:border-violet-500/60  transition-all resize-none"
             />
           </div>
+          <div className="flex w-full mt-3">
+            <Select2
+              label='Assigné à'
+              icon={<User className='w-4 h-4' />}
+              parentClassName={"w-full !h-[45] !bg-accent max-w-none px-0"}
+              onChange={(e) => set('assignedTo', e)}
+              list={WillAssignedTo.map(u => ({ innerText: `${u.firstName} ${u.lastName}`, value: u._id }))}
+            />
 
+          </div>
           {/* Status + Priority row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -239,17 +248,7 @@ export default function TaskModal({ task, defaultStatus, onClose, onSave, WillAs
             </div>
           </div>
         </div>
-        <div className="flex w-full px-3 mt-3">
 
-          <Select2
-            label='Assigné à'
-            icon={<User className='w-4 h-4' />}
-            parentClassName={"w-full"}
-            onChange={(e) => set('assignedTo', e)}
-            list={WillAssignedTo.map(u => ({ innerText: `${u.firstName} ${u.lastName}`, value: u._id }))}
-          />
-
-        </div>
         {/* Footer */}
         <div className="flex items-center justify-end gap-2.5 px-5 py-4 border-t border-white/[0.06]">
           <button

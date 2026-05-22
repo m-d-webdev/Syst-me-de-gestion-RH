@@ -34,7 +34,7 @@ export const CREATE_USER = async ({ data }) => {
 
 export const UPDATE_USER = async ({ id, data }) => {
     try {
-        const res = await api.put(`/user/${id}`, data);
+        const res = await api.put(`/users/${id}`, data);
         toast.success("Utilisateur mis à jour avec succès");
         return res.data;
     } catch (error) {
@@ -45,7 +45,7 @@ export const UPDATE_USER = async ({ id, data }) => {
 
 export const DELETE_USER = async ({ id }) => {
     try {
-        const res = await api.delete(`/user/${id}`);
+        const res = await api.delete(`/users/${id}`);
         toast.success("Utilisateur supprimé avec succès");
         return res.data;
     } catch (error) {

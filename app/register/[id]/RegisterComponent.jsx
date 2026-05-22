@@ -7,7 +7,7 @@ import Loader1 from "@/components/Global/Loader1";
 import { REGISTER } from "@/api/Employers/Auth";
 import { GET_DIVISIONS } from "@/api/Division";
 import { GET_SERVICES } from "@/api/Service";
-import { FetchGrads, FetchOffices } from "@/api/Employers/User";
+import { FetchGrads, FetchOffices, GET_USER, UPDATE_USER } from "@/api/Employers/User";
 import { MapPinned } from "lucide-react";
 
 
@@ -20,9 +20,9 @@ function SectionLabel({ children }) {
     );
 }
 
-function FieldGroup({dir="ltr", label, children, hint }) {
+function FieldGroup({ label, children, hint }) {
     return (
-        <div  dir={dir} className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-gray-500">{label}</label>
             {children}
             {hint && <span className="font-mono text-[11px] text-gray-400">{hint}</span>}
@@ -39,14 +39,11 @@ function Input({ className = "", ...props }) {
     );
 }
 
-export default function RegisterUser() {
+export default function UpdateDataComponent({ id }) {
     const [form, setForm] = useState({});
-
     const [listOfDivisions, setlistOfDivisions] = useState([]);
-
     const [listOfServices, setlistOfServices] = useState([]);
     const [listOfGrades, setlistOfGrades] = useState();
-
     const [listOfRoles, setlistOfRoles] = useState([
         { value: "admin", innerText: "Administrateur" },
         { value: "hr_agent", innerText: "Agent RH" },
@@ -54,34 +51,41 @@ export default function RegisterUser() {
         { value: "chef_division", innerText: "Chef de division" },
         { value: "employee", innerText: "Employé" },
     ]);
-
     const [listOfOffice, setlistOfOffice] = useState([]);
-
     const [isLoading, setIsLoading] = useState(false);
     const [LoadingServices, setLoadingServices] = useState(false);
-
     const [isLoadingExistingRalted, setLoadingExistingRalted] = useState(true)
+    const [UserData, setUserData] = useState(null)
+    const [isLoading0, setLoading0] = useState(true)
+
+
+    // ----------------
+    const GET_USER_DATA = async () => {
+        const res = await GET_USER({ id });
+        setUserData(res.data)
+        setLoading0(false)
+        setForm({ ...res.data })
+    }
 
     const handleLoadNeedDataToRegister = async () => {
         setLoadingExistingRalted(true);
 
         const divisionsreq = await GET_DIVISIONS();
         let gradesRes = await FetchGrads();
-        setlistOfGrades(gradesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
+        setlistOfGrades(gradesRes?.data?.map(element => ({ innerText: element.ar_name, value: element._id })))
 
         let OfficesRes = await FetchOffices();
-        setlistOfOffice(OfficesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
+        setlistOfOffice(OfficesRes?.data?.map(element => ({ innerText: element.ar_name, value: element._id })))
 
         setlistOfDivisions(divisionsreq.data.map(e => (
             {
                 value: e._id,
-                innerText: e.name
+                innerText: e.ar_name
             }
         )));
 
         setLoadingExistingRalted(false)
     };
-
     const HandleGetServices = async ({ division_id }) => {
         setLoadingServices(true);
 
@@ -92,58 +96,58 @@ export default function RegisterUser() {
         setlistOfServices(res.data?.map(e => (
             {
                 value: e._id,
-                innerText: e.name
+                innerText: e.ar_name
             }
         )));
 
 
         setLoadingServices(false)
 
-    }
+    };
+
+
     useEffect(() => {
-        handleLoadNeedDataToRegister()
-    }, [])
+
+        handleLoadNeedDataToRegister();
+        GET_USER_DATA();
+
+    }, []);
 
 
     const handleChange = (field) => (e) => {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         setForm((prev) => ({ ...prev, [field]: value }));
     };
-
     const handleChange2 = (key, v) => {
         setForm((prev) => ({ ...prev, [key]: v }));
     };
-
     const handleSubmit = async () => {
-        console.log("Submitting:", form);
         setIsLoading(true)
-        const res = await REGISTER({ data: form });
-        if (res.success) {
-            window.location.reload();
-
-        }
+        const res = await UPDATE_USER({ id, data: form });
         setIsLoading(false)
-        // alert("User registered!\n" + JSON.stringify(form, null, 2));
     };
-
     const initials = `${form.firstName?.[0] ?? ""}${form.lastName?.[0] ?? ""}`.toUpperCase();
-    const inputCls =
-        "rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 placeholder:text-gray-300";
 
-    const selectCls =
-        "rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 appearance-none cursor-pointer";
+
 
     return (
         <div className="flex w-full  justify-center items-center ">
-
-            <div className="w-full max-w-[1200] grid  bg-background items-start  grid-cols-1 xl:grid-cols-2 p-6 gap-10">
+            {
+                isLoading0 &&
+                <div className="w-screen h-screen fixed top-0 right-0 flex justify-center items-center">
+                    <div className="w-[300] h-[300] flex justify-center items-center">
+                        <Loader1 />
+                    </div>
+                </div>
+            }
+            <div className="w-full max-w-[1200] grid  bg-background items-end  grid-cols-1 xl:grid-cols-2 p-6 gap-10">
                 <div className="w-full  rounded-2xl ">
                     <div className="bg-foreground rounded-xl px-8 py-6 flex items-center gap-4">
                         <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center font-mono font-semibold text-lg text-[#1a1a2e] flex-shrink-0">
                             {initials}
                         </div>
                         <div>
-                            <h2 className="text-background text-xl font-semibold tracking-tight">Créer un nouvel utilisateur</h2>
+                            <h2 className="text-background text-xl font-semibold tracking-tight">Mettre à jour un utilisateur</h2>
                             <p className="text-background/50 text-sm mt-0.5">Remplissez les champs ci-dessous pour créer le compte</p>
                         </div>
                     </div>
@@ -168,8 +172,8 @@ export default function RegisterUser() {
                             />
                         </FieldGroup>
                     </div>
-                    <div className="grid  mt-3 grid-cols-2 gap-3">
-                        <FieldGroup dir={"rtl"}  label="الاسم الشخصي">
+                    <div className="grid grid-cols-2 gap-3">
+                        <FieldGroup label="الاسم الشخصي">
                             <Input
                                 type="text"
                                 value={form.ar_firstName}
@@ -177,10 +181,9 @@ export default function RegisterUser() {
                                 placeholder="الاسم الشخصي"
                             />
                         </FieldGroup>
-                        <FieldGroup dir={"rtl"} label="الاسم العائلي">
+                        <FieldGroup label="الاسم العائلي">
                             <Input
                                 type="text"
-                                
                                 value={form.ar_lastName}
                                 onChange={handleChange("ar_lastName")}
                                 placeholder="الاسم العائلي"
@@ -190,7 +193,7 @@ export default function RegisterUser() {
 
 
 
-                    <hr className="border-gray-100 my-3" />
+                    <hr className="border-gray-100 my-5" />
 
                     {/* Contact */}
                     <SectionLabel>Contact</SectionLabel>
@@ -203,12 +206,6 @@ export default function RegisterUser() {
                                 placeholder="Adresse e-mail"
                             />
                         </FieldGroup>
-
-                        <FieldGroup label="CIN">
-                            <input className={inputCls} placeholder="AB123456" maxLength={10}
-                                value={form.cin} onChange={handleChange("cin")} />
-                        </FieldGroup>
-
                         <FieldGroup label="Numéro de téléphone">
                             <Input
                                 type="tel"
@@ -217,33 +214,44 @@ export default function RegisterUser() {
                                 placeholder="+212600000000"
                             />
                         </FieldGroup>
+                    </div>
 
-                        <hr className="border-gray-100 " />
+                    <hr className="border-gray-100 my-5" />
 
-                        {/* Security */}
-                        <SectionLabel>Sécurité</SectionLabel>
-                        <FieldGroup label="Mot de passe (hash bcrypt)">
+                    {/* Security */}
+                    <SectionLabel>Sécurité</SectionLabel>
+                    <FieldGroup label="Mot de passe (hash bcrypt)">
 
-                            <div className="flex w-full gap-2 items-center">
+                        <div className="flex w-full gap-2 items-center">
 
-                                <Input
-                                    type="text"
-                                    value={form.password}
-                                    onChange={handleChange("password")}
-                                    className="font-mono text-xs tracking-wide"
-                                    placeholder="$2b$12$..."
-                                />
-                                <button
-                                    onClick={() =>
-                                        setForm((prev) => ({ ...prev, "password": generateTempPassword() }))
+                            <Input
+                                type="text"
+                                value={form.password}
+                                onChange={handleChange("password")}
+                                className="font-mono text-xs tracking-wide"
+                                placeholder="$2b$12$..."
+                            />
+                            <button
+                                onClick={() =>
+                                    setForm((prev) => ({ ...prev, "password": generateTempPassword() }))
 
-                                    }
-                                    className="bg-chart-1 flex text-nowrap gap-2 items-center p-2 rounded-md text-sm opacity-60 hover:opacity-100 text-white">
-                                    <i className="bi bi-gear"></i>
-                                    auto-généré
-                                </button>
-                            </div>
-                        </FieldGroup>
+                                }
+                                className="bg-chart-1 flex text-nowrap gap-2 items-center p-2 rounded-md text-sm opacity-60 hover:opacity-100 text-white">
+                                <i className="bi bi-gear"></i>
+                                auto-généré
+                            </button>
+                        </div>
+                    </FieldGroup>
+
+                </div>
+                <div className="w-full">
+                    {/* Body */}
+                    <div className="px-8 py-6">
+
+
+                        <hr className="border-gray-100 my-5" />
+
+                        {/* Organisation */}
                         <SectionLabel>Organisation</SectionLabel>
                         {
                             isLoadingExistingRalted
@@ -296,7 +304,6 @@ export default function RegisterUser() {
                                         list={listOfGrades}
                                         onChange={v => handleChange2("grade_id", v)}
                                         className="font-mono text-xs"
-                                        parentClassName="!h-[42]"
                                         placeholder="ObjectId de la division"
                                     />
                                     <Select2
@@ -313,80 +320,9 @@ export default function RegisterUser() {
 
                                 </div>
                         }
-                    </div>
 
 
-
-                </div>
-                <div className="w-full ">
-                    {/* Body */}
-                    <div className="px-8 gap-5 flex flex-col  ">
-
-
-                        <hr className="border-none my-12" />
-
-                        {/* Organisation */}
-
-
-
-                        <FieldGroup label="PPR">
-                            <input className={inputCls} placeholder="0000000"
-                                value={form.ppr} onChange={handleChange("ppr")} />
-                        </FieldGroup>
-
-
-                        <FieldGroup label="Date de naissance">
-                            <input className={inputCls} type="date"
-                                value={form.birthDate} onChange={handleChange("birthDate")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="Ville">
-                            <input className={inputCls} placeholder="Agadir"
-                                value={form.city} onChange={handleChange("city")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="Date de recrutement">
-                            <input className={inputCls} type="date"
-                                value={form.recurementDate} onChange={handleChange("recurementDate")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="Échelon">
-                            <input className={inputCls} type="number" min={6} max={11} placeholder="9"
-                                value={form.echel} onChange={handleChange("echel")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="N° d'immatriculation">
-                            <input className={inputCls} placeholder="000000000"
-                                value={form.numero_immatriculation} onChange={handleChange("numero_immatriculation")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="Sexe">
-                            <select className={selectCls}
-                                value={form.gender} onChange={handleChange("gender")}>
-                                <option value="">— Sélectionner —</option>
-                                <option value="M">Masculin</option>
-                                <option value="F">Féminin</option>
-                            </select>
-                        </FieldGroup>
-
-                        <FieldGroup label="Range">
-                            <input
-                                className={inputCls}
-                                placeholder="Technicien spécialisé"
-                                value={form.rank}
-                                onChange={handleChange("rank")} />
-
-                        </FieldGroup>
-
-                        <FieldGroup label="Spécialité" hint="Ex : Génie civil, Ingénierie électrique…">
-                            <input className={inputCls} placeholder="Génie civil"
-                                value={form.specialite} onChange={handleChange("specialite")} />
-                        </FieldGroup>
-
-                        <FieldGroup label="Diplôme" hint="Intitulé complet du diplôme obtenu">
-                            <input className={inputCls} placeholder="Technicien spécialisé en génie civil"
-                                value={form.diplome} onChange={handleChange("diplome")} />
-                        </FieldGroup>
+                        <hr className="border-gray-100 my-5" />
 
                         {/* Account status */}
                         <SectionLabel>Statut du compte</SectionLabel>
@@ -422,7 +358,7 @@ export default function RegisterUser() {
                                     ? <Loader1 className="" />
                                     : <i className="bi bi-check-circle"></i>
                             }
-                            Créer l'utilisateur
+                            Mettre à jour l'utilisateur
 
                         </button>
                     </div>

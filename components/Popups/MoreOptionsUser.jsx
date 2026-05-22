@@ -9,8 +9,9 @@ import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
 import { decision_de_stage_url, demande_explication } from "@/api/DOCUMENTS";
+import { DELETE_USER } from "@/api/Employers/User";
 
-const MoreOptionsUser = ({ data }) => {
+const MoreOptionsUser = ({ data,onDelete }) => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [UserDataOpen, setUserDataOpen] = useState(false);
@@ -33,6 +34,13 @@ const MoreOptionsUser = ({ data }) => {
         };
     }, [menuOpen]);
 
+    const handleDelet = async () => {
+        setDeleting(true)
+        await DELETE_USER({ id: data._id })
+        setDeleting(false);
+        setMenuOpen(false)
+        onDelete()
+    }
     return (
         <>
             <div className="relative">
@@ -73,7 +81,7 @@ const MoreOptionsUser = ({ data }) => {
                                 Détails de l’employé
                             </Link>
 
-                            <Link href={`/`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                            <Link href={`/register/${data._id}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi text-base w-5 bi-pen"></i>
                                 Modifier
                             </Link>
@@ -84,6 +92,14 @@ const MoreOptionsUser = ({ data }) => {
                             <button onClick={() => COPY_TEXT(JSON.stringify(data))} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi text-base w-5 bi-clipboard-check"></i>
                                 Copier les informations
+                            </button>
+                            <button onClick={handleDelet} className="flex gap-2  text-red-500 bg-red-500/15 border border-red-500/600 p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-semibold  rounded-md hover:bg-primary-foreground items-center ">
+                                {
+                                    isDeleting
+                                        ? <Loader1 className="before:border-red-500" wh="w-[15] h-[15]" />
+                                        : <i className="bi bi-trash"></i>
+                                }
+                                Supprimer
                             </button>
                         </motion.div>
                     }

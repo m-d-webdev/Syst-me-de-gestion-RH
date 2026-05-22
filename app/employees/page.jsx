@@ -67,7 +67,7 @@ const page = () => {
     </div>,
     <p className="tracking-tight">Poste</p>,
     <p className="tracking-tight">téléphone</p>,
-    <p className="tracking-tight">Division</p>,
+    // <p className="tracking-tight">Division</p>,
     <p className="tracking-tight">Service</p>,
     <p className="tracking-tight">Grade</p>,
     <p className="tracking-tight">statut</p>,
@@ -76,24 +76,24 @@ const page = () => {
 
   let rows = Users?.map((i, idx) =>
     <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/2 " : ""}`} key={idx}>
-      <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
+      <TableCell className={"flex truncate  items-center gap-2  pl-5"}>
         <CheckBoxinput
           checked={selections.includes(i._id)}
           onClick={() => setselections(pv => pv.includes(i._id) ? pv.filter(item => item != i._id) : [...pv, i._id])}
         />
-        <Link href={`/users/${i._id}`}  className="max-w-[200] underline flex items-center gap-1  truncate">
+        <Link href={`/users/${i._id}`} className="max-w-[200] underline flex items-center gap-1  truncate">
           <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
           {i.firstName} {i.lastName}
         </Link>
       </TableCell>
-      <TableCell><p className="font-medium max-w-[120] truncate">{getRoleLabel(i.role)}</p></TableCell>
-      <TableCell><b className="font-medium">{i.phone}</b></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
-      <TableCell><p className="font-medium max-w-[150] truncate">{i?.grade_id?.name}</p></TableCell>
+      <TableCell><p className=" max-w-[120] truncate">{getRoleLabel(i.role)}</p></TableCell>
+      <TableCell><p className="">{i.phone}</p></TableCell>
+      {/* <TableCell><p className=" max-w-[150] truncate">{i?.division_id?.name ?? "--"}</p></TableCell> */}
+      <TableCell><p className=" max-w-[180] truncate">{i?.service_id?.name ?? "--"}</p></TableCell>
+      <TableCell><p className=" max-w-[180] truncate">{i?.grade_id?.name}</p></TableCell>
       <TableCell>
 
-        <p className={`w-fit text-sm font-medium flex items-center gap-2 p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18] font-medium  border-2 border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
+        <p className={`w-fit text-sm  flex items-center gap-2 p-1 ${i.isActive == true ? "bg-green-100/50 text-[#009e18]   border-2 border-green-500" : "bg-red-100/50 text-[#d40000] border-red-400 "} border rounded-2xl px-2`}>
           {
             i.isActive == true
               ? <>Actif <i className="bi bi-check-circle"></i></>
@@ -103,7 +103,9 @@ const page = () => {
 
       </TableCell>
       <TableCell className={"text-center"}>
-        <MoreOptionsUser data={i} />
+        <MoreOptionsUser
+          onDelete={() => get_users()}
+          data={i} />
       </TableCell>
     </TableRow >
   );
@@ -115,14 +117,15 @@ const page = () => {
         headers={headers}
         rows={rows}
         isLoading={isLoading}
-        hrefWhenClickAdd="/addUser"
+        hrefWhenClickAdd="/register"
         pageTitle="Employés"
 
         filterPopup={
           <UsersFilter
             filters={filters}
             setFilters={setFilters}
-            onClose={() => setFitlerOpen(false)} />
+            onClose={() => setFitlerOpen(false)}
+          />
         }
 
         setFitlerOpen={setFitlerOpen}

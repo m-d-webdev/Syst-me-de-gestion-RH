@@ -136,7 +136,7 @@ const Select2 = ({
   const PageRef = useRef();
   const handleClickOutside = (e) => {
     if (!PageRef.current?.contains(e.target)) {
-      setmenuOpen(pv => !pv)
+      setmenuOpen(false)
     }
   };
 
@@ -145,7 +145,7 @@ const Select2 = ({
 
   useEffect(() => {
     if (!menuOpen) return;
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -161,7 +161,7 @@ const Select2 = ({
   return (
     <div
       ref={PageRef}
-      onClick={() => setmenuOpen(pv => disabled ? false : true)}
+      onClick={() => setmenuOpen(pv => disabled ? false : enableSearch ? true : !pv)}
       className={`${parentClassName} px-9 tracking-tight  flex items-center  bg-sidebar/30 ${icon ? "max-w-[380] w-full" : "max-w-[350]"} h-[50]  relative border border-foreground/10  ${menuOpen ? "rounded-t-[8]" : "rounded-[8]"} p-1 px-3 `}>
       {
         disabled &&
@@ -175,7 +175,7 @@ const Select2 = ({
         }
       </div>
 
-      <label className={`px-3 text-sm ${(menuOpen || (value != "" && value != null)) ? "translate-y-[-10px]  opacity-60" : ""}  ${icon ? "ltr:left-6 rtl:right-6" : ""}    capitalize absolute duration-150 font-medium tracking-tight       `}>{label}</label>
+      <label className={`px-3  ${(menuOpen || (value != "" && value != null)) ? "translate-y-[-10px] text-xs opacity-60" : "text-sm"}  ${icon ? "ltr:left-6 rtl:right-6" : ""}    capitalize absolute duration-150 font-medium tracking-tight       `}>{label}</label>
 
       <div className="max-w-full   overflow-hidden">
 
@@ -210,6 +210,7 @@ const Select2 = ({
             onChange={v => {
               setValue(v.innerText)
               setHovredItem("")
+              // setmenuOpen(false)
               onChange(v.value)
             }}
             onClose={() => {
