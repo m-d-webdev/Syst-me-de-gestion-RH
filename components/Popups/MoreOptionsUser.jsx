@@ -8,11 +8,14 @@ import { COPY_TEXT } from "@/lib/utils";
 import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
-import { decision_de_stage_url, demande_explication } from "@/api/DOCUMENTS";
+import { decision_de_stage_url, demande_explication, exporter_data } from "@/api/DOCUMENTS";
 import { DELETE_USER } from "@/api/Employers/User";
+import SecureButton from "../SecureButton";
+import Dialog from "../Global/Dialog";
 
-const MoreOptionsUser = ({ data,onDelete }) => {
+const MoreOptionsUser = ({ data, onDelete }) => {
 
+    const [isDocumentMenuOpen, setDocumentMenuOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [UserDataOpen, setUserDataOpen] = useState(false);
     const [isDeleting, setDeleting] = useState(false);
@@ -72,10 +75,15 @@ const MoreOptionsUser = ({ data,onDelete }) => {
                             ref={PageRef}
                             className="absolute drop-shadow-xl min-w-[150] flex flex-col gap-1 bg-background top-0 right-0 z-10 p-1 shadow-sm rounded-lg"
                         >
-                            <a target="_blank" href={demande_explication(data._id)} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
-                                <File />
-                                demande d'explication
-                            </a>
+                            <button
+                                className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-2 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+                                onClick={() => setDocumentMenuOpen(true)}
+                            >
+                                <i className="bi bi-file-earmark-text"></i>
+                                Documents
+                            </button>
+
+
                             <Link href={`/users/${data._id}`} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <ReceiptText className="stroke-1 w-5 h-5" />
                                 Détails de l’employé
@@ -85,10 +93,7 @@ const MoreOptionsUser = ({ data,onDelete }) => {
                                 <i className="bi text-base w-5 bi-pen"></i>
                                 Modifier
                             </Link>
-                            <button onClick={() => COPY_TEXT(JSON.stringify(data))} className="flex p-1 opacity-70 gap-2 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
-                                <i className="bi bi-file-earmark-arrow-up"></i>
-                                Exporter
-                            </button>
+
                             <button onClick={() => COPY_TEXT(JSON.stringify(data))} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi text-base w-5 bi-clipboard-check"></i>
                                 Copier les informations
@@ -109,8 +114,48 @@ const MoreOptionsUser = ({ data,onDelete }) => {
             {UserDataOpen &&
                 <EmployeePopup onClose={() => setUserDataOpen(false)} employee={data} />
             }
+            {
+                isDocumentMenuOpen &&
+                <DocumentsPopup _id={data._id} onClose={() => setDocumentMenuOpen(false)} />
+            }
         </>
     )
 }
 
+
+const DocumentsPopup = ({ _id, onClose }) => {
+
+    return (
+        <Dialog
+            onClose={onClose}
+            closeIfClickOutside={true}
+            containerClassName="grid w-[500] min-h-[300] !bg-sidebare gap-3 grid-cols-3 p-4 py-8">
+            <div className="w-full col-span-3 text-left mb-4 text-lg font-semibold">
+                Documents
+            </div>
+            <SecureButton
+                urlToAddToken={exporter_data(_id)}
+                className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+            >
+                <File />
+                Exporter les données
+            </SecureButton>
+            <SecureButton
+                urlToAddToken={demande_explication(_id)}
+                className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+            >
+                <File />
+                explication d'absence
+            </SecureButton>
+            <SecureButton
+                // urlToAddToken={demande_explication(_id)}
+                className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+            >
+                <File />
+                Ordre de mission
+            </SecureButton>
+        </Dialog>
+    )
+
+}
 export default MoreOptionsUser

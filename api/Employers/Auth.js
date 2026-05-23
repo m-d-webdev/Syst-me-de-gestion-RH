@@ -29,6 +29,30 @@ export const AUTH = async () => {
     }
 };
 
+export const CHECK_EXTRADATA_TOKEN = async (token) => {
+    try {
+        const res = await api.post('/users/check_extradata_token', { token })
+        const data2 = res.data;
+        return data2;
+    } catch (error) {
+        toast.error("Session invalide. Veuillez vous reconnecter.");
+
+        return error.message;
+    }
+};
+
+
+export const GET_EXTRADATA_TOKEN = async (code) => {
+    try {
+        const res = await api.post('/users/requestTokenToDecryptExtraUserData', { code })
+        const data2 = res.data;
+        return data2;
+    } catch (error) {
+        toast.error("Code n est pas correct.");
+        return error.message;
+    }
+};
+
 
 export const LOGIN = async ({ email, password }) => {
     return new Promise(

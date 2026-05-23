@@ -26,3 +26,6 @@ export const attestation_de_reception = (id, lang = "ar") => {
 export const demande_explication = (id, lang = "ar") => {
     return `${NEXT_PUBLIC_DOCUMENTS}/demande_explication/${lang}/${id}`
 }
+export const exporter_data = (id, lang = "fr") => {
+    return `${NEXT_PUBLIC_DOCUMENTS}/userInfo/${lang}/${id}`
+}
