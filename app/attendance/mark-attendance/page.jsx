@@ -16,10 +16,12 @@ import Calendar from "@/components/ui/calendar";
 import { MoveLeft, RefreshCcw, Wrench } from "lucide-react";
 import Link from "next/link";
 import TableCardItem from "@/components/cards&loadingCards/TableCard";
+import SignatureErea from "@/components/Signature";
+import { UseMainConext } from "@/contexts/MainContext";
 
 const page = () => {
 
-
+    const { User } = UseMainConext()
     const [isLoading, setLoading] = useState(true);
     const [isSubmiting, setisSubmiting] = useState(false);
     const [calendarOpen, setCalendarOpen] = useState(false);
@@ -31,7 +33,7 @@ const page = () => {
     const Get_USERS = async () => {
         setLoading(true);
         const res = await GET_USERS();
-        setAttendanceChekingList(res?.data?.map(u => ({ ...u, presente: true, presente_period: ["morning", "afternoon"], justification: null })))
+        setAttendanceChekingList(res?.data?.map(u => ({ ...u, presente: true, justification: null, signature: null, isSubmitingSelf: false })))
         setLoading(false);
     };
 
@@ -39,15 +41,23 @@ const page = () => {
         Get_USERS();
     }, []);
 
-    const handleTogglePresense = (id, period) => {
+    const handleTogglePresense = (id) => {
         setAttendanceChekingList(pv => pv.map(ele => ele._id == id
             ? {
                 ...ele,
-                presente_period: ele.presente_period?.includes(period)
-                    ? ele.presente_period?.filter(pver =>
-                        pver != period
-                    )
-                    : [...ele.presente_period, period]
+                presente: ele.presente == true ? false : true
+            }
+            : ele
+        ));
+
+
+    }
+
+    const handleSignature = (id, svg) => {
+        setAttendanceChekingList(pv => pv.map(ele => ele._id == id
+            ? {
+                ...ele,
+                signature: svg
             }
             : ele
         ));
@@ -74,16 +84,13 @@ const page = () => {
         setisSubmiting(true);
         try {
             for (const u of AttendanceChekingList) {
-                if (u.presente_period.length < 2 && u.justification != null) {
+                if (u.justification != null) {
+                    const period = isMorningPeriod ? "morning" : isAfternoonPeriod ? "afternoon" : null
 
                     const formData = new FormData();
                     formData.append("user_id", u._id);
                     formData.append("date", date);
-
-                    formData.append(
-                        "presente_periods",
-                        JSON.stringify(u.presente_period)
-                    );
+                    formData.append("period", period);
 
                     formData.append("justification", u.justification);
                     const res = await CREATE_ATTENDANCE(formData);
@@ -93,11 +100,13 @@ const page = () => {
                     };
 
                 } else {
-                    const { _id, presente_period } = u;
+                    const { _id } = u;
+                    const period = isMorningPeriod ? "morning" : isAfternoonPeriod ? "afternoon" : null
+
                     const res = await CREATE_ATTENDANCE({
                         user_id: _id,
                         date,
-                        presente_periods: JSON.stringify(presente_period)
+                        period
                     });
 
                     if (res.data) {
@@ -116,6 +125,71 @@ const page = () => {
             setisSubmiting(false);
         }
     };
+    const handleSubmitSingle = async (data) => {
+        try {
+            setAttendanceChekingList(pv => pv.map(ele => ele._id == data._id
+                ? {
+                    ...ele,
+                    isSubmitingSelf: true
+                }
+                : ele
+            ));
+            if (data.justification != null) {
+                const period = isMorningPeriod ? "morning" : isAfternoonPeriod ? "afternoon" : null
+
+                const formData = new FormData();
+                formData.append("user_id", data._id);
+                formData.append("date", date);
+                formData.append("period", period);
+                formData.append("justification", data.justification);
+
+                if (data.signature != null) {
+                    formData.append("signature", JSON.stringify(data.signature));
+                };
+
+                const res = await CREATE_ATTENDANCE(formData);
+
+                if (res.data) {
+                    setSubmitedList((pv) => [...pv, data._id]);
+                };
+
+            } else {
+                const { _id, presente_period, signature } = data;
+                let JSONSIGNATURE = signature != null ? JSON.stringify(signature) : signature;
+                const period = isMorningPeriod ? "morning" : isAfternoonPeriod ? "afternoon" : null
+                const res = await CREATE_ATTENDANCE({
+                    user_id: _id,
+                    date,
+                    period,
+                    signature: JSONSIGNATURE,
+                });
+
+                if (res.data) {
+                    setSubmitedList((pv) => [...pv, data._id]);
+
+                };
+
+            }
+            setAttendanceChekingList(pv => pv.map(ele => ele._id == data._id
+                ? {
+                    ...ele,
+                    isSubmitingSelf: true
+                }
+                : ele
+            ));
+        } catch (error) {
+            console.log({ error });
+        } finally {
+            setAttendanceChekingList(pv => pv.map(ele => ele._id == data._id
+                ? {
+                    ...ele,
+                    isSubmitingSelf: false
+                }
+                : ele
+            ));
+            setisSubmiting(false);
+        }
+    };
 
 
     const handleRefresh = () => {
@@ -123,7 +197,7 @@ const page = () => {
         setAttendanceChekingList(pv =>
             pv.map(
                 ele => (
-                    { ...ele, presente: true, presente_period: ["morning", "afternoon"], justification: null }
+                    { ...ele, presente: true, signature: null, justification: null }
                 )
             )
         );
@@ -134,18 +208,29 @@ const page = () => {
 
             <p className="tracking-tight">Nom</p>
         </div>,
-        <p className="tracking-tight">CIN</p>,
-        <p className="tracking-tight">Grade</p>,
-        <p className="tracking-tight">Présence</p>,
-        <>
-            {
-                // AttendanceChekingList.some(i => i.presente == false) &&
-                <p className="tracking-tight">Justification</p>
-            }
-        </>
+        <p p className="tracking-tight" > Présence</p>,
+        <p className="tracking-tight">Signature</p>,
+        <p className="tracking-tight">Justification</p>,
+        <p className="tracking-tight">Action</p>,
     ];
 
+    const now = moment();
 
+    // 08:30 AM -> 01:00 PM
+    const isMorningPeriod = now.isBetween(
+        moment().set({ hour: 8, minute: 30, second: 0 }),
+        moment().set({ hour: 13, minute: 0, second: 0 }),
+        undefined,
+        "[]"
+    );
+
+    // 01:01 PM -> 04:30 PM
+    const isAfternoonPeriod = now.isBetween(
+        moment().set({ hour: 13, minute: 1, second: 0 }),
+        moment().set({ hour: 16, minute: 30, second: 0 }),
+        undefined,
+        "[]"
+    );
     let rows = AttendanceChekingList?.map((i, idx) =>
         <TableRow className={`relative`} key={idx}>
             {
@@ -156,7 +241,7 @@ const page = () => {
                         style={{
                             backdropFilter: "blur(8px)"
                         }}
-                        className="bg-background p-1 px-3 ">
+                        className="bg-background border border-foreground/10 p-1 px-3 ">
                         Présence enregistrée avec succès
                     </p>
                 </div>
@@ -171,60 +256,89 @@ const page = () => {
                 </p>
 
             </TableCell>
-            <TableCell><p className="">{i.cin ?? "---"}</p></TableCell>
-            <TableCell><p className="">{i.grade_id?.name}</p></TableCell>
+
             <TableCell>
                 <div className="flex gap-2 items-center "></div>
                 <div className={`w-fit flex   items-center `}>
-                    <p
-                        onClick={() => handleTogglePresense(i._id, "morning")}
-                        className={`flex font-semibold  gap-2 cursor-pointer rounded-l-2xl border p-2 items-center ${(i.presente_period?.includes("morning"))
-                            ? "bg-green-500/5 border-green-500/20 text-green-600"
-                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                    >
-                        <CheckBoxinput
-                            onClick={() => handleTogglePresense(i._id, "morning")}
-                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                            checked={i.presente_period?.includes("morning")}
-                        />
-                        matin
-                    </p>
-                    <p
-                        onClick={() => handleTogglePresense(i._id, "afternoon")}
-                        className={`flex font-semibold  gap-2 cursor-pointer rounded-r-2xl border p-2 items-center ${((i.presente_period?.includes("afternoon")))
-                            ? "bg-green-500/5 border-green-500/20 text-green-600"
-                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                    >
-                        <CheckBoxinput
-                            onClick={() => handleTogglePresense(i._id, "afternoon")}
-                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                            checked={(i.presente_period?.includes("afternoon"))}
-                        />
-                        après-midi
-                    </p>
-                </div>
-
-
-            </TableCell>
-            <TableCell>
-                <div className={`!w-fit cursor-pointer flex items-center gap-2 rounded-full font-medium border  bg-sidebar  border-foreground/20 `}>
                     {
-                        i.presente_period?.length < 2 &&
-                        <>
-                            <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
-                            <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-1">
-
-                                {
-                                    i.justification == null ?
-                                        <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
-                                        : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
-                                }
-                            </label>
-                        </>
+                        isMorningPeriod &&
+                        <p
+                            onClick={() => handleTogglePresense(i._id, "morning")}
+                            className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                        >
+                            <CheckBoxinput
+                                onClick={() => handleTogglePresense(i._id, "morning")}
+                                labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                checked={i.presente == true}
+                            />
+                            matin
+                        </p>
+                    }
+                    {
+                        isAfternoonPeriod &&
+                        <p
+                            onClick={() => handleTogglePresense(i._id, "afternoon")}
+                            className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                        >
+                            <CheckBoxinput
+                                onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                checked={i.presente}
+                            />
+                            après-midi
+                        </p>
                     }
                 </div>
 
+
             </TableCell>
+
+            <TableCell>
+
+                <SignatureErea
+                    disabled={i.presente == false}
+                    isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
+                    onSave={(svg) => handleSignature(i._id, svg)}
+                    data={i}
+                />
+
+            </TableCell>
+            <TableCell>
+                <div className={`!w-fit relative cursor-pointer flex items-center gap-2 rounded-md font-medium border  bg-accent  border-foreground/20 `}>
+                    {
+                        i.presente == true &&
+                        <div className="w-full z-[3] rounded-2xl bg-background/50 h-full absolute top-0 right-0 ">
+                        </div>
+                    }
+
+                    <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
+
+                    <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 z-[1] p-1">
+
+                        {
+                            i.justification == null ?
+                                <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
+                                : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                        }
+                    </label>
+
+                </div>
+
+            </TableCell>
+            <TableCell>
+                <button
+                    disabled={i.isSubmitingSelf}
+                    onClick={() => handleSubmitSingle(i)} className="flex items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
+                    {
+                        i.isSubmitingSelf
+                            ? <Loader1 wh=" w-[15] h-[15]" />
+                            : <i className="bi bi-arrow-right-circle"></i>
+                    }
+                </button>
+            </TableCell>
+
         </TableRow >
     );
     // ========= CALENDARE COM-----------
@@ -260,13 +374,14 @@ const page = () => {
         <div className="w-full p-4">
 
             <div className="flex flex-col md:flex-row md:gap-5 gap-1 w-full md:pr-6 md:items-center items-end justify-end">
+               
                 <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
                     <RefreshCcw className="h-4 w-4" /> Actualiser
                 </button>
                 <div className="flex w-fit items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
                     <p className="font-medium text-sm min-w-[200] flex gap-3  ">
                         <i className="bi bi-calendar-range"></i>
-                        <span className="text-chart-3"> {moment(date, "D-M-yyyy").format("dddd DD/MM/YYYY")}</span>
+                        <span className="text-chart-3"> {moment(date, "D-M-yyyy").format("dddd DD/MM/YYYY")} - {moment().format("HH:mm a")}</span>
                     </p>
                     <button
                         className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
@@ -319,45 +434,59 @@ const page = () => {
                             <TableCardItem
                                 title={<div className="flex items-center font-semibold gap-2 text-lg "><img src={UserPic()} className="w-[30] h-[30] rounded-full" alt="" />{i.firstName} {i.lastName}</div>}
                                 entries={[
-                                    <div className="flex gap-2 items-center">C.I.N:<p className="font-me">{i.cin ?? "JB456"}</p></div>,
                                     <div className="flex gap-2 items-center">Grade:<p className="font-me">{i.grade_id?.name}</p></div>,
                                     <div className="flex flex-col gap-2 mt-2">
                                         Presence:
-                                        <div className="grid grid-cols-2 gap-1">
-                                            <p
-                                                onClick={() => handleTogglePresense(i._id, "morning")}
-                                                className={`flex w-full font-semibold  gap-2 cursor-pointer rounded-l-2xl border p-2 items-center ${(i.presente_period?.includes("morning"))
-                                                    ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                                            >
-                                                <CheckBoxinput
+                                        <div className="grid grid-cols-1 gap-1">
+                                            {
+                                                isMorningPeriod &&
+
+                                                <p
                                                     onClick={() => handleTogglePresense(i._id, "morning")}
-                                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                                    checked={i.presente_period?.includes("morning")}
-                                                />
-                                                matin
-                                            </p>
-                                            <p
-                                                onClick={() => handleTogglePresense(i._id, "afternoon")}
-                                                className={`flex  w-full font-semibold  gap-2 cursor-pointer rounded-r-2xl border p-2 items-center ${((i.presente_period?.includes("afternoon")))
-                                                    ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                                            >
-                                                <CheckBoxinput
+                                                    className={`flex w-full font-semibold justify-center  gap-2 cursor-pointer rounded-md  border p-2 items-center ${i.presente == true
+                                                        ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                        : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                                >
+                                                    <CheckBoxinput
+                                                        onClick={() => handleTogglePresense(i._id, "morning")}
+                                                        labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                        checked={i.presente == true}
+                                                    />
+                                                    matin
+                                                </p>
+                                            }
+                                            {
+                                                isAfternoonPeriod &&
+                                                <p
                                                     onClick={() => handleTogglePresense(i._id, "afternoon")}
-                                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                                    checked={(i.presente_period?.includes("afternoon"))}
-                                                />
-                                                après-midi
-                                            </p>
+                                                    className={`flex  w-full font-semibold  gap-2 justify-center cursor-pointer rounded-md border p-2 items-center ${i.presente == true
+                                                        ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                        : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                                >
+                                                    <CheckBoxinput
+                                                        onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                                        labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                        checked={i.presente == true}
+                                                    />
+                                                    après-midi
+                                                </p>
+                                            }
                                         </div>
                                     </div>,
-                                    <div className={` cursor-pointer mt-2 flex items-center justify-center gap-2 rounded-full font-medium  `}>
+                                    <div>
+                                        <SignatureErea
+                                            disabled={i.presente == false}
+                                            isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
+                                            onSave={(svg) => handleSignature(i._id, svg)}
+                                            data={i}
+                                        />
+                                    </div>,
+                                    <div className={` cursor-pointer  mt-2 flex items-center justify-center gap-2 rounded-full font-medium  `}>
                                         {
-                                            i.presente_period?.length < 2 &&
+                                            i.presente == false &&
                                             <>
                                                 <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
-                                                <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-2 w-full border border-foreground/10 rounded-xl text-center">
+                                                <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-2 w-full border border-foreground/10 rounded-md text-center">
 
                                                     {
                                                         i.justification == null ?
@@ -367,7 +496,17 @@ const page = () => {
                                                 </label>
                                             </>
                                         }
-                                    </div>
+                                    </div>,
+                                    <button
+                                        disabled={i.isSubmitingSelf}
+                                        onClick={() => handleSubmitSingle(i)} className="flex justify-center mt-3 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
+                                        {
+                                            i.isSubmitingSelf
+                                                ? <Loader1 wh=" w-[15] h-[15]" />
+                                                : <i className="bi bi-arrow-right-circle"></i>
+                                        }
+                                    </button>
+
                                 ]}
                             />
                         )
@@ -381,16 +520,16 @@ const page = () => {
                     <MoveLeft className="w-4 h-4" />
                     Retour
                 </Link>
-                <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg"
+                {/* <Button onClick={handleSUBMIT} disabled={isSubmiting || SubmitedList.length == AttendanceChekingList.length} size="lg"
                     className={"w-[200] !py-4"}
                 >
-                    Submit
+                    Submit tout
                     {
                         isSubmiting
                             ? <Loader1 />
                             : <i className="bi bi-arrow-right-circle"></i>
                     }
-                </Button>
+                </Button> */}
             </div>
 
         </div>

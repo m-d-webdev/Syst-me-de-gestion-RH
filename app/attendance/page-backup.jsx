@@ -16,7 +16,6 @@ import MoreOptionsPresenceTableLine from "@/components/Popups/MoreOptionsProduct
 import moment from "moment";
 import { GET_ATTENDANCES } from "@/api/Attendance";
 import { UseMainConext } from "@/contexts/MainContext";
-import Dialog from "@/components/Global/Dialog";
 
 
 const page = () => {
@@ -26,7 +25,7 @@ const page = () => {
   const [sortByPopupOpen, setSortByOpen] = useState(false);
   const [attendanceList, setAttendanceList] = useState([]);
   const [TotalPages, setTotalPages] = useState([]);
-  const [isExpandSignatureOpen, setisExpandSignatureOpen] = useState(null);
+  const [firstTime, setfirstTime] = useState(false);
   const [filters, setFilters] = useState(
     {
       page: 1,
@@ -83,14 +82,6 @@ const page = () => {
     <p className="tracking-tight">justification</p>,
     <p className="tracking-tight">Action</p>,
   ];
-  function SignatureCell({ svgString }) {
-    // Replace width/height attrs but keep viewBox untouched
-    const scaled = svgString
-      .replace(/width="[^"]+"/, 'width="auto"')
-      .replace(/height="[^"]+"/, 'height="40"');
-
-    return <div onClick={() => setisExpandSignatureOpen(svgString)} dangerouslySetInnerHTML={{ __html: scaled }} />;
-  }
 
   let rows = attendanceList?.map((i, idx) =>
     <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/10 " : ""} `} key={idx}>
@@ -111,15 +102,8 @@ const page = () => {
       <TableCell><p className="">{i?.user_id?.service_id?.name}</p></TableCell>
       <TableCell>{i?.user_id?.grade_id?.name}</TableCell>
 
-      <TableCell >
-        <div className="justify-center items-center bg-white flex">
-          {
-            i?.signature
-              ? SignatureCell({ svgString: JSON.parse(i?.signature) })
-              : <div className="text-red-500 "> Non signé</div>
-          }
-        </div>
-        {/* <p className={`w-fit font-medium flex gap-2 text-sm  p-1 ${i.presente_periods?.length == 2 ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "} border rounded-2xl px-2`}>
+      <TableCell>
+        <p className={`w-fit font-medium flex gap-2 text-sm  p-1 ${i.presente_periods?.length == 2 ? "bg-green-100/10 text-[#009e18] border-green-500" : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "} border rounded-2xl px-2`}>
           {
             i.presente_periods.length == 2
               ? <>Présent toute la journée<i className="bi bi-check2-circle"></i></>
@@ -135,10 +119,10 @@ const page = () => {
                 }
               </>
           }
-        </p> */}
+        </p>
       </TableCell>
       <TableCell>
-        {/* {
+        {
           i.presente_periods?.length < 2 ?
             <p className={`w-fit flex  items-center gap-1 text-sm  p-1 ${i.justification != null ? "bg-green-100/10 text-[#009e18] font-medium border-green-500" : "bg-red-100/10 text-[#d40000] font-semibold border-[2px] border-red-400 "} border rounded-2xl px-2`}>
               {
@@ -148,7 +132,7 @@ const page = () => {
               }
 
             </p> : <p className="opacity-60">Présent</p>
-        } */}
+        }
       </TableCell>
       <TableCell className={"text-center"}>
         <MoreOptionsPresenceTableLine data={i} />
@@ -190,19 +174,9 @@ const page = () => {
         setLimit={l => setFilters(pv => ({ ...pv, limit: l }))}
         setPage={p => setFilters(pv => ({ ...pv, page: p }))}
       />
-      {isExpandSignatureOpen != null &&
-        <Dialog
-          closeIfClickOutside={true}
-          onClose={() => setisExpandSignatureOpen(null)}
-        >
-          
-          <div
-            onClick={() => setisExpandSignatureOpen(null)}
-            dangerouslySetInnerHTML={{ __html: isExpandSignatureOpen }}
-          />;
-
-        </Dialog>
-      }
+      {/* { HistoryAttendanceOpen  &&
+        <AttendanceCalendar />
+      } */}
     </div>
 
   )
