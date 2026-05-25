@@ -148,7 +148,7 @@ const DocumentsPopup = ({ _id, onClose }) => {
                 explication d'absence
             </SecureButton>
             <SecureButton
-                // urlToAddToken={demande_explication(_id)}
+                urlToAddToken={demande_explication(_id)}
                 className="flex bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
             >
                 <File />
