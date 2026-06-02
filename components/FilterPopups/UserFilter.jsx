@@ -3,21 +3,41 @@
 
 
 import { useState, useEffect } from "react";
-import { ChevronDown, X, SlidersHorizontal, RefreshCcw, User } from "lucide-react";
+import { ChevronDown, X, SlidersHorizontal, RefreshCcw, User, MapPinned } from "lucide-react";
 import Dialog from "../Global/Dialog";
 import Select2 from "../ui/select2";
 import { GET_DIVISIONS } from "@/api/Division";
 import { GET_SERVICES } from "@/api/Service";
 import Loader1 from "../Global/Loader1";
 import { Button } from "../ui/button";
-import { FetchGrads } from "@/api/Employers/User";
+import { FetchGrads, FetchOffices } from "@/api/Employers/User";
 import { ServiceICON } from "@/lib/utils";
 const ROLES = [
-    { value: "admin", label: "Admin" },
-    { value: "hr_agent", label: "HR Agent" },
-    { value: "chef_division", label: "Chef Division" },
-    { value: "chef_service", label: "Chef Service" },
-    { value: "employee", label: "Employee" },
+    {
+        value: "admin",
+        label: "Admin",
+        ar_label: "مسؤول النظام",
+    },
+    {
+        value: "hr_agent",
+        label: "HR Agent",
+        ar_label: "موظف الموارد البشرية",
+    },
+    {
+        value: "chef_division",
+        label: "Chef Division",
+        ar_label: "رئيس قسم",
+    },
+    {
+        value: "chef_service",
+        label: "Chef Service",
+        ar_label: "رئيس مصلحة",
+    },
+    {
+        value: "employee",
+        label: "Employee",
+        ar_label: "موظف",
+    },
 ];
 
 const ROLE_COLORS = {
@@ -31,12 +51,15 @@ const ROLE_COLORS = {
 export default function UsersFilter({
     filters = {},
     setFilters,
-    onClose
+    onClose,
+    isAttendancePage = false
 }) {
     const [services, setServices] = useState([])
     const [divisions, setDivisions] = useState([]);
-    const [gradeOptions, setGradeOptions] = useState([]);
+    const [grades, setGrades] = useState([]);
+    const [Offices, setOffices] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [lang, setlang] = useState("ar");
 
 
     const activeCount = Object.values(filters).filter(Boolean).length;
@@ -45,10 +68,16 @@ export default function UsersFilter({
 
         let divRes = await GET_DIVISIONS()
         let servRes = await GET_SERVICES()
-        let gradesRes = await FetchGrads()
+        let gradesRes = await FetchGrads();
+        let officeOptionsReq = await FetchOffices();
+        console.log({ officeOptionsReq });
+
         setDivisions(divRes.data)
         setServices(servRes.data);
-        setGradeOptions(gradesRes?.data?.map(element => ({ innerText: element.name, value: element._id })))
+        // setGrades(gradesRes?.data?.map(element => ({ innerText: lang == "fr" ? element.name : element.ar_name, value: element._id })))
+        setGrades(gradesRes?.data)
+        setOffices(officeOptionsReq?.data)
+        // setOfficeOptions(officeOptionsReq?.data?.map(element => ({ innerText: lang == "fr" ? element.name : element.ar_name, value: element._id })))
         setLoading(false)
     };
 
@@ -67,7 +96,8 @@ export default function UsersFilter({
                 role: null,
                 division_id: null,
                 service_id: null,
-                grade_id: null
+                grade_id: null,
+                office_id: null
             }
         ));
         onClose();
@@ -79,10 +109,12 @@ export default function UsersFilter({
 
 
 
-    const divisionOptions = divisions.map((d) => ({ value: d._id, innerText: d.name }));
+    const divisionOptions = divisions.map((d) => ({ value: d._id, innerText: lang == "fr" ? d.name : d.ar_name }));
 
-    const serviceOptions = filteredServices.map((s) => ({ value: s._id, innerText: s.name }));
-    const roleOptions = ROLES.map((r) => ({ value: r.value, innerText: r.label }));
+    const serviceOptions = filteredServices.map((s) => ({ value: s._id, innerText: lang == "fr" ? s.name : s.ar_name }));
+    const gradeOptions = grades.map((s) => ({ value: s._id, innerText: lang == "fr" ? s.name : s.ar_name }));
+    const officeOptions = Offices.map((s) => ({ value: s._id, innerText: lang == "fr" ? s.name : s.ar_name }));
+    const roleOptions = ROLES.map((r) => ({ value: r.value, innerText: lang == "fr" ? r.label : r.ar_label  }));
 
 
     useEffect(() => {
@@ -92,13 +124,24 @@ export default function UsersFilter({
 
 
     return (
-        <Dialog closeIfClickOutside={true} onClose={onClose} backWhenClose={false} containerClassName="scrl_none w-[350] p-4 flex flex-col justify-between bg-background relative max-h-[600] min-h-[400] ">
+        <Dialog closeIfClickOutside={true} onClose={onClose} backWhenClose={false} containerClassName={`scrl_none w-[350] p-4 flex flex-col justify-between bg-background relative max-h-[600] ${!isAttendancePage ? " min-h-[400]" : " min-h-[300]"} `}>
 
             <div className="flex flex-col gap-2" >
                 {/* Header */}
-                <div className="flex mb-5  items-center gap-1.5 pr-3  mr-1">
-                    <i className="bi bi-funnel"></i>
-                    <span className=" font-medium  ">Filtres</span>
+                <div className="flex mb-5 justify-between items-center  items-center gap-1.5 pr-3  mr-1">
+                    <div className="flex gap-2 items-center">
+
+                        <i className="bi bi-funnel"></i>
+                        <span className=" font-medium  ">Filtres</span>
+                    </div>
+                    <div className="text-[11px]">
+                        <button onClick={() => setlang("ar")} className={`p-2 px-3 bg-sidebar border border-foreground/20  rounded-md  ${lang == "ar" ? "opacity-100" : "opacity-60"} duration-200  `}>
+                            العربية
+                        </button>
+                        <button onClick={() => setlang("fr")} className={`p-2 px-3 bg-sidebar border border-foreground/20  rounded-md  ${lang == "fr" ? "opacity-100" : "opacity-60"} duration-200  `}>
+                            Français
+                        </button>
+                    </div>
                 </div>
 
                 {
@@ -108,15 +151,18 @@ export default function UsersFilter({
                         </div>
                         : <>
                             {/* Role */}
-                            <Select2
-                                label="Role"
-                                defaultValue={filters.role}
-                                icon={<User className="w-4 h-4" />}
+                            {
+                                !isAttendancePage &&
+                                <Select2
+                                    label="Role"
+                                    defaultValue={filters.role}
+                                    icon={<User className="w-4 h-4" />}
 
-                                onChange={(v) => handleChange("role", v)}
-                                list={roleOptions}
-                                placeholder="All roles"
-                            />
+                                    onChange={(v) => handleChange("role", v)}
+                                    list={roleOptions}
+                                    placeholder="All roles"
+                                />
+                            }
 
                             {/* Division */}
                             <Select2
@@ -153,6 +199,17 @@ export default function UsersFilter({
                                 icon={
                                     <i className="bi bi-mortarboard"></i>
                                 }
+                            />
+                            <Select2
+                                onChange={(v) => handleChange("office_id", v)}
+                                defaultValue={filters.office_id}
+                                list={officeOptions}
+                                orderAlphabet={true}
+                                type="text"
+                                label="lieu de travail"
+                                icon={<MapPinned className="w-4 h-4" />}
+                                enableSearch={true}
+                                placeholder="lieu de travail"
                             />
 
                             {activeCount > 0 && (

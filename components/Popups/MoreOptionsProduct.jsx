@@ -8,9 +8,10 @@ import { COPY_TEXT } from "@/lib/utils";
 import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
+import { DocumentsPopup } from "./MoreOptionsUser";
 
 const MoreOptionsPresenceTableLine = ({ data }) => {
-   
+    
     const [menuOpen, setMenuOpen] = useState(false);
     const [HistoryAttendanceOpen, setHistoryAttendanceOpen] = useState(false);
     const [UserDataOpen, setUserDataOpen] = useState(false);
@@ -34,7 +35,7 @@ const MoreOptionsPresenceTableLine = ({ data }) => {
         };
     }, [menuOpen]);
 
-    const [isDeactivating, setDeactivating] = useState(false)
+    const [isDocumentsOpen, setDocumentsOpen] = useState(false)
     const [isFeaturing, setFeaturing] = useState(false)
 
 
@@ -71,6 +72,10 @@ const MoreOptionsPresenceTableLine = ({ data }) => {
                             ref={PageRef}
                             className="absolute min-w-[150] flex flex-col gap-1 bg-background top-0 right-0 z-10 p-1 shadow-sm rounded-lg"
                         >
+                            <button onClick={() => setDocumentsOpen(true)} className="flex p-1 gap-2 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
+                                Document
+                            </button>
+
                             <Link href={`/attendance/${data?.user_id?._id}`} className="flex p-1 gap-2 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
                                 <i className="bi bi-calendar2-range"></i>
                                 Voir historique
@@ -96,12 +101,24 @@ const MoreOptionsPresenceTableLine = ({ data }) => {
                     }
                 </AnimatePresence>
             </div >
+
             {HistoryAttendanceOpen &&
                 <EmployeeAttendance onClose={() => setHistoryAttendanceOpen(false)} _id={data?.user?._id} />
             }
+
             {UserDataOpen &&
                 <EmployeePopup onClose={() => setUserDataOpen(false)} employee={data?.user} />
             }
+
+            {
+                isDocumentsOpen &&
+                <DocumentsPopup
+                    _id={data?.user_id?._id}
+                    defaultDates={[data.date]}
+                    onClose={() => setDocumentsOpen(false)}
+                />
+            }
+
         </>
     )
 }

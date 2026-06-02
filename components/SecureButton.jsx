@@ -7,7 +7,7 @@ import { CHECK_EXTRADATA_TOKEN, GET_EXTRADATA_TOKEN } from '@/api/Employers/Auth
 
 
 
-const SecureButton = ({ children, urlToAddToken, onClick = () => { }, className, ...props }) => {
+const SecureButton = ({ children, urlToAddToken, alreadyContainVar = false, onClick = () => { }, className, ...props }) => {
     const { TokenToGetExtraData, setTokenToGetExtraData } = UseMainConext()
     const [isMenuOpen, setMenuOpen] = useState(false)
     const [isError, setisError] = useState(false)
@@ -25,7 +25,7 @@ const SecureButton = ({ children, urlToAddToken, onClick = () => { }, className,
                 setCheking(false);
                 setMenuOpen(false)
                 if (urlToAddToken) {
-                    const url = `${urlToAddToken}?token=${encodeURIComponent(TokenToGetExtraData)}`;
+                    const url = `${urlToAddToken}${alreadyContainVar ? "&" : "?"}token=${encodeURIComponent(TokenToGetExtraData)}`;
                     window.open(url, "_blank");
                 }
                 else {
@@ -74,13 +74,13 @@ const SecureButton = ({ children, urlToAddToken, onClick = () => { }, className,
 
     return (
         <div className='relative'>
-            <div
+            <button
                 onClick={handleClick}
                 className={`${className} cursor-pointer`}
                 {...props}
             >
                 {children}
-            </div>
+            </button>
             <AnimatePresence>
                 {
                     isMenuOpen &&

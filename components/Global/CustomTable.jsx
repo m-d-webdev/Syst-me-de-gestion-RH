@@ -60,7 +60,7 @@ const CustomTable2 = ({
     day,
     setSortByOpen = () => { },
     onSearch = () => { },
-    originalSearch
+    originalSearch,
 }) => {
     try {
 
@@ -113,7 +113,6 @@ const CustomTable2 = ({
                     className={`${containerClassName} pt-10 text-sm flex min-h-screen flex-col items-start    w-full p-4 px-10   md:overflow-auto `}
                 >
                     <h1 className="font-semibold tracking-tight text-2xl">{pageTitle}</h1>
-
                     {
                         (enableSearch ||
                             enableFilterButton ||
@@ -127,9 +126,9 @@ const CustomTable2 = ({
                                         onChange={r => setsearch(r.target.value)}
                                         value={search}
                                         className={""}
-                                        parentclassName=" !py-2  !bg-background  border-foreground/15 md:w-[300]"
+                                        parentclassName=" !py-2  !bg-background  border-foreground/15 md:w-[250]"
                                         icon={<Search className=" stroke-1 w-5 h-5" />}
-                                        placeholder="Search ... "
+                                        placeholder="Rechercher ... "
                                     />
                                 }
 

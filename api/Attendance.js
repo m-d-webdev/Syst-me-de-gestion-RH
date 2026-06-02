@@ -3,17 +3,10 @@ import toast from "react-hot-toast";
 
 // 🔹 Get all attendances
 export const GET_ATTENDANCES = async ({
-    user_id,
-    date,
-    status,
+    ...params
 } = {}) => {
     try {
-        const params = {};
-
-        if (user_id) params.user_id = user_id;
-        if (date) params.date = date; // format: "05-05-2026"
-        if (status) params.status = status;
-
+        
         const res = await api.get("/attendance", { params });
         return res.data;
     } catch (error) {

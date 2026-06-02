@@ -22,7 +22,8 @@ export const HOLIDAYS = [
   "25-9", // Aïd Al-Mawlid (approx)
 ];
 export default function Calendar({ onSelect, day }) {
-  const today = moment(day, "D-M-yyyy");
+
+  const today = day ? moment(day, "D-M-yyyy") : moment();
   const [current, setCurrent] = useState(today.clone().startOf("month"));
   const [selected, setSelected] = useState(day);
 

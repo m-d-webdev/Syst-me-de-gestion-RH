@@ -98,7 +98,7 @@ const SelectMenu = ({
                 key={i}
                 onClick={() => onChange(option)}
                 onMouseOver={() => overedItem(option.innerText)}
-                className="hover2 tracking-tight duration-150 hover:font-medium first-letter:uppercase lowercase p-2 px-3 cursor-pointer hover:bg-accent/50"
+                className="hover2 tracking-tight text-sm duration-150 hover:font-medium first-letter:uppercase lowercase p-2 px-3 cursor-pointer hover:bg-accent/50"
               >
                 {option.innerText}
               </p>
@@ -181,7 +181,7 @@ const Select2 = ({
 
         {
           (HovredItem == "" || !menuOpen) &&
-          <h2 className="mt-4 truncate  max-w-[100%] text-nowrap font-semibold !tracking-tighter">{value}</h2>
+          <h2 className="mt-4 truncate  max-w-[100%] text-nowrap font-semibold text-sm !tracking-tighter">{value}</h2>
         }
         {
           (HovredItem != "" && menuOpen) &&

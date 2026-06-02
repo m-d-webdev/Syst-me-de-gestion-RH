@@ -59,7 +59,7 @@ const Sidebare = () => {
 
     return (
         <>
-            <AnimatePresence>
+            {/* <AnimatePresence> */}
 
                 {isMobile ?
                     isSideBareVisible &&
@@ -79,7 +79,7 @@ const Sidebare = () => {
                         <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
                     </div>
                     :
-                    <div className={`duration-200 bg-background h-screen overflow-auto scrl_none ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
+                    <div className={`duration-200 bg-background h-screen overflow-auto scrl_none  ${isOpen ? "p-3 px-4 w-[250]" : "w-[50] p-1"}`}>
                         <div className="w-full flex justify-center items-center">
 
                             <Logo isOpen={isOpen} />
@@ -92,7 +92,6 @@ const Sidebare = () => {
                                 <p className="duration-200">Signaler problème</p>
                             }
                         </Link>
-                        <div onClick={handleChaneOpen} className="absolute top-0 right-[-2] w-[5] h-full   cursor-e-resize"></div>
 
                         <div className="w-full flex items-end justify-end mt-10">
 
@@ -106,9 +105,9 @@ const Sidebare = () => {
                         </div>
                     </div>
                 }
-            </AnimatePresence>
+            {/* </AnimatePresence> */}
             {
-                isSideBareVisible && isMobile &&
+                (isSideBareVisible && isMobile ) &&
                 <BackgroundBlack />
             }
         </>

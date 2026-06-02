@@ -24,6 +24,7 @@ const page = () => {
       limit: 10,
       department: null,
       grade_id: null,
+      office_id: null,
       role: null,
       status: null,
       hireDate: null,

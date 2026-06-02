@@ -29,6 +29,9 @@ const page = () => {
     const [date, setDate] = useState(moment().format("D-M-yyy"));
     const [SubmitedList, setSubmitedList] = useState([]);
 
+    const today = moment();
+    const isToday = moment(date, "D-M-YYYY").isSame(moment(), "day");
+    const isAfterToday = moment(date, "D-M-YYYY").isAfter(moment(), "day");
 
     const Get_USERS = async () => {
         setLoading(true);
@@ -45,7 +48,8 @@ const page = () => {
         setAttendanceChekingList(pv => pv.map(ele => ele._id == id
             ? {
                 ...ele,
-                presente: ele.presente == true ? false : true
+                presente: ele.presente == true ? false : true,
+                signature: ele.presente == true ? null : ele.signature
             }
             : ele
         ));
@@ -79,7 +83,6 @@ const page = () => {
     };
 
     // ==============================
-
     const handleSUBMIT = async () => {
         setisSubmiting(true);
         try {
@@ -141,6 +144,7 @@ const page = () => {
                 formData.append("user_id", data._id);
                 formData.append("date", date);
                 formData.append("period", period);
+                formData.append("isPresente", data.presente);
                 formData.append("justification", data.justification);
 
                 if (data.signature != null) {
@@ -154,13 +158,14 @@ const page = () => {
                 };
 
             } else {
-                const { _id, presente_period, signature } = data;
+                const { _id, signature, presente } = data;
                 let JSONSIGNATURE = signature != null ? JSON.stringify(signature) : signature;
                 const period = isMorningPeriod ? "morning" : isAfternoonPeriod ? "afternoon" : null
                 const res = await CREATE_ATTENDANCE({
                     user_id: _id,
                     date,
                     period,
+                    isPresente: presente,
                     signature: JSONSIGNATURE,
                 });
 
@@ -217,20 +222,22 @@ const page = () => {
     const now = moment();
 
     // 08:30 AM -> 01:00 PM
-    const isMorningPeriod = now.isBetween(
-        moment().set({ hour: 8, minute: 30, second: 0 }),
-        moment().set({ hour: 13, minute: 0, second: 0 }),
-        undefined,
-        "[]"
-    );
+    const [isMorningPeriod, setisMorningPeriod] = useState(
+        now.isBetween(
+            moment().set({ hour: 8, minute: 30, second: 0 }),
+            moment().set({ hour: 13, minute: 0, second: 0 }),
+            undefined,
+            "[]"
+        ));
 
     // 01:01 PM -> 04:30 PM
-    const isAfternoonPeriod = now.isBetween(
+    const [isAfternoonPeriod, setisAfternoonPeriod] = useState(now.isBetween(
         moment().set({ hour: 13, minute: 1, second: 0 }),
         moment().set({ hour: 16, minute: 30, second: 0 }),
         undefined,
         "[]"
-    );
+    ));
+
     let rows = AttendanceChekingList?.map((i, idx) =>
         <TableRow className={`relative`} key={idx}>
             {
@@ -329,8 +336,8 @@ const page = () => {
             </TableCell>
             <TableCell>
                 <button
-                    disabled={i.isSubmitingSelf}
-                    onClick={() => handleSubmitSingle(i)} className="flex items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
+                    disabled={i.isSubmitingSelf || isAfterToday}
+                    onClick={() => handleSubmitSingle(i)} className="flex disabled:opacity-50 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
                     {
                         i.isSubmitingSelf
                             ? <Loader1 wh=" w-[15] h-[15]" />
@@ -358,6 +365,22 @@ const page = () => {
     }, []);
 
 
+
+    useEffect(() => {
+        if (isToday && !now.isBetween(
+            moment().set({ hour: 13, minute: 1, second: 0 }),
+            moment().set({ hour: 16, minute: 30, second: 0 }),
+            undefined,
+            "[]"
+        )) {
+            setisAfternoonPeriod(false)
+            setisMorningPeriod(true)
+        }
+    }, [date]);
+
+
+
+
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -374,11 +397,43 @@ const page = () => {
         <div className="w-full p-4">
 
             <div className="flex flex-col md:flex-row md:gap-5 gap-1 w-full md:pr-6 md:items-center items-end justify-end">
-               
+                {
+                    !isAfterToday &&
+                    <div
+                        className="flex text-sm gap-2 items-center"
+                    >
+                        <h1 className="text-sm opacity-70">Period du jour</h1>
+                        <button onClick={
+                            () => {
+                                setisMorningPeriod(true);
+                                setisAfternoonPeriod(false)
+                            }
+
+                        } className={` cursor-pointer  p-2 px-3 rounded-md border ${isMorningPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
+                            Matin
+                        </button>
+                        <button
+                            disabled={isToday && !now.isBetween(
+                                moment().set({ hour: 13, minute: 1, second: 0 }),
+                                moment().set({ hour: 16, minute: 30, second: 0 }),
+                                undefined,
+                                "[]"
+                            )}
+                            onClick={
+                                () => {
+                                    setisMorningPeriod(false);
+                                    setisAfternoonPeriod(true)
+                                }} className={` disabled:opacity-50 cursor-pointer  p-2 px-3 rounded-md border ${isAfternoonPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
+                            Après-midi
+                        </button>
+                    </div>
+                }
+
                 <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
                     <RefreshCcw className="h-4 w-4" /> Actualiser
                 </button>
                 <div className="flex w-fit items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
+
                     <p className="font-medium text-sm min-w-[200] flex gap-3  ">
                         <i className="bi bi-calendar-range"></i>
                         <span className="text-chart-3"> {moment(date, "D-M-yyyy").format("dddd DD/MM/YYYY")} - {moment().format("HH:mm a")}</span>
@@ -395,7 +450,7 @@ const page = () => {
                                 animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="absolute z-3 w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
+                                className="absolute z-[10] w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
                             >
                                 <Calendar
                                     classNames={""}

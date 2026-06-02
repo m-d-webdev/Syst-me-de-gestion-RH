@@ -23,8 +23,9 @@ export const attestation_de_reception = (id, lang = "ar") => {
     return `${NEXT_PUBLIC_DOCUMENTS}/attestation_de_reception/${lang}/${id}`
 }
 // ----------- EMPLOYER --------------
-export const demande_explication = (id, lang = "ar") => {
-    return `${NEXT_PUBLIC_DOCUMENTS}/demande_explication/${lang}/${id}`
+export const demande_explication = (id, date, lang = "ar") => {
+    let date2 = encodeURIComponent(date)
+    return `${NEXT_PUBLIC_DOCUMENTS}/demande_explication/${lang}/${id}?day=${date2}`
 }
 export const exporter_data = (id, lang = "fr") => {
     return `${NEXT_PUBLIC_DOCUMENTS}/userInfo/${lang}/${id}`
