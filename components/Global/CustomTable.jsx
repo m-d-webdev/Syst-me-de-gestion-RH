@@ -291,12 +291,12 @@ const CustomTable2 = ({
                                                                                 {React.isValidElement(NoResultIcon) && NoResultIcon}
                                                                                 {NoResultText ? (
                                                                                     <>
-                                                                                        <h1 className="max-w-[600] font-medium text-xl   text-center">
+                                                                                        <div className="max-w-[600] font-medium text-xl   text-center">
                                                                                             {NoResultText}
-                                                                                        </h1>
-                                                                                        <p className="max-w-[500] font-normal text-base text-wrap  text-center mt-1">
+                                                                                        </div>
+                                                                                        <div className="max-w-[500] font-normal text-base text-wrap  text-center mt-1">
                                                                                             {NoResultDescription}
-                                                                                        </p>
+                                                                                        </div>
                                                                                     </>
                                                                                 ) : (
                                                                                     <h1 className="max-w-[600px] text-2xl text-[#1B3D50] font-medium text-center">
@@ -324,24 +324,28 @@ const CustomTable2 = ({
                     </div>
 
                     <div className="w-full flex items-center gap-2 justify-between">
-                        <div className="flex gap-2 items-center">
-                            <p className="font-medium">Showing </p>
-                            <Select value={limit} onValueChange={v => { setLimit(v) }}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Category" />
-                                </SelectTrigger>
+                        {
+                            limit != null &&
+                            <div className="flex gap-2 items-center">
+                                <p className="font-medium">Showing </p>
+                                <Select value={limit} onValueChange={v => { setLimit(v) }}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select Category" />
+                                    </SelectTrigger>
 
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {[10, 20, 50, 100, 500].map((cat) => (
-                                            <SelectItem key={cat} value={cat}>
-                                                {cat}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {[10, 20, 50, 100, 500].map((cat) => (
+                                                <SelectItem key={cat} value={cat}>
+                                                    {cat}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        }
+
                         <Pagination onPageChange={p => setPage(p)} currentPage={currentPage} totalPages={totalePages} />
                     </div>
                 </div >

@@ -121,7 +121,7 @@ const page = () => {
 
 
       <TableCell className={"text-center"}>
-        <MoreOptionsTrainer data={i} />
+        <MoreOptionsTrainer onDelete={() => get_users()} data={i} />
       </TableCell>
     </TableRow >
   );

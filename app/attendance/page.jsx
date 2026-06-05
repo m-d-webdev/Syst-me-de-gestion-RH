@@ -20,6 +20,7 @@ import Dialog from "@/components/Global/Dialog";
 import Link from "next/link";
 import { RefreshCcw } from "lucide-react";
 import UsersFilter from "@/components/FilterPopups/UserFilter";
+import NoResult from "@/components/Lotties/no_result";
 
 function isStartWithPresenteFunc(str) {
   if (str.startsWith("absent")) {
@@ -91,7 +92,8 @@ const page = () => {
       limit: 10,
       date: moment().format("D-M-yyyy"),
       period: null,
-      search: ""
+      search: "",
+      isPresente: null
     }
   );
   const isToday = moment(filters.date, "D-M-YYYY").isSame(moment(), "day");
@@ -100,6 +102,9 @@ const page = () => {
 
   const handleChangePeriod = per => {
     setFilters(pv => ({ ...pv, period: per }))
+  }
+  const handleChangeIsPresente = per => {
+    setFilters(pv => ({ ...pv, isPresente: per }))
   }
   const [selections, setselections] = useState([])
 
@@ -134,7 +139,7 @@ const page = () => {
     // Replace width/height attrs but keep viewBox untouched
     const scaled = svgString
       .replace(/width="[^"]+"/, 'width="auto"')
-      .replace(/height="[^"]+"/, 'height="40"');
+      .replace(/height="[^"]+"/, 'height="30"');
 
     return <div onClick={() => setisExpandSignatureOpen(svgString)} dangerouslySetInnerHTML={{ __html: scaled }} />;
   }
@@ -143,7 +148,7 @@ const page = () => {
 
   let rows = attendanceList?.map((i, idx) =>
     <TableRow className={`${selections.includes(i._id) ? "bg-chart-1/10 " : ""} `} key={idx}>
-      <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
+      <TableCell className={"flex truncate  items-center gap-2  "}>
 
 
         <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
@@ -158,13 +163,13 @@ const page = () => {
         <p className={`w-fit font-medium flex gap-2 text-sm  p-1
          ${isStartWithPresenteFunc(i.dailyStatus) ? "bg-green-100/10 text-[#009e18] border-green-500"
             : "bg-red-100/30 text-[#d40000]  border-[2px] border-red-400 "
-          } 
-              border rounded-2xl px-2`}>
+          } border rounded-2xl px-2`}
+        >
           {getAttendanceLabel(i.dailyStatus, filters.period)}
         </p>
       </TableCell>
       <TableCell >
-        <div className="justify-center items-center p-1 px-2 rounded-md bg-white flex">
+        <div className="justify-center items-center  px-2 rounded-md bg-white flex">
           {(i?.morning?.signature != null || i?.afternoon?.signature != null)
             ? SignatureCell({ svgString: JSON.parse(i?.morning?.signature != null ? i?.morning?.signature : i?.afternoon?.signature) })
             : <p className="text-black">Non signé</p>
@@ -175,9 +180,9 @@ const page = () => {
 
       <TableCell>
         {
-          i.dailyStatus != "present" ?
+          !isStartWithPresenteFunc(i.dailyStatus) ?
 
-            <p className={`w-fit flex  items-center gap-1 text-sm  p-1 ${(i?.morning?.justification != null || i?.afternoon?.justification != null) ? "bg-green-100/10 text-[#009e18] font-medium border-green-500" : "bg-red-100/10 text-[#d40000] font-semibold border-[2px] border-red-400 "} border rounded-2xl px-2`}>
+            <p className={`w-fit flex  items-center gap-1 text-sm  p-[1px] ${(i?.morning?.justification != null || i?.afternoon?.justification != null) ? "bg-green-100/10 text-[#009e18] font-medium border-green-500" : "bg-red-100/10 text-[#d40000] font-semibold border-[2px] border-red-400 "} border rounded-2xl px-2`}>
               {
                 i?.morning?.justification != null
                   ? <a download={true} target="_blank" href={i?.morning?.justification}>Justifié <i className="bi bi-file-earmark-check"></i></a>
@@ -205,6 +210,20 @@ const page = () => {
       {/* <AttendanceCalendar /> */}
 
       <div className="w-full text-xs flex px-4 gap-4  items-center justify-end">
+
+        <div
+          className="flex text-xs mr-3  items-center"
+        >
+          <button onClick={() => handleChangeIsPresente(true)} className={` cursor-pointer  p-2 px-3 rounded-l-md border ${filters.isPresente == true ? "border-foreground/20 opacity-100 font-medium text-green-500 bg-green-500/5" : " opacity-70 border-foreground/20"} duration-150 !border-r-transparent`}>
+            Présents uniquement
+          </button>
+          <button onClick={() => handleChangeIsPresente(false)} className={` !text-nowrap disabled:opacity-50  cursor-pointer  p-2 px-3 rounded-none border ${filters.isPresente == false ? "border-foreground/20 opacity-100 font-medium text-green-500 bg-green-500/5" : " opacity-70 border-foreground/20"} duration-150 !border-l-transparent !border-r-transparent`}>
+            Absents uniquement
+          </button>
+          <button onClick={() => handleChangeIsPresente(null)} className={` cursor-pointer  p-2 px-3 rounded-r-md border ${filters.isPresente == null ? "border-foreground/20 opacity-100 font-medium text-green-500 bg-green-500/5" : " opacity-70 border-foreground/20"} duration-150 !border-l-transparent`}>
+            Tous
+          </button>
+        </div>
 
         <div
           className="flex text-xs mr-3  items-center"
@@ -283,8 +302,16 @@ const page = () => {
         enableDaySeleted={true}
         day={filters.date}
         containerClassName="!pt-0"
-        NoResultDescription="Aucune donnée de présence n’est disponible pour le moment. Veuillez ajouter des enregistrements ou réessayer plus tard"
-        NoResultText="Aucune présence enregistrée"
+        NoResultDescription={
+          `Aucune donnée de présence n’est disponible pour le ${moment(filters.date).format("MM/DD/YYYY")} . Veuillez ajouter des enregistrements ou réessayer plus tard`
+
+        }
+        NoResultText={
+          <div className="flex flex-col gap-2 items-center justify-center" >
+            <NoResult />
+            Aucune présence enregistrée
+          </div>
+        }
         setDay={d => setFilters(pv => ({ ...pv, date: d }))}
         setLimit={l => setFilters(pv => ({ ...pv, limit: l }))}
         setPage={p => setFilters(pv => ({ ...pv, page: p }))}
@@ -293,6 +320,7 @@ const page = () => {
       {isExpandSignatureOpen != null &&
         <Dialog
           closeIfClickOutside={true}
+          containerClassName="!bg-white"
           onClose={() => setisExpandSignatureOpen(null)}
         >
 

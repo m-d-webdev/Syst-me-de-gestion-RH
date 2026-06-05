@@ -30,3 +30,6 @@ export const demande_explication = (id, date, lang = "ar") => {
 export const exporter_data = (id, lang = "fr") => {
     return `${NEXT_PUBLIC_DOCUMENTS}/userInfo/${lang}/${id}`
 }
+export const Note_administrative = (id, lang = "ar") => {
+    return `${NEXT_PUBLIC_DOCUMENTS}/note/${lang}/${id}`
+}

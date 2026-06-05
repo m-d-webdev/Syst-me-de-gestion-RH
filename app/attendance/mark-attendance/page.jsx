@@ -18,10 +18,11 @@ import Link from "next/link";
 import TableCardItem from "@/components/cards&loadingCards/TableCard";
 import SignatureErea from "@/components/Signature";
 import { UseMainConext } from "@/contexts/MainContext";
+import { Input } from "@/components/ui/input";
 
 const page = () => {
 
-    const { User } = UseMainConext()
+    const [Search, setSearch] = useState("")
     const [isLoading, setLoading] = useState(true);
     const [isSubmiting, setisSubmiting] = useState(false);
     const [calendarOpen, setCalendarOpen] = useState(false);
@@ -35,7 +36,7 @@ const page = () => {
 
     const Get_USERS = async () => {
         setLoading(true);
-        const res = await GET_USERS();
+        const res = await GET_USERS({ limit: 99999 });
         setAttendanceChekingList(res?.data?.map(u => ({ ...u, presente: true, justification: null, signature: null, isSubmitingSelf: false })))
         setLoading(false);
     };
@@ -238,116 +239,133 @@ const page = () => {
         "[]"
     ));
 
-    let rows = AttendanceChekingList?.map((i, idx) =>
-        <TableRow className={`relative`} key={idx}>
-            {
-                SubmitedList?.includes(i._id) &&
-                <div
-                    className="bg-background/60 text-green-500 font-semibold  flex justify-center items-center w-full h-full  absolute top-0 right-0 z-[2]">
-                    <p
-                        style={{
-                            backdropFilter: "blur(8px)"
-                        }}
-                        className="bg-background border border-foreground/10 p-1 px-3 ">
-                        Présence enregistrée avec succès
+    let rows = AttendanceChekingList
+        ?.filter((a) => {
+            if (Search === "") return true;
+            const searchLower = Search.toLowerCase();
+            const aName = a.firstName.toLowerCase();
+
+            // Replace any vowel in the search with a "any vowel" group
+            const vowelFlex = searchLower.replace(/[aeiou]/g, "[aeiou]");
+
+            // Then make consonants fuzzy too (allow skipped letters)
+            const fuzzyPattern = new RegExp(
+                vowelFlex.split("").join(".*?"),
+                "i"
+            );
+
+            return fuzzyPattern.test(aName);
+        })
+        ?.map((i, idx) =>
+            <TableRow className={`relative`} key={idx}>
+                {
+                    SubmitedList?.includes(i._id) &&
+                    <div
+                        className="bg-background/60 text-green-500 font-semibold  flex justify-center items-center w-full h-full  absolute top-0 right-0 z-[2]">
+                        <p
+                            style={{
+                                backdropFilter: "blur(8px)"
+                            }}
+                            className="bg-background border border-foreground/10 p-1 px-3 ">
+                            Présence enregistrée avec succès
+                        </p>
+                    </div>
+                }
+                <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
+
+
+
+                    <p className="max-w-[200] flex items-center gap-2  truncate">
+                        <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
+                        {i.firstName} {i.lastName}
                     </p>
-                </div>
-            }
-            <TableCell className={"flex truncate  items-center gap-3  pl-5"}>
 
+                </TableCell>
 
-
-                <p className="max-w-[200] flex items-center gap-2  truncate">
-                    <img src={UserPic()} className="w-7 h-7 object-cover rounded-full" alt="" />
-                    {i.firstName} {i.lastName}
-                </p>
-
-            </TableCell>
-
-            <TableCell>
-                <div className="flex gap-2 items-center "></div>
-                <div className={`w-fit flex   items-center `}>
-                    {
-                        isMorningPeriod &&
-                        <p
-                            onClick={() => handleTogglePresense(i._id, "morning")}
-                            className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                        >
-                            <CheckBoxinput
-                                onClick={() => handleTogglePresense(i._id, "morning")}
-                                labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                checked={i.presente == true}
-                            />
-                            matin
-                        </p>
-                    }
-                    {
-                        isAfternoonPeriod &&
-                        <p
-                            onClick={() => handleTogglePresense(i._id, "afternoon")}
-                            className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                        >
-                            <CheckBoxinput
-                                onClick={() => handleTogglePresense(i._id, "afternoon")}
-                                labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                checked={i.presente}
-                            />
-                            après-midi
-                        </p>
-                    }
-                </div>
-
-
-            </TableCell>
-
-            <TableCell>
-
-                <SignatureErea
-                    disabled={i.presente == false}
-                    isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
-                    onSave={(svg) => handleSignature(i._id, svg)}
-                    data={i}
-                />
-
-            </TableCell>
-            <TableCell>
-                <div className={`!w-fit relative cursor-pointer flex items-center gap-2 rounded-md font-medium border  bg-accent  border-foreground/20 `}>
-                    {
-                        i.presente == true &&
-                        <div className="w-full z-[3] rounded-2xl bg-background/50 h-full absolute top-0 right-0 ">
-                        </div>
-                    }
-
-                    <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
-
-                    <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 z-[1] p-1">
-
+                <TableCell>
+                    <div className="flex gap-2 items-center "></div>
+                    <div className={`w-fit flex   items-center `}>
                         {
-                            i.justification == null ?
-                                <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
-                                : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                            isMorningPeriod &&
+                            <p
+                                onClick={() => handleTogglePresense(i._id, "morning")}
+                                className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                            >
+                                <CheckBoxinput
+                                    onClick={() => handleTogglePresense(i._id, "morning")}
+                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                    checked={i.presente == true}
+                                />
+                                matin
+                            </p>
                         }
-                    </label>
+                        {
+                            isAfternoonPeriod &&
+                            <p
+                                onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                className={`flex font-semibold  gap-2 cursor-pointer rounded-2xl border p-2 items-center ${i.presente == true ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                    : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                            >
+                                <CheckBoxinput
+                                    onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                    labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                    checked={i.presente}
+                                />
+                                après-midi
+                            </p>
+                        }
+                    </div>
 
-                </div>
 
-            </TableCell>
-            <TableCell>
-                <button
-                    disabled={i.isSubmitingSelf || isAfterToday}
-                    onClick={() => handleSubmitSingle(i)} className="flex disabled:opacity-50 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
-                    {
-                        i.isSubmitingSelf
-                            ? <Loader1 wh=" w-[15] h-[15]" />
-                            : <i className="bi bi-arrow-right-circle"></i>
-                    }
-                </button>
-            </TableCell>
+                </TableCell>
 
-        </TableRow >
-    );
+                <TableCell>
+
+                    <SignatureErea
+                        disabled={i.presente == false}
+                        isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
+                        onSave={(svg) => handleSignature(i._id, svg)}
+                        data={i}
+                    />
+
+                </TableCell>
+                <TableCell>
+                    <div className={`!w-fit relative cursor-pointer flex items-center gap-2 rounded-md font-medium border  bg-accent  border-foreground/20 `}>
+                        {
+                            i.presente == true &&
+                            <div className="w-full z-[3] rounded-2xl bg-background/50 h-full absolute top-0 right-0 ">
+                            </div>
+                        }
+
+                        <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
+
+                        <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 z-[1] p-1">
+
+                            {
+                                i.justification == null ?
+                                    <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
+                                    : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                            }
+                        </label>
+
+                    </div>
+
+                </TableCell>
+                <TableCell>
+                    <button
+                        disabled={i.isSubmitingSelf || isAfterToday}
+                        onClick={() => handleSubmitSingle(i)} className="flex disabled:opacity-50 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Soumettre
+                        {
+                            i.isSubmitingSelf
+                                ? <Loader1 wh=" w-[15] h-[15]" />
+                                : <i className="bi bi-arrow-right-circle"></i>
+                        }
+                    </button>
+                </TableCell>
+
+            </TableRow >
+        );
     // ========= CALENDARE COM-----------
 
     const CalendarDayRef = useRef();
@@ -363,8 +381,7 @@ const page = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-
-
+    
 
     useEffect(() => {
         if (isToday && !now.isBetween(
@@ -377,8 +394,6 @@ const page = () => {
             setisMorningPeriod(true)
         }
     }, [date]);
-
-
 
 
     const [isMobile, setIsMobile] = useState(false);
@@ -396,74 +411,83 @@ const page = () => {
 
         <div className="w-full p-4">
 
-            <div className="flex flex-col md:flex-row md:gap-5 gap-1 w-full md:pr-6 md:items-center items-end justify-end">
-                {
-                    !isAfterToday &&
-                    <div
-                        className="flex text-sm gap-2 items-center"
-                    >
-                        <h1 className="text-sm opacity-70">Period du jour</h1>
-                        <button onClick={
-                            () => {
-                                setisMorningPeriod(true);
-                                setisAfternoonPeriod(false)
-                            }
+            <div className="flex md:justify-between flex-wrap-reverse items-center  ">
+                <Input
+                    onChange={e => setSearch(e.target.value)}
+                    parentclassName={"!py-1 md:w-[250] mr-6"}
+                    icon={<i className="bi bi-search"></i>}
+                    placeholder="Rechercher..."
 
-                        } className={` cursor-pointer  p-2 px-3 rounded-md border ${isMorningPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
-                            Matin
-                        </button>
-                        <button
-                            disabled={isToday && !now.isBetween(
-                                moment().set({ hour: 13, minute: 1, second: 0 }),
-                                moment().set({ hour: 16, minute: 30, second: 0 }),
-                                undefined,
-                                "[]"
-                            )}
-                            onClick={
+                />
+                <div className="flex  flex-wrap-reverse  md:gap-5 gap-1  md:pr-6 md:items-center items-end justify-end">
+                    {
+                        !isAfterToday &&
+                        <div
+                            className="flex text-sm gap-2 items-center"
+                        >
+                            <h1 className="text-sm opacity-70">Period du jour</h1>
+                            <button onClick={
                                 () => {
-                                    setisMorningPeriod(false);
-                                    setisAfternoonPeriod(true)
-                                }} className={` disabled:opacity-50 cursor-pointer  p-2 px-3 rounded-md border ${isAfternoonPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
-                            Après-midi
-                        </button>
+                                    setisMorningPeriod(true);
+                                    setisAfternoonPeriod(false)
+                                }
+
+                            } className={` cursor-pointer  p-2 px-3 rounded-md border ${isMorningPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
+                                Matin
+                            </button>
+                            <button
+                                disabled={isToday && !now.isBetween(
+                                    moment().set({ hour: 13, minute: 1, second: 0 }),
+                                    moment().set({ hour: 16, minute: 30, second: 0 }),
+                                    undefined,
+                                    "[]"
+                                )}
+                                onClick={
+                                    () => {
+                                        setisMorningPeriod(false);
+                                        setisAfternoonPeriod(true)
+                                    }} className={` disabled:opacity-50 cursor-pointer  p-2 px-3 rounded-md border ${isAfternoonPeriod ? "border-green-500/20 font-medium text-green-500 bg-green-500/5" : " border-foreground/20"}`}>
+                                Après-midi
+                            </button>
+                        </div>
+                    }
+
+                    <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
+                        <RefreshCcw className="h-4 w-4" /> Actualiser
+                    </button>
+                    <div className="flex w-fit items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
+
+                        <p className="font-medium text-sm min-w-[200] flex gap-3  ">
+                            <i className="bi bi-calendar-range"></i>
+                            <span className="text-chart-3"> {moment(date, "D-M-yyyy").format("dddd DD/MM/YYYY")} - {moment().format("HH:mm a")}</span>
+                        </p>
+                        <button
+                            className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
+                            onClick={() => setCalendarOpen(true)}
+                        ><Wrench className="w-5 h-5 stroke-1" /></button>
+                        <AnimatePresence>
+                            {calendarOpen &&
+                                <motion.div
+                                    ref={CalendarDayRef}
+                                    initial={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
+                                    transition={{ duration: 0.15, ease: "easeOut" }}
+                                    className="absolute z-[10] w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
+                                >
+                                    <Calendar
+                                        classNames={""}
+                                        locale={"fr"}
+                                        day={date}
+                                        onSelect={d => {
+                                            setDate(d);
+                                            setCalendarOpen(false)
+                                        }}
+                                    />
+                                </motion.div>
+                            }
+                        </AnimatePresence>
                     </div>
-                }
-
-                <button disabled={isSubmiting} onClick={handleRefresh} className="bg-accent text-sm  p-2 font-medium px-3 flex items-center gap-2 rounded-md border border-foreground/15">
-                    <RefreshCcw className="h-4 w-4" /> Actualiser
-                </button>
-                <div className="flex w-fit items-center relative gap-2 bg-background p-1 px-2 border rounded-md">
-
-                    <p className="font-medium text-sm min-w-[200] flex gap-3  ">
-                        <i className="bi bi-calendar-range"></i>
-                        <span className="text-chart-3"> {moment(date, "D-M-yyyy").format("dddd DD/MM/YYYY")} - {moment().format("HH:mm a")}</span>
-                    </p>
-                    <button
-                        className=" p-1 cursor-pointer bg-sidebar border opacity-70 hover:opacity-100 duration-200 border-foreground/10 rounded-sm  "
-                        onClick={() => setCalendarOpen(true)}
-                    ><Wrench className="w-5 h-5 stroke-1" /></button>
-                    <AnimatePresence>
-                        {calendarOpen &&
-                            <motion.div
-                                ref={CalendarDayRef}
-                                initial={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
-                                animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                                exit={{ opacity: 0, scale: 0.95, y: -10, x: 10 }}
-                                transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="absolute z-[10] w-[300] right-0 top-0  shadow-lg rounded-lg  overflow-hidden"
-                            >
-                                <Calendar
-                                    classNames={""}
-                                    locale={"fr"}
-                                    day={date}
-                                    onSelect={d => {
-                                        setDate(d);
-                                        setCalendarOpen(false)
-                                    }}
-                                />
-                            </motion.div>
-                        }
-                    </AnimatePresence>
                 </div>
             </div>
             {
@@ -472,6 +496,7 @@ const page = () => {
                     headers={headers}
                     rows={rows}
                     enableAddElem={false}
+                    limit={null}
                     enableDaySeleted={false}
                     enableFilterButton={false}
                     enableSearch={false}
@@ -485,86 +510,103 @@ const page = () => {
                 isMobile &&
                 <div className="flex mt-10 flex-col md:hidden  gap-3">
                     {
-                        AttendanceChekingList.map(i =>
-                            <TableCardItem
-                                title={<div className="flex items-center font-semibold gap-2 text-lg "><img src={UserPic()} className="w-[30] h-[30] rounded-full" alt="" />{i.firstName} {i.lastName}</div>}
-                                entries={[
-                                    <div className="flex gap-2 items-center">Grade:<p className="font-me">{i.grade_id?.name}</p></div>,
-                                    <div className="flex flex-col gap-2 mt-2">
-                                        Presence:
-                                        <div className="grid grid-cols-1 gap-1">
-                                            {
-                                                isMorningPeriod &&
+                        AttendanceChekingList
+                            ?.filter((a) => {
+                                if (Search === "") return true;
+                                const searchLower = Search.toLowerCase();
+                                const aName = a.firstName.toLowerCase();
 
-                                                <p
-                                                    onClick={() => handleTogglePresense(i._id, "morning")}
-                                                    className={`flex w-full font-semibold justify-center  gap-2 cursor-pointer rounded-md  border p-2 items-center ${i.presente == true
-                                                        ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                                        : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                                                >
-                                                    <CheckBoxinput
+                                // Replace any vowel in the search with a "any vowel" group
+                                const vowelFlex = searchLower.replace(/[aeiou]/g, "[aeiou]");
+
+                                // Then make consonants fuzzy too (allow skipped letters)
+                                const fuzzyPattern = new RegExp(
+                                    vowelFlex.split("").join(".*?"),
+                                    "i"
+                                );
+
+                                return fuzzyPattern.test(aName);
+                            })
+                            ?.map(i =>
+                                <TableCardItem
+                                    title={<div className="flex items-center font-semibold gap-2 text-lg "><img src={UserPic()} className="w-[30] h-[30] rounded-full" alt="" />{i.firstName} {i.lastName}</div>}
+                                    entries={[
+                                        <div className="flex gap-2 items-center">Grade:<p className="font-me">{i.grade_id?.name}</p></div>,
+                                        <div className="flex flex-col gap-2 mt-2">
+                                            Presence:
+                                            <div className="grid grid-cols-1 gap-1">
+                                                {
+                                                    isMorningPeriod &&
+
+                                                    <p
                                                         onClick={() => handleTogglePresense(i._id, "morning")}
-                                                        labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                                        checked={i.presente == true}
-                                                    />
-                                                    matin
-                                                </p>
-                                            }
-                                            {
-                                                isAfternoonPeriod &&
-                                                <p
-                                                    onClick={() => handleTogglePresense(i._id, "afternoon")}
-                                                    className={`flex  w-full font-semibold  gap-2 justify-center cursor-pointer rounded-md border p-2 items-center ${i.presente == true
-                                                        ? "bg-green-500/5 border-green-500/20 text-green-600"
-                                                        : "bg-red-500/5 border-red-500/20 text-red-600"}`}
-                                                >
-                                                    <CheckBoxinput
+                                                        className={`flex w-full font-semibold justify-center  gap-2 cursor-pointer rounded-md  border p-2 items-center ${i.presente == true
+                                                            ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                                    >
+                                                        <CheckBoxinput
+                                                            onClick={() => handleTogglePresense(i._id, "morning")}
+                                                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                            checked={i.presente == true}
+                                                        />
+                                                        matin
+                                                    </p>
+                                                }
+                                                {
+                                                    isAfternoonPeriod &&
+                                                    <p
                                                         onClick={() => handleTogglePresense(i._id, "afternoon")}
-                                                        labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
-                                                        checked={i.presente == true}
-                                                    />
-                                                    après-midi
-                                                </p>
+                                                        className={`flex  w-full font-semibold  gap-2 justify-center cursor-pointer rounded-md border p-2 items-center ${i.presente == true
+                                                            ? "bg-green-500/5 border-green-500/20 text-green-600"
+                                                            : "bg-red-500/5 border-red-500/20 text-red-600"}`}
+                                                    >
+                                                        <CheckBoxinput
+                                                            onClick={() => handleTogglePresense(i._id, "afternoon")}
+                                                            labelClassName={"peer-checked:text-white peer-checked:bg-green-500"}
+                                                            checked={i.presente == true}
+                                                        />
+                                                        après-midi
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>,
+                                        <div>
+                                            <SignatureErea
+                                                disabled={i.presente == false}
+                                                isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
+                                                onSave={(svg) => handleSignature(i._id, svg)}
+                                                data={i}
+                                            />
+                                        </div>,
+                                        <div className={` cursor-pointer  mt-2 flex items-center justify-center gap-2 rounded-full font-medium  `}>
+                                            {
+                                                i.presente == false &&
+                                                <>
+                                                    <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
+                                                    <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-2 w-full border border-foreground/10 rounded-md text-center">
+
+                                                        {
+                                                            i.justification == null ?
+                                                                <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
+                                                                : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
+                                                        }
+                                                    </label>
+                                                </>
                                             }
-                                        </div>
-                                    </div>,
-                                    <div>
-                                        <SignatureErea
-                                            disabled={i.presente == false}
-                                            isSigned={AttendanceChekingList.find(ele => ele._id == i._id)?.signature != null}
-                                            onSave={(svg) => handleSignature(i._id, svg)}
-                                            data={i}
-                                        />
-                                    </div>,
-                                    <div className={` cursor-pointer  mt-2 flex items-center justify-center gap-2 rounded-full font-medium  `}>
-                                        {
-                                            i.presente == false &&
-                                            <>
-                                                <input onChange={e => handleUploadFIles(e, i._id)} type="file" className="hidden" id={`inpudtforjustification${i._id}`} />
-                                                <label htmlFor={`inpudtforjustification${i._id}`} className="px-3 p-2 w-full border border-foreground/10 rounded-md text-center">
+                                        </div>,
+                                        <button
+                                            disabled={i.isSubmitingSelf}
+                                            onClick={() => handleSubmitSingle(i)} className="flex justify-center mt-3 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Soumettre
+                                            {
+                                                i.isSubmitingSelf
+                                                    ? <Loader1 wh=" w-[15] h-[15]" />
+                                                    : <i className="bi bi-arrow-right-circle"></i>
+                                            }
+                                        </button>
 
-                                                    {
-                                                        i.justification == null ?
-                                                            <>justification <i className="bi bi-file-earmark-arrow-up"></i></>
-                                                            : <div className="text-green-500 truncate max-w-[200]">{i.justification?.name} <i className="bi bi-check2-circle"></i></div>
-                                                    }
-                                                </label>
-                                            </>
-                                        }
-                                    </div>,
-                                    <button
-                                        disabled={i.isSubmitingSelf}
-                                        onClick={() => handleSubmitSingle(i)} className="flex justify-center mt-3 items-center gap-2 bg-foreground rounded-md text-background p-2 px-4 font-semibold">Submit
-                                        {
-                                            i.isSubmitingSelf
-                                                ? <Loader1 wh=" w-[15] h-[15]" />
-                                                : <i className="bi bi-arrow-right-circle"></i>
-                                        }
-                                    </button>
-
-                                ]}
-                            />
-                        )
+                                    ]}
+                                />
+                            )
                     }
                 </div>
             }

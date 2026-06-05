@@ -8,7 +8,7 @@ import { COPY_TEXT } from "@/lib/utils";
 import Loader1 from "../Global/Loader1";
 import EmployeeAttendance from "@/app/attendance/(COMPS)/attendanceCalenda";
 import EmployeePopup from "../Global/UserData";
-import { decision_de_stage_url, demande_explication, exporter_data } from "@/api/DOCUMENTS";
+import { decision_de_stage_url, demande_explication, exporter_data, Note_administrative } from "@/api/DOCUMENTS";
 import { DELETE_USER } from "@/api/Employers/User";
 import SecureButton from "../SecureButton";
 import Dialog from "../Global/Dialog";
@@ -198,19 +198,25 @@ export const DocumentsPopup = ({ _id, defaultDates, onClose }) => {
                     <File />
                     Exporter les données
                 </SecureButton>
-                <div className="relative">
 
-                    <button
-                        urlToAddToken={demande_explication(_id)}
-                        onClick={() => setselectDatesOpen(true)}
-                        className="flex  bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
-                    >
-                        <File />
-                        explication d'absence
-                    </button>
+                <SecureButton
+                    urlToAddToken={demande_explication(_id)}
+                    onClick={() => setselectDatesOpen(true)}
+                    className="flex  bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+                >
+                    <File />
+                    Explication d'absence
+                </SecureButton>
+                <SecureButton
+                    urlToAddToken={Note_administrative(_id)}
+                    onClick={() => setselectDatesOpen(true)}
+                    className="flex  bg-background  border-foreground/20 text-wrap w-full p-2 flex-col opacity-70 hover:opacity-100 duration-200 font-medium gap-2 border  hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center "
+                >
+                    <i className="bi text-lg bi-bell"></i>
+                    Note administrative
+                </SecureButton>
 
 
-                </div>
 
             </Dialog>
 

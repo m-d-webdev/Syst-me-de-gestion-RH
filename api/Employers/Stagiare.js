@@ -32,3 +32,13 @@ export const GET_STAGAIRE = async ({ id }) => {
         return error.message;
     }
 };
+
+export const DELETE_STAGAIRE = async ({ id }) => {
+    try {
+        const res = await api.delete(`/stagaires/${id}`);
+        return res.data;
+    } catch (error) {
+        toast.error(error?.response?.data?.message ?? "Échec du superission de l'utilisateur");
+        return error.message;
+    }
+};

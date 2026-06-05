@@ -8,6 +8,8 @@ import { COPY_TEXT } from "@/lib/utils";
 
 import { attestation_de_reception, attestation_de_stage_url, decision_de_stage_url, engagement_de_stage_url, Notification_de_fin_de_stage_url } from "@/api/DOCUMENTS";
 import Dialog from "../Global/Dialog";
+import { DELETE_STAGAIRE } from "@/api/Employers/Stagiare";
+import Loader1 from "../Global/Loader1";
 
 
 const DocumentsPopup = ({ _id, onClose }) => {
@@ -69,7 +71,7 @@ const DocumentsPopup = ({ _id, onClose }) => {
 }
 
 
-const MoreOptionsTrainer = ({ data }) => {
+const MoreOptionsTrainer = ({ data ,onDelete}) => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [DocumentMenuOpen, setDocumentMenuOpen] = useState(false);
@@ -95,7 +97,13 @@ const MoreOptionsTrainer = ({ data }) => {
     const [isDeactivating, setDeactivating] = useState(false)
     const [isFeaturing, setFeaturing] = useState(false)
 
-
+   const handleDelet = async () => {
+        setDeleting(true)
+        await DELETE_STAGAIRE({ id: data._id })
+        setDeleting(false);
+        setMenuOpen(false)
+        onDelete()
+    }
 
 
     return (
@@ -145,9 +153,13 @@ const MoreOptionsTrainer = ({ data }) => {
                                 <i className="bi bi-file-earmark-arrow-up"></i>
                                 Exporter
                             </button>
-                            <button onClick={() => COPY_TEXT(JSON.stringify(data))} className="flex p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-medium gap-1 border border-transparent hover:border-foreground/20 rounded-md hover:bg-primary-foreground items-center ">
-                                <i className="bi text-base w-5 bi-clipboard-check"></i>
-                                Copier les informations
+                            <button onClick={handleDelet} className="flex gap-2  text-red-500 bg-red-500/15 border border-red-500/600 p-1 opacity-70 hover:opacity-100 duration-200 px-2 font-semibold  rounded-md hover:bg-primary-foreground items-center ">
+                                {
+                                    isDeleting
+                                        ? <Loader1 className="before:border-red-500" wh="w-[15] h-[15]" />
+                                        : <i className="bi bi-trash"></i>
+                                }
+                                Supprimer
                             </button>
 
                         </motion.div>
